@@ -39,39 +39,6 @@ public class MallCustomer implements UserDetails , Serializable {
     @Column(name = "SC_UserLoginPassword")
     private String password;
 
-    @Column(name = "SC_IndustryType")
-    private Integer industryType;
-
-    @Column(name = "SC_UserActivate")
-    private Integer userActivate;
-
-    @Column(name = "SC_RoleID")
-    private Integer roleID;
-
-    @Column(name = "SC_BelongManagerID")
-    private Integer belongManagerID;
-
-    @Column(name = "SC_Email")
-    private String email;
-
-    @Column(name = "SC_IsOld")
-    private Integer isOld;
-
-    @Column(name = "SC_DeveloperUrl")
-    private String developerUrl;
-
-    @Column(name = "SC_developerToken")
-    private String developerToken;
-
-    @Column(name = "SC_TYPE")
-    private Integer scType;
-
-    @Column(name = "SC_Score")
-    private Double score;
-
-    @Column(name = "SC_CityID")
-    private Integer cityID;
-
     @Column(name = "SC_CustomerType")
     private CustomerTypeEnum customerType;
 

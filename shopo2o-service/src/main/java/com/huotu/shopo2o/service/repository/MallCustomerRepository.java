@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by helloztt on 2017-08-21.
  */
-public interface MallCustomerRepository extends JpaRepository<MallCustomer,Long> {
+public interface MallCustomerRepository extends JpaRepository<MallCustomer, Long> {
+
+    MallCustomer findByUserName(String userName);
 }

@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by helloztt on 2017-08-21.
  */
 @Entity
-@Table(name = "Shop_OfflineShop")
+@Table(name = "Shop_O2OShop")
 @Getter
 @Setter
 @Cacheable(false)
@@ -34,6 +34,12 @@ public class Shop {
      */
     @Column(name = "Name")
     private String name;
+
+    /**
+     * 线下门店ID
+     */
+    @Column(name = "Offline_ShopId")
+    private String offlineShopId;
 
     /**
      * 区号

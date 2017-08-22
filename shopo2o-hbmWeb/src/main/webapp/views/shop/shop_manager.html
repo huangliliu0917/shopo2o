@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>门店列表</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <div class="ibox">
+        <div class="ibox-content">
+            <ol class="breadcrumb">
+                <li><strong>门店列表</strong></li>
+            </ol>
+        </div>
+    </div>
+    <!--</form>-->
+    <!--search-->
+    <!--list-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins m-b-none">
+                <div class="ibox-content p-xxs no-top-border">
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover table-center">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>门店名称</th>
+                                <th>门店地址</th>
+                                <th>外部ID</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody th:remove="all-but-first">
+                            <tr th:each="shop ,infoState: ${shopPage.content}">
+                                <!--/*@thymesVar id="shop" type="com.huotu.shopo2o.service.entity.Shop"*/-->
+                                <td th:text="${shop.id}">1</td>
+                                <td th:text="${shop.name}">门店1</td>
+                                <td th:text="${shop.address}">浙江省杭州市滨江区智慧e谷</td>
+                                <td th:text="${shop.offlineShopId}">1</td>
+                                <td th:text="${shop.disabled ? '线下' : '线上'}" style="color:red;"
+                                    th:style="${|'color:'${shop.disabled ? 'red' : 'green'}|}">线上
+                                </td>
+                                <td>
+                                    <span class="cursor-point" onclick="shopListHandler.edit(this)"
+                                          th:attr="shopId=${shop.id}">
+                                       <i class="fa tooltips" data-toggle="tooltip" data-original-title="编辑">编辑</i>
+                                    </span>
+                                    &nbsp;
+                                    <span class="cursor-point" onclick="shopListHandler.changeOption(this)"
+                                          th:attr="shopId=${shop.id}">
+                                       <i class="fa tooltips" data-toggle="tooltip" data-original-title="切换">切换</i>
+                                    </span>
+                                    &nbsp;
+                                    <span onclick="shopListHandler.delete(this)" th:attr="shopId=${shop.id}"
+                                          class="cursor-point">
+                                        <i class="fa tooltips" data-toggle="tooltip" data-original-title="删除">删除</i>
+                                    </span>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        共
+                        <th:block th:text="${shopPage.totalElements}">0</th:block>
+                        条记录，当前第
+                        <th:block th:text="${pageNo}">1</th:block>
+                        /
+                        <th:block th:text="${shopPage.totalPages}">1</th:block>
+                        ，每页
+                        <th:block th:text="${pageSize}">0</th:block>
+                        条记录
+                        <ul style="float: right;" class="pagination pagination-split">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<script src="../../resources/js/plugins/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/js/plugins/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/js/shop/shop_manager.js" th:src="@{/resources/js/shop/shop_manager.js}"></script>
+
+<script type="text/javascript" th:inline="javascript">
+    var pageIndex = /*[[${pageNo}]]*/ 1;
+    var totalPage = /*[[${shopPage.totalPages}]]*/ 1;
+</script>
+</body>
+
+</html>

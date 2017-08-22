@@ -16,4 +16,6 @@ public class Constant {
      * 默认统计月数
      */
     public static final int MONTH_NUM = 5;
+
+    public static final String ENCODING = "UTF-8";
 }
