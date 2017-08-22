@@ -21,7 +21,7 @@
     <link href="../../resources/css/custom.css" th:href="@{/resources/css/custom.css}" rel="stylesheet"/>
     <!--高德地图-->
     <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
-    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=e99fce513b3e7bf7da5a28cebf1e9ffe&plugin=AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch"></script>
+
 </head>
 <body class="gray-bg">
 
@@ -82,19 +82,20 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
                                             <div id="citys">
-                                                <select id="province" onchange="search(this)" />
-                                                <select id="city" onchange="search(this)" />
-                                                <select id="district" onchange="search(this)"/>
-                                                <select id="street" onchange="setCenter(this)" />
+                                                <select id="province" onchange="mapHandler.changeCity(this)" ></select>
+                                                <select id="city" onchange="mapHandler.changeCity(this)" ></select>
+                                                <select id="district" onchange="mapHandler.changeCity(this)"></select>
+                                                <select id="street" onchange="mapHandler.setCenter(this)" ></select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
                                         <label class="col-sm-2 control-label">详细地址
                                             <span class="asterisk">*</span></label>
-                                        <div class="col-sm-10">
-                                            <input name="address" id="address" style="width: 400px;"
+                                        <div class="input-group col-sm-5">
+                                            <input name="address" id="address"
                                                    class="form-control input-sm" placeholder="详细地址"/>
+                                            <span class="input-group-btn"><button type="button" class="btn btn-sm" id="search"> 搜索</button></span>
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
@@ -303,6 +304,7 @@
 <script type="text/javascript" src="../../resources/js/plugins/hot/regionNode.js"
         th:src="@{/resources/js/plugins/hot/regionNode.js}"></script>
 <!--高德地图-->
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=e99fce513b3e7bf7da5a28cebf1e9ffe&plugin=AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch"></script>
 
 <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
 
