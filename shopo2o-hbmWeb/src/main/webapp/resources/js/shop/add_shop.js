@@ -5,12 +5,13 @@ var map, district, polygons = [], citycode;
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
+var openTime,closeTime,deadlineTime;
 $(function () {
     map = new AMap.Map("addressMap", {
         resizeEnable: true,
         zoom: 3
     });
-    AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
+    AMap.plugin(['AMap.Autocomplete','AMap.PlaceSearch'],function(){
         var autoOptions = {
             city: "杭州",
             input: "J_address"
@@ -50,6 +51,43 @@ $(function () {
         }
     });
 
+    openTime = $('input[name=openTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        // allowInput:true,
+        defaultMinute: 0
+    });
+    closeTime = $('input[name=closeTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        // allowInput:true,
+        defaultMinute: 0
+    });
+    deadlineTime = $('input[name=deadlineTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        // allowInput:true,
+        defaultMinute: 0
+    });
+    openTime.config.onChange =function(dateobj, datestr){
+        console.info(dateobj, datestr);
+        console.info(specific_calendar.input);
+    }
 });
 var mapHandler = {
     getData: function (data, level) {
@@ -120,5 +158,31 @@ var mapHandler = {
     },
     setCenter: function (obj) {
         map.setCenter(obj[obj.options.selectedIndex].center);
+    }
+}
+
+var uploadHandler = {
+    uploadImg: function (btnFile, showImgId, pathId) {
+        layer.load();
+
+        $.ajaxFileUpload({
+            url:baseUrl + "mall/common/upload",
+            data:{customerId:$('input[name=customerId]').val()},
+            secureuri: false,//安全协议
+            fileElementId: btnFile,//id
+            dataType: 'json', //返回值类型 一般设置为json
+            success: function (json) {
+                if (json.result == 1) {
+                    $("#" + showImgId).attr("src", json.fileUrl);
+                    $("#" + pathId).val(json.fileUri);
+                    layer.msg('上传成功');
+                } else {
+                    layer.msg("上传失败");
+                }
+            },
+            error:function(){
+                layer.closeAll('loading');
+            }
+        });
     }
 }
