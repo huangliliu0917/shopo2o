@@ -13,13 +13,11 @@ $(function () {
     });
     AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
         var autoOptions = {
-            city: "杭州",
             input: "J_address"
         };
         autocomplete = new AMap.Autocomplete(autoOptions);
         var placeSearch = new AMap.PlaceSearch({
             type: '餐饮服务|购物服务|生活服务|住宿服务|商务住宅',
-            city: '杭州',
             map: map
         });
         AMap.event.addListener(autocomplete, "select", function (e) {
