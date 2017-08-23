@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Date;
 
 /**
@@ -90,6 +91,24 @@ public class Shop {
      */
     @Column(name = "Lat")
     private Double lat;
+
+    /**
+     * 营业起始时间
+     */
+    @Column(name = "Open_Time",columnDefinition = "time")
+    private LocalTime openTime;
+
+    /**
+     * 营业结束时间
+     */
+    @Column(name = "Close_Time",columnDefinition = "time")
+    private LocalTime closeTime;
+
+    /**
+     * 截单时间
+      */
+    @Column(name = "Deadline_Time",columnDefinition = "time")
+    private LocalTime deadlineTime;
 
     /**
      * 图标
