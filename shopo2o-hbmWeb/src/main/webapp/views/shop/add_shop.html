@@ -40,10 +40,10 @@
                 <div class="tabs-container">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a id="baseInfoBtn" data-toggle="tab" href="#tab-1" aria-expanded="true">基本信息</a>
+                            <a id="baseInfoBtn" data-toggle="tab" href="#tab-1">基本信息</a>
                         </li>
                         <li>
-                            <a id="sendRuleBtn" data-toggle="tab" href="#tab-2" aria-expanded="true">配送规则</a>
+                            <a id="sendRuleBtn" data-toggle="tab" href="#tab-2">配送规则</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -82,20 +82,24 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
                                             <div id="citys">
-                                                <select id="province" onchange="mapHandler.changeCity(this)" ></select>
-                                                <select id="city" onchange="mapHandler.changeCity(this)" ></select>
-                                                <select id="district" onchange="mapHandler.changeCity(this)"></select>
-                                                <select id="street" onchange="mapHandler.setCenter(this)" ></select>
+                                                <select class="form-control" id="province" onchange="mapHandler.changeCity(this)" ></select>
+                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)" ></select>
+                                                <select class="form-control" id="district" onchange="mapHandler.changeCity(this)"></select>
+                                                <select class="form-control" id="street" onchange="mapHandler.setCenter(this)" ></select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
                                         <label class="col-sm-2 control-label">详细地址
                                             <span class="asterisk">*</span></label>
-                                        <div class="input-group col-sm-5">
-                                            <input name="address" id="address"
-                                                   class="form-control input-sm" placeholder="详细地址"/>
-                                            <span class="input-group-btn"><button type="button" class="btn btn-sm" id="search"> 搜索</button></span>
+                                        <div class="col-sm-5">
+                                            <div class="input-group">
+                                                <input name="address" id="J_address"
+                                                       class="form-control" placeholder="详细地址"/>
+                                                <span class="input-group-btn">
+                                                    <button type="button" class="btn btn-success" id="J_search"><i class="fa fa-search"></i></button>
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
