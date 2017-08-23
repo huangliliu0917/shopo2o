@@ -13,8 +13,8 @@ $(function () {
     });
     AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
         var autoOptions = {
-            city: "杭州", //城市，默认全国
-            input: "address"//使用联想输入的input的id
+            city: "杭州",
+            input: "J_address"
         };
         autocomplete = new AMap.Autocomplete(autoOptions);
         var placeSearch = new AMap.PlaceSearch({
@@ -27,15 +27,20 @@ $(function () {
             console.log(e);
             placeSearch.search(e.poi.name)
         });
+
+        $('#J_search').click(function () {
+            var value = $.trim($('#J_address').val());
+            if(value) placeSearch.search(value);
+        });
     });
     //行政区划查询
     var opts = {
         subdistrict: 1,   //返回下一级行政区
         showbiz: false  //最后一级返回街道信息
     };
-    district = new AMap.DistrictSearch(opts);//注意：需要使用插件同步下发功能才能这样直接使用
-    district.search('中国', function (status, result) {
-        if (status == 'complete') {
+    district = new AMap.DistrictSearch(opts);
+    district.search('中国', function(status, result) {
+        if(status ==='complete'){
             mapHandler.getData(result.districtList[0]);
         }
     });
@@ -79,10 +84,7 @@ $(function () {
     }
 });
 var mapHandler = {
-    search: function () {
-        placeSearch.search(e.poi.name)
-    },
-    getData: function (data, level) {
+    getData:function(data,level) {
         var bounds = data.boundaries;
         if (bounds) {
             for (var i = 0, l = bounds.length; i < l; i++) {
@@ -98,6 +100,7 @@ var mapHandler = {
             }
             map.setFitView();//地图自适应
         }
+
 
 
         //清空下一级别的下拉列表
@@ -116,7 +119,7 @@ var mapHandler = {
         if (subList) {
             var contentSub = new Option('--请选择--');
             var curlevel = subList[0].level;
-            var curList = document.querySelector('#' + curlevel);
+            var curList =  document.querySelector('#' + curlevel);
             curList.add(contentSub);
             for (var i = 0, l = subList.length; i < l; i++) {
                 var name = subList[i].name;
