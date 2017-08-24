@@ -5,13 +5,15 @@ var map, district, polygons = [], citycode;
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
-var openTime,closeTime,deadlineTime;
+var openTime, closeTime, deadlineTime;
 $(function () {
     map = new AMap.Map("addressMap", {
         resizeEnable: true,
         zoom: 3
     });
-    AMap.plugin(['AMap.Autocomplete','AMap.PlaceSearch'],function(){
+
+
+    AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
         var autoOptions = {
             city: "杭州",
             input: "J_address"
@@ -23,7 +25,6 @@ $(function () {
             map: map
         });
         AMap.event.addListener(autocomplete, "select", function (e) {
-            //TODO 针对选中的poi实现自己的功能
             placeSearch.search(e.poi.name)
         });
 
@@ -32,13 +33,53 @@ $(function () {
             if (value) placeSearch.search(value);
         });
 
-        AMap.event.addListener(placeSearch, "markerClick", function(e) {
-            console.log(e.data.location);//当前marker的经纬度信息
-            console.log(e.data.address);//获取当前marker的具体地址信息
-            console.log(e.data);//则是包含所有的marker数据
-            $('#J_address').val(e.data.address)
+        AMap.event.addListener(placeSearch, "markerClick", function (e) {
+            var infoContent = createInfoWindow(e.data);
+            var infoWindow = new AMap.InfoWindow({
+                isCustom: true,
+                content: infoContent,
+                offset: new AMap.Pixel(0, -30)
+            });
+
+            infoWindow.open(map, e.marker.getPosition());
         });
+
     });
+
+    //构建自定义信息窗体
+    function createInfoWindow(data) {
+        var $wrap = $('<div></div>');
+        var $div = '<div class="amap-content-body">\n' +
+            '            <div class="amap-lib-infowindow">\n' +
+            '                <div class="amap-lib-infowindow-title">\n' +
+            '                    <span>' + data.name + '</span>\n' +
+            '                    <div>地址：' + data.address + '</div>\n' +
+            '                </div>\n' +
+            '                <div class="amap-lib-infowindow-content">\n' +
+            '                    <div class="amap-lib-infowindow-content-wrap">\n' +
+            '                        <a href="javascript:;" class="btn-link" id="J_setAddress"  data-address="' + data.address + '">设为联系地址</a>\n' +
+            '                    </div>\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '        </div>\n' +
+            '        <div class="amap-combo-close"></div>\n' +
+            '        <div class="amap-combo-sharp"></div>';
+        $wrap.append($div);
+        return $wrap[0];
+    }
+
+    $(document).on('click', '.amap-combo-close', function () {
+        closeInfoWindow();
+    }).on('click', '#J_setAddress', function () {
+        $('#J_address').val($(this).attr('data-address'));
+        closeInfoWindow();
+    });
+
+    //关闭信息窗体
+    function closeInfoWindow() {
+        map.clearInfoWindow();
+    }
+
     //行政区划查询
     var opts = {
         subdistrict: 1,   //返回下一级行政区
@@ -84,7 +125,7 @@ $(function () {
         // allowInput:true,
         defaultMinute: 0
     });
-    openTime.config.onChange =function(dateobj, datestr){
+    openTime.config.onChange = function (dateobj, datestr) {
         console.info(dateobj, datestr);
         console.info(specific_calendar.input);
     }
@@ -166,8 +207,8 @@ var uploadHandler = {
         layer.load();
 
         $.ajaxFileUpload({
-            url:baseUrl + "mall/common/upload",
-            data:{customerId:$('input[name=customerId]').val()},
+            url: baseUrl + "mall/common/upload",
+            data: {customerId: $('input[name=customerId]').val()},
             secureuri: false,//安全协议
             fileElementId: btnFile,//id
             dataType: 'json', //返回值类型 一般设置为json
@@ -180,7 +221,7 @@ var uploadHandler = {
                     layer.msg("上传失败");
                 }
             },
-            error:function(){
+            error: function () {
                 layer.closeAll('loading');
             }
         });
