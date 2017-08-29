@@ -20,4 +20,13 @@ public interface MallCustomerService {
      */
     @Transactional
     ApiResult newCustomer(String userName, String password, CustomerTypeEnum customerTypeEnum);
+
+    /**
+     * 根据主键查找商户信息
+     *
+     * @param customerId 商户ID
+     * @return {@link MallCustomer}
+     */
+    @Transactional(readOnly = true)
+    MallCustomer findOne(Long customerId);
 }

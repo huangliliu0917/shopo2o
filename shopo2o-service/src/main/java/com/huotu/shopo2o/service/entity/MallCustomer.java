@@ -28,7 +28,7 @@ public class MallCustomer implements UserDetails , Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SC_UserID")
-    private Integer customerId;
+    private Long customerId;
 
     @Column(name = "SC_UserLoginName")
     private String username;

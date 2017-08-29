@@ -26,14 +26,19 @@ public class ApiServiceImpl implements ApiService {
     private static final Log log = LogFactory.getLog(ApiServiceImpl.class);
 
     @Override
-    public ApiResult newCustomer(String userName, String password, CustomerTypeEnum customerTypeEnum) throws UnsupportedEncodingException {
+    public ApiResult newCustomer(String userName, String password, CustomerTypeEnum customerTypeEnum) {
         // TODO: 2017-08-22 这个接口待明哥测试
         Map<String, Object> requestMap = new TreeMap<>();
         requestMap.put("loginname", userName);
         requestMap.put("password", password);
         requestMap.put("customertype", customerTypeEnum.getCode());
         requestMap.put("appid", SysConstant.HUOBANMALL_PUSH_APPID);
-        String sign = SignBuilder.buildSignIgnoreEmpty(requestMap, null, SysConstant.HUOBANMALL_PUSH_APP_SECRET);
+        String sign = null;
+        try {
+            sign = SignBuilder.buildSignIgnoreEmpty(requestMap, null, SysConstant.HUOBANMALL_PUSH_APP_SECRET);
+        } catch (UnsupportedEncodingException e) {
+            return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
+        }
         requestMap.put("sign", sign);
         ApiResult apiResult;
         HttpResult httpResult = HttpClientUtil.getInstance().post(SysConstant.HUOBANMALL_PUSH_URL + "/Account/sendCode", requestMap);

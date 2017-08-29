@@ -18,5 +18,5 @@ public interface ApiService {
      * @param customerTypeEnum 商户类型
      * @return 调用接口
      */
-    ApiResult newCustomer(String userName, String password, CustomerTypeEnum customerTypeEnum) throws UnsupportedEncodingException;
+    ApiResult newCustomer(String userName, String password, CustomerTypeEnum customerTypeEnum);
 }

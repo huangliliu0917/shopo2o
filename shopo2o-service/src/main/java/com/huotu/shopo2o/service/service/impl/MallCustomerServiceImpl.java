@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * Created by helloztt on 2017-08-22.
  */
@@ -41,21 +39,21 @@ public class MallCustomerServiceImpl implements MallCustomerService {
             return ApiResult.resultWith(ResultCodeEnum.SUCCESS,mallCustomer);
         }else{
             //调用商城接口
-            try {
-                ApiResult result = apiService.newCustomer(userName, password, customerTypeEnum);
-                if(result.getCode() == 200){
-                    MallCustomer mallCustomer = mallCustomerRepository.findByUserName(userName);
-                    if(mallCustomer != null){
-                        return ApiResult.resultWith(ResultCodeEnum.SUCCESS,mallCustomer);
-                    }
-                }else{
-                    return result;
+            ApiResult result = apiService.newCustomer(userName, password, customerTypeEnum);
+            if(result.getCode() == 200){
+                MallCustomer mallCustomer = mallCustomerRepository.findByUsername(userName);
+                if(mallCustomer != null){
+                    return ApiResult.resultWith(ResultCodeEnum.SUCCESS,mallCustomer);
                 }
-            } catch (UnsupportedEncodingException e) {
-                log.error("add customer error",e);
-                return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
+            }else{
+                return result;
             }
         }
         return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR);
+    }
+
+    @Override
+    public MallCustomer findOne(Long customerId) {
+        return mallCustomerRepository.findOne(customerId);
     }
 }

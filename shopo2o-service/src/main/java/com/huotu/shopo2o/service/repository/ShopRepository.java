@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  */
 public interface ShopRepository extends JpaRepository<Shop,Long>,JpaSpecificationExecutor<Shop> {
     Shop findByIdAndCustomer_CustomerId(Long shopId,Long customerId);
+
+    Shop findByIdAndCustomer_CustomerIdAndIsDeletedFalse(Long shopId, Long customerId);
 }

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
         "com.huotu.shopo2o.service",
         "com.huotu.shopo2o.common"
 })
-@EnableJpaRepositories(basePackages = "com.huotu.shopo2o.repository")
+@EnableJpaRepositories(basePackages = "com.huotu.shopo2o.service.repository")
 @EnableTransactionManagement
 @ImportResource({"classpath:hbm_config_test.xml", "classpath:hbm_config_development.xml","classpath:hbm_config_prod.xml"})
 public class ServiceConfig {

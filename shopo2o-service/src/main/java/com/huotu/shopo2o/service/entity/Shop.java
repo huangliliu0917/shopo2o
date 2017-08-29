@@ -37,12 +37,6 @@ public class Shop {
     private String name;
 
     /**
-     * 线下门店ID
-     */
-    @Column(name = "Offline_ShopId")
-    private String offlineShopId;
-
-    /**
      * 区号
      */
     @Column(name = "Area_Code")
