@@ -1,3 +1,68 @@
 .asterisk {
     color: #D9534F;
 }
+
+.amap-content-body {
+    min-width: 200px;
+    max-width: 240px;
+    font-family: Helvetica, "Hiragino Sans GB", "Microsoft Yahei", "微软雅黑", Arial, sans-serif;
+    box-shadow: 0 0 0.5px rgba(0, 0, 100, .6);
+    background: #fff;
+    border-radius: 2px;
+    text-align: left;
+    border: 1px solid silver;
+}
+
+.amap-combo-close {
+    position: absolute;
+    top: 11px;
+    right: 10px;
+    background: url('../../resources/img/amap-info.png') -1px -151px no-repeat;
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+}
+
+.amap-combo-sharp {
+    margin: 0 auto;
+    bottom: 1px;
+    position: relative;
+    background: url('../../resources/img/amap-info.png') -5px -564px no-repeat;
+    width: 18px;
+    height: 9px;
+}
+
+.amap-lib-infowindow {
+    padding: 0;
+    position: relative;
+    background-color: #fff;
+    margin: 8px;
+}
+
+.amap-lib-infowindow-title {
+    line-height: 22px;
+    font-size: 14px;
+    border-bottom: 1px #99adce solid;
+    padding-right: 15px;
+}
+
+.amap-lib-infowindow-content {
+    padding-top: 5px;
+    overflow: hidden;
+    font-size: 12px;
+    zoom: 1;
+}
+
+.amap-lib-infowindow .amap-lib-infowindow-content-wrap {
+    word-break: break-all;
+    overflow: hidden;
+    zoom: 1;
+}
+.amap-lib-infowindow .amap-lib-infowindow-content-wrap .btn-link {
+    text-decoration: none;
+    font-size: 14px;
+    color: #009cfa;
+}
+.amap-lib-infowindow .amap-lib-infowindow-content-wrap .btn-link:hover {
+    color: #1e88e5;
+}
