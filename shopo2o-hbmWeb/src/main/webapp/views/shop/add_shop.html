@@ -31,7 +31,7 @@
     <div class="ibox">
         <div class="ibox-content">
             <ol class="breadcrumb">
-                <li><strong th:if="${currentData==null}">新增门店</strong><strong th:if="${currentData!=null}">编辑门店</strong></li>
+                <li><strong th:text="${currentData.id==null}?'新增门店':'编辑门店'">新增门店</strong></li>
             </ol>
         </div>
     </div>
@@ -43,19 +43,19 @@
                         <li class="active">
                             <a id="baseInfoBtn" data-toggle="tab" href="#tab-1">基本信息</a>
                         </li>
-                        <li>
+                        <li th:if="${currentData.id!=null}">
                             <a id="sendRuleBtn" data-toggle="tab" href="#tab-2">配送规则</a>
                         </li>
                     </ul>
                     <div class="tab-content">
                         <div id="tab-1" class="tab-pane active">
-                            <form id="tab-1-form">
+                            <form id="shopBasicInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group form-inline">
                                         <label class="col-sm-2 control-label">登录名
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="name" type="text"
+                                            <input name="loginName" type="text" th:value="${loginName}" required="true"
                                                    class="form-control" placeholder="登录名"/>
                                         </div>
                                     </div>
@@ -63,7 +63,7 @@
                                         <label class="col-sm-2 control-label">门店名称
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="name" type="text" id="name"
+                                            <input name="name" type="text" id="name" th:value="${currentData.name}" required="true" maxlength="20"
                                                    class="form-control" placeholder="门店名称"/>
                                         </div>
                                     </div>
@@ -71,10 +71,11 @@
                                         <label class="col-sm-2 control-label">联系电话
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="areaCode" type="text" style="width: 100px;"
+                                            <input name="areaCode" type="text" style="width: 100px;" th:value="${currentData.areaCode}" required="true"
+                                                   number="rue" rangelength="[3,5]"
                                                    class="form-control" placeholder="区号"/>
                                             -
-                                            <input name="telephone" type="text"
+                                            <input name="telephone" type="text" th:value="${currentData.telephone}" required="true" number="true" rangelength="[7,10]"
                                                    class="form-control" placeholder="请输入电话号码"/>
                                         </div>
                                     </div>
@@ -83,10 +84,14 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
                                             <div id="citys">
-                                                <select class="form-control" id="province" onchange="mapHandler.changeCity(this)" ></select>
-                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)" ></select>
-                                                <select class="form-control" id="district" onchange="mapHandler.changeCity(this)"></select>
-                                                <select class="form-control" id="street" onchange="mapHandler.setCenter(this)" ></select>
+                                                <select class="form-control" id="province" required="true"
+                                                        onchange="mapHandler.changeCity(this)" th:value="${currentData.provinceCode}"></select>
+                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)" required="true"
+                                                        th:value="${currentData.cityCode}"></select>
+                                                <select class="form-control" id="district" required="true"
+                                                        onchange="mapHandler.changeCity(this)" th:value="${currentData.districtCode}"></select>
+                                                <select class="form-control" id="street"
+                                                        onchange="mapHandler.setCenter(this)"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -95,7 +100,7 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-3">
                                             <div class="input-group" style="width: 100%">
-                                                <input name="address" id="J_address"
+                                                <input name="address" id="J_address" th:value="${currentData.address}" required="true" maxlength="100"
                                                        class="form-control" placeholder="详细地址"/>
                                                 <span class="input-group-btn">
                                                     <button type="button" class="btn btn-success" id="J_search"><i class="fa fa-search"></i></button>
@@ -104,6 +109,9 @@
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
+                                        <label for="lan"></label>
+                                        <input type="hidden" name="lan" id="lan" th:value="${currentData.lan}" required="true"/>
+                                        <input type="hidden" name="lat" id="lat" th:value="${currentData.lat}"/>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="addressMap" style="height: 400px;">
@@ -113,10 +121,10 @@
                                         <label class="col-sm-2 control-label">营业时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="openTime" type="text"
+                                            <input name="openTime" type="text" required="true"
                                                    class="form-control" placeholder="起始时间"/>
                                             -
-                                            <input name="closeTime" type="text"
+                                            <input name="closeTime" type="text" required="true"
                                                    class="form-control" placeholder="结束时间"/>
                                         </div>
                                     </div>
@@ -124,7 +132,7 @@
                                         <label class="col-sm-2 control-label">截单时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="deadlineTime" type="text"
+                                            <input name="deadlineTime" type="text" required="true"
                                                    class="form-control" placeholder="截单时间"/>
                                         </div>
                                     </div>
@@ -132,31 +140,32 @@
                                         <label class="col-sm-2 control-label">店招图
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <img id="logo_uri" style="width:80px;height: 80px;"/>
+                                            <img id="logo_uri" style="width:80px;height: 80px;" th:href="${currentData.mallLogoUri}"/>
                                             <button class="btn btn-sm" id="uploadImage" type="button"
                                                     onclick="javascript:$('#uploadFile').click();">上传图片</button>
-                                            <input onchange="configHandler.uploadImg('uploadFile','logo_uri','logo')"
+                                            <input onchange="uploadHandler.uploadImg('uploadFile','logo_uri','logo')"
                                                    id="uploadFile" name="btnFile"
                                                    style="display: none;" type="file"/>
-                                            <input type="hidden" name="logo" id="logo"/>
+                                            <label for="logo"></label>
+                                            <input type="hidden" name="logo" id="logo" th:value="${currentData.logo}" required="true"/>
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
                                         <label class="col-sm-2 control-label">ERP门店
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="erpId" type="text"
+                                            <input name="erpId" type="text" th:value="${currentData.erpId}" required="true"
                                                    class="form-control" placeholder="请输入对应的erp门店id"/>
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
                                         <div class="col-sm-1  col-sm-offset-2 control-label">
-                                            <button type="submit" class="btn btn-m btn-success">
+                                            <button type="button" class="btn btn-m btn-success" onclick="addShopHandler.saveShopBasicInfo()">
                                                 确&nbsp;定
                                             </button>
                                         </div>
                                         <div class="col-sm-1 control-label">
-                                            <button type="submit" class="btn btn-m btn-success ">
+                                            <button type="button" class="btn btn-m btn-success" onclick="window.location.reload()">
                                                 取&nbsp;消
                                             </button>
                                         </div>
@@ -164,7 +173,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="tab-2" class="tab-pane">
+                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
                             <form id="tab-2-form">
                             </form>
                         </div>
@@ -180,6 +189,8 @@
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/l10n/zh.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
 
 <!--valid-->
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
@@ -191,6 +202,7 @@
          th:src="@{/resources/js/shop/add_shop.js}"></script>
 <script type="text/javascript" th:inline="javascript">
     var baseUrl = /*[[@{/}]]*/ "/";
+    var customerId = /*${customerId}*/ "1";
 </script>
 </body>
 </html>

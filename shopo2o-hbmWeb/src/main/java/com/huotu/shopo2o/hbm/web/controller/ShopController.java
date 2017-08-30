@@ -3,7 +3,9 @@ package com.huotu.shopo2o.hbm.web.controller;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
+import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.Shop;
+import com.huotu.shopo2o.service.service.MallCustomerService;
 import com.huotu.shopo2o.service.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,8 @@ import java.time.LocalTime;
 public class ShopController extends MallBaseController {
     @Autowired
     private ShopService shopService;
+    @Autowired
+    private MallCustomerService customerService;
 
     @GetMapping("/list")
     public String shopList(@ModelAttribute("customerId") Long customerId
@@ -45,6 +49,10 @@ public class ShopController extends MallBaseController {
         Shop shop = null;
         if (shopId != null && shopId != 0) {
             shop = shopService.findOne(shopId, customerId);
+            MallCustomer shopCustomer = customerService.findOne(shopId);
+            if(shopCustomer != null){
+                model.addAttribute("loginName",shopCustomer.getUsername());
+            }
         }
         if (shop == null) {
             shop = new Shop();
@@ -53,7 +61,7 @@ public class ShopController extends MallBaseController {
         return "shop/add_shop";
     }
 
-    @PostMapping("/save")
+    @PostMapping("/saveShopBaseInfo")
     @ResponseBody
     @Transactional
     public ApiResult save(@ModelAttribute("customerId") Long customerId

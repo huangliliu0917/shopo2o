@@ -11,5 +11,8 @@ var shopListHandler = {
     },
     delete: function (obj) {
         var shopId = $(obj).attr("shopId");
+    },
+    addShop:function(){
+        window.location.href= baseUrl + "edit";
     }
 }

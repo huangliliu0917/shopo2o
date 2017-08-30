@@ -33,7 +33,7 @@ public class Shop {
     /**
      * 名称
      */
-    @Column(name = "Name")
+    @Column(name = "Name",length = 64)
     private String name;
 
     /**
@@ -71,7 +71,7 @@ public class Shop {
      *
      * @return
      */
-    @Column(name = "Address")
+    @Column(name = "Address",length = 256)
     private String address;
 
     /**
@@ -109,6 +109,9 @@ public class Shop {
      */
     @Column(name = "Logo")
     private String logo;
+
+    @Transient
+    private String mallLogoUri;
 
     /**
      * ERP门店ID
