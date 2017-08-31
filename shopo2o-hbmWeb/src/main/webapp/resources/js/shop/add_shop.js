@@ -48,18 +48,18 @@ $(function () {
 
     //构建自定义信息窗体
     function createInfoWindow(data) {
-        var addressDetail = (!!data.pname?data.pname:'')
-            + (!!data.cityname?data.cityname:'')
-            + (!!data.adname?data.adname:'')
-            + (!!data.address?data.address:'');
-        if(!!data.pname){
-            selectorHandler.jsSelectItemByValue($("#province")[0],data.pname);
+        var addressDetail = (!!data.pname ? data.pname : '')
+            + (!!data.cityname ? data.cityname : '')
+            + (!!data.adname ? data.adname : '')
+            + (!!data.address ? data.address : '');
+        if (!!data.pname) {
+            selectorHandler.jsSelectItemByValue($("#province")[0], data.pname);
         }
-        if(!!data.cityname){
-            selectorHandler.jsSelectItemByValue($("#city")[0],data.cityname);
+        if (!!data.cityname) {
+            selectorHandler.jsSelectItemByValue($("#city")[0], data.cityname);
         }
-        if(!!data.adname){
-            selectorHandler.jsSelectItemByValue($("#district")[0],data.adname);
+        if (!!data.adname) {
+            selectorHandler.jsSelectItemByValue($("#district")[0], data.adname);
 
         }
         var $wrap = $('<div></div>');
@@ -72,7 +72,7 @@ $(function () {
             '                </div>\n' +
             '                <div class="amap-lib-infowindow-content">\n' +
             '                    <div class="amap-lib-infowindow-content-wrap">\n' +
-            '                        <a href="javascript:;" class="btn-link" id="J_setAddress" data-lat="'+ data.location.lat+'" data-lng="'+ data.location.lng+ '" data-address="' + addressDetail + '">设为联系地址</a>\n' +
+            '                        <a href="javascript:;" class="btn-link" id="J_setAddress" data-lat="' + data.location.lat + '" data-lng="' + data.location.lng + '" data-address="' + addressDetail + '">设为联系地址</a>\n' +
             '                    </div>\n' +
             '                </div>\n' +
             '            </div>\n' +
@@ -148,7 +148,7 @@ $(function () {
     }
 
     $("#shopBasicInfo").validate({
-        ignore:''
+        ignore: ''
     })
 });
 var mapHandler = {
@@ -224,22 +224,22 @@ var mapHandler = {
 }
 
 var addShopHandler = {
-    saveShopBasicInfo:function(){
-        if($("#shopBasicInfo").valid()){
+    saveShopBasicInfo: function () {
+        if ($("#shopBasicInfo").valid()) {
             $.showLoading('正在保存');
-            $.ajax(baseUrl + "hbmWeb/shop/saveShopBaseInfo",{
-                method:'POST',
-                data:$('#shopBasicInfo').serializeObject(),
-                dataType:'json',
-                success:function(data){
+            $.ajax(baseUrl + "hbmWeb/shop/saveShopBaseInfo", {
+                method: 'POST',
+                data: $('#shopBasicInfo').serializeObject(),
+                dataType: 'json',
+                success: function (data) {
                     $.hideLoading();
-                    if(data.code != 200){
+                    if (data.code != 200) {
                         $.toptip(data.data);
-                    }else{
+                    } else {
                         $.toptip('保存成功');
-                        setTimeout(function(){
+                        setTimeout(function () {
                             window.location.reload()
-                        },300);
+                        }, 300);
                     }
                 },
                 error: function () {
@@ -258,9 +258,9 @@ var uploadHandler = {
         $.ajaxFileUpload({
             url: baseUrl + "mall/common/upload",
             secureuri: false,//安全协议
-            fileElementId: btnFile,//id
+            fileElementId: "uploadFile",//id
             dataType: 'json', //返回值类型 一般设置为json
-            type:'post',
+            type: 'post',
             success: function (json) {
                 if (json.result == 1) {
                     $("#" + showImgId).attr("src", json.fileUrl);
@@ -277,9 +277,9 @@ var uploadHandler = {
     }
 }
 
-var selectorHandler={
+var selectorHandler = {
     //设置select中text="paraText"的第一个Item为选中
-    jsSelectItemByValue : function(objSelect, objItemText) {
+    jsSelectItemByValue: function (objSelect, objItemText) {
         //判断是否存在
         var isExit = false;
         for (var i = 0; i < objSelect.options.length; i++) {
@@ -289,12 +289,12 @@ var selectorHandler={
                 break;
             }
         }
-        if(!isExit){
-            this.jsAddItemToSelect(objSelect,objItemText,objSelect.id);
+        if (!isExit) {
+            this.jsAddItemToSelect(objSelect, objItemText, objSelect.id);
         }
     },
     //向select选项中 加入一个Item,并选中
-    jsAddItemToSelect : function(objSelect, objItemText, objItemValue){
+    jsAddItemToSelect: function (objSelect, objItemText, objItemValue) {
         //判断是否存在
         var varItem = new Option(objItemText, objItemValue);
         varItem.selected = true;
