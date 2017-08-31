@@ -7,10 +7,18 @@ var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
 var openTime, closeTime, deadlineTime;
 $(function () {
+    var lan = $("#lan").val(),lat = $("#lat").val();
     map = new AMap.Map("addressMap", {
         resizeEnable: true,
-        zoom: 3
+        zoom: 5
     });
+    if(!!lan && !!lat){
+        map = new AMap.Map("sendArea", {
+            resizeEnable: true,
+            center:[lan,lat],
+            zoom: 13
+        });
+    }
 
 
     AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
@@ -227,7 +235,7 @@ var addShopHandler = {
     saveShopBasicInfo:function(){
         if($("#shopBasicInfo").valid()){
             $.showLoading('正在保存');
-            $.ajax(baseUrl + "hbmWeb/shop/saveShopBaseInfo",{
+            $.ajax(baseUrl + "mall/hbmWeb/shop/saveShopBaseInfo",{
                 method:'POST',
                 data:$('#shopBasicInfo').serializeObject(),
                 dataType:'json',

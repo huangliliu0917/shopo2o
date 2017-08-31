@@ -23,7 +23,7 @@ import java.time.LocalTime;
  * Created by helloztt on 2017-08-22.
  */
 @Controller
-@RequestMapping("/hbmWeb/shop")
+@RequestMapping("/mall/hbmWeb/shop")
 public class ShopController extends MallBaseController {
     @Autowired
     private ShopService shopService;

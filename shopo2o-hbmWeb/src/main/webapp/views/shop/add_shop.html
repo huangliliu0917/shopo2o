@@ -174,7 +174,28 @@
                             </form>
                         </div>
                         <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
-                            <form id="tab-2-form">
+                            <form id="shopMoreInfo">
+                                <div class="panel-body form-horizontal ">
+                                    <div class="form-group form-inline">
+                                        <label for="lan"></label>
+                                        <label class="col-sm-2 control-label">地图定位
+                                            <span class="asterisk">*</span></label>
+                                        <div class="col-sm-6" id="sendArea" style="height: 400px;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-inline">
+                                        <div class="col-sm-1  col-sm-offset-2 control-label">
+                                            <button type="button" class="btn btn-m btn-success" onclick="addShopHandler.saveShopBasicInfo()">
+                                                确&nbsp;定
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-1 control-label">
+                                            <button type="button" class="btn btn-m btn-success" onclick="window.location.reload()">
+                                                取&nbsp;消
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -196,7 +217,7 @@
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
 <!--高德地图-->
-<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=e99fce513b3e7bf7da5a28cebf1e9ffe&plugin=AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch"></script>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=e99fce513b3e7bf7da5a28cebf1e9ffe&plugin=AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.PolyEditor,AMap.MouseTool"></script>
 <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
 <script  type="text/javascript" src="../../resources/js/shop/add_shop.js"
          th:src="@{/resources/js/shop/add_shop.js}"></script>

@@ -4,7 +4,7 @@
 var shopListHandler = {
     edit: function (obj) {
         var shopId = $(obj).attr("shopId");
-
+        window.location.href = baseUrl + "edit?shopId=" + shopId;
     },
     changeOption: function (obj) {
         var shopId = $(obj).attr("shopId");

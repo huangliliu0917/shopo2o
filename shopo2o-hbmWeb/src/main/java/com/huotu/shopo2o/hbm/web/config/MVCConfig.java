@@ -46,7 +46,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
-        registry.addInterceptor(customerInterceptor).addPathPatterns("/hbmWeb/**");
+        registry.addInterceptor(customerInterceptor).addPathPatterns("/mall/**");
     }
 
     @Override
