@@ -258,7 +258,7 @@ var uploadHandler = {
         $.ajaxFileUpload({
             url: baseUrl + "mall/common/upload",
             secureuri: false,//安全协议
-            fileElementId: "btnFile",//id
+            fileElementId: btnFile,//id
             dataType: 'json', //返回值类型 一般设置为json
             type: 'post',
             success: function (json) {
