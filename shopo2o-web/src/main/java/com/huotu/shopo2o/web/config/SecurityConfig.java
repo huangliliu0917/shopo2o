@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/", "/resource/**", "/*.html",
-                        "/*.js", "/views/*.html", "/checkLogin","/hbmWeb/shop/**").permitAll()
+                        "/*.js", "/views/*.html", "/checkLogin","/hbmWeb/store/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
