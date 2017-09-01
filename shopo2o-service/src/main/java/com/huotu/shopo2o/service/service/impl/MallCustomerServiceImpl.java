@@ -56,4 +56,9 @@ public class MallCustomerServiceImpl implements MallCustomerService {
     public MallCustomer findOne(Long customerId) {
         return mallCustomerRepository.findOne(customerId);
     }
+
+    @Override
+    public boolean isExist(String userName) {
+        return mallCustomerRepository.findByUsername(userName) != null;
+    }
 }

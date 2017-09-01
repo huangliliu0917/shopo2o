@@ -6,8 +6,6 @@
  * Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
  * 2013-2016. All rights reserved.
  */
-document.write('<script src="http://resali.huobanplus.com/cdn/layer/2.4/layer.js"></script>');
-
 var modal = function () {
     this.layerIndex = null,
         this.layerOption = null,

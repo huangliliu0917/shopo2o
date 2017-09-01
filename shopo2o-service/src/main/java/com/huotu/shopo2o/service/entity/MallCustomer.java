@@ -43,7 +43,7 @@ public class MallCustomer implements UserDetails , Serializable {
     private CustomerTypeEnum customerType;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn(referencedColumnName = "Shop_Id")
+    @PrimaryKeyJoinColumn(referencedColumnName = "Store_Id")
     private Shop shop;
 
     @Override
@@ -81,4 +81,38 @@ public class MallCustomer implements UserDetails , Serializable {
         }
         return false;
     }
+
+    // TODO: 2017-08-31 delete
+    @Column(name = "SC_IndustryType")
+    private Integer industryType;
+
+    @Column(name = "SC_UserActivate")
+    private Integer userActivate;
+
+    @Column(name = "SC_RoleID")
+    private Integer roleID;
+
+    @Column(name = "SC_BelongManagerID")
+    private Integer belongManagerID;
+
+    @Column(name = "SC_Email")
+    private String email;
+
+    @Column(name = "SC_IsOld")
+    private Integer isOld;
+
+    @Column(name = "SC_DeveloperUrl")
+    private String developerUrl;
+
+    @Column(name = "SC_developerToken")
+    private String developerToken;
+
+    @Column(name = "SC_TYPE")
+    private Integer scType;
+
+    @Column(name = "SC_Score")
+    private Double score;
+
+    @Column(name = "SC_CityID")
+    private Integer cityID;
 }

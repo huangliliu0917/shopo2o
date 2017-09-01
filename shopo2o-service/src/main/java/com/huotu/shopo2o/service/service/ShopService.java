@@ -12,14 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ShopService {
 
     /**
-     * 添加门店
+     * 添加/保存门店
      *
      * @param customerId 商户ID
      * @param shop       门店信息
      * @param loginName  登录账号
      * @return 添加门店结果
      */
-    ApiResult newShop(Long customerId, Shop shop, String loginName);
+    ApiResult saveShop(Long customerId, Shop shop, String loginName);
 
     Page<Shop> findAll(Long customerId, Pageable pageable);
 

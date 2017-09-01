@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.service.entity;
 
+import com.huotu.shopo2o.service.entity.support.DistributionRegionConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,27 +8,28 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 线下门店。非代理商门店
  * Created by helloztt on 2017-08-21.
  */
 @Entity
-@Table(name = "Shop_O2OShop")
+@Table(name = "ST_Store")
 @Getter
 @Setter
 @Cacheable(false)
 public class Shop {
 
     @Id
-    @Column(name = "Shop_Id")
+    @Column(name = "Store_Id")
     private Long id;
 
     /**
      * 平台方
      */
     @ManyToOne
-    @JoinColumn(name = "Customer_Id",columnDefinition = "numeric(19, 0)")
+    @JoinColumn(name = "Customer_Id")
     private MallCustomer customer;
 
     /**
@@ -118,6 +120,13 @@ public class Shop {
      */
     @Column(name = "Erp_Id")
     private String erpId;
+
+    /**
+     * 配送区域坐标
+     */
+    @Column(name = "Distribution_Regions",columnDefinition = "varchar(MAX)")
+    @Convert(converter = DistributionRegionConverter.class)
+    private List<DistributionRegion> distributionRegions;
 
     /**
      * 配送费

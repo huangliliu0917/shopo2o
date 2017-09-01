@@ -29,4 +29,6 @@ public interface MallCustomerService {
      */
     @Transactional(readOnly = true)
     MallCustomer findOne(Long customerId);
+
+    boolean isExist(String userName);
 }

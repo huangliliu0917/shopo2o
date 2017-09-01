@@ -51,20 +51,20 @@
                                 <td th:text="${shop.address}">浙江省杭州市滨江区智慧e谷</td>
                                 <td th:text="${shop.erpId}">1</td>
                                 <td th:text="${shop.disabled ? '线下' : '线上'}" style="color:red;"
-                                    th:style="${|'color:'${shop.disabled ? 'red' : 'green'}|}">线上
+                                    th:style="|color:${shop.disabled ? 'red' : 'green'}|">线上
                                 </td>
                                 <td>
                                     <span class="cursor-point" onclick="shopListHandler.edit(this)"
-                                          th:attr="shopId=${shop.id}">
+                                          th:attr="storeId=${shop.id}">
                                        <i class="fa tooltips" data-toggle="tooltip" data-original-title="编辑">编辑</i>
                                     </span>
                                     &nbsp;
                                     <span class="cursor-point" onclick="shopListHandler.changeOption(this)"
-                                          th:attr="shopId=${shop.id}">
+                                          th:attr="storeId=${shop.id},data-disabled=${shop.disabled}">
                                        <i class="fa tooltips" data-toggle="tooltip" data-original-title="切换">切换</i>
                                     </span>
                                     &nbsp;
-                                    <span onclick="shopListHandler.delete(this)" th:attr="shopId=${shop.id}"
+                                    <span onclick="shopListHandler.delete(this)" th:attr="storeId=${shop.id}"
                                           class="cursor-point">
                                         <i class="fa tooltips" data-toggle="tooltip" data-original-title="删除">删除</i>
                                     </span>
@@ -95,6 +95,7 @@
 <script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
 <script src="../../resources/js/plugins/hot/bootstrap.hot.extra-utils.js"
         th:src="@{/resources/js/plugins/hot/bootstrap.hot.extra-utils.js}"></script>
 <script src="../../resources/js/shop/shop_manager.js" th:src="@{/resources/js/shop/shop_manager.js}"></script>
@@ -102,7 +103,7 @@
 <script type="text/javascript" th:inline="javascript">
     var pageIndex = /*[[${pageNo}]]*/ 1;
     var totalPage = /*[[${shopPage.totalPages}]]*/ 1;
-    var baseUrl = /*[[@{/hbmWeb/shop/}]]*/ "/hbmWeb/shop/";
+    var baseUrl = /*[[@{/mall/store/}]]*/ "/mall/store/";
 </script>
 </body>
 
