@@ -66,3 +66,6 @@
 .amap-lib-infowindow .amap-lib-infowindow-content-wrap .btn-link:hover {
     color: #1e88e5;
 }
+.displayNone {
+    display: none;
+}

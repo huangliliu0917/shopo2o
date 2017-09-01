@@ -27,7 +27,7 @@ public class ShopServiceImpl implements ShopService {
     private MallCustomerService customerService;
 
     @Override
-    public ApiResult newShop(Long customerId, Shop shop, String loginName) {
+    public ApiResult saveShop(Long customerId, Shop shop, String loginName) {
         if (shop.getId() == null || shop.getId() == 0) {
             //调用商城接口，判断该登录名是否是有效的
             ApiResult apiResult = customerService.newCustomer(loginName, null, CustomerTypeEnum.SHOP);
@@ -48,7 +48,7 @@ public class ShopServiceImpl implements ShopService {
     public Page<Shop> findAll(Long customerId, Pageable pageable) {
         return shopRepository.findAll((root, query, cb) -> cb.and(
                 cb.isFalse(root.get(Shop_.isDeleted))
-                , cb.isFalse(root.get(Shop_.isDisabled))
+//                , cb.isFalse(root.get(Shop_.isDisabled))
                 , cb.equal(root.get(Shop_.customer).get(MallCustomer_.customerId), customerId)
         ), pageable);
     }

@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MallCustomerRepository extends JpaRepository<MallCustomer, Long> {
 
     MallCustomer findByUsername(String userName);
+
+    int countByUsername(String userName);
 }

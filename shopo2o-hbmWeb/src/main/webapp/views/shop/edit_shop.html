@@ -55,7 +55,7 @@
                                         <label class="col-sm-2 control-label">登录名
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="loginName" type="text" th:value="${loginName}" required="true"
+                                            <input name="loginName" type="text" th:value="${loginName}" required="true" th:disabled="${currentData.id != null}"
                                                    class="form-control" placeholder="登录名"/>
                                         </div>
                                     </div>
@@ -85,13 +85,10 @@
                                         <div class="col-sm-10">
                                             <div id="citys">
                                                 <select class="form-control" id="province" required="true"
-                                                        onchange="mapHandler.changeCity(this)" th:value="${currentData.provinceCode}"></select>
-                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)" required="true"
-                                                        th:value="${currentData.cityCode}"></select>
-                                                <select class="form-control" id="district" required="true"
-                                                        onchange="mapHandler.changeCity(this)" th:value="${currentData.districtCode}"></select>
-                                                <select class="form-control" id="street"
-                                                        onchange="mapHandler.setCenter(this)"></select>
+                                                        onchange="mapHandler.changeCity(this)"></select>
+                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)" required="true"></select>
+                                                <select class="form-control" id="district" required="true" onchange="mapHandler.changeCity(this)"></select>
+                                                <select class="form-control" id="street" onchange="mapHandler.setCenter(this)"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -121,10 +118,10 @@
                                         <label class="col-sm-2 control-label">营业时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="openTime" type="text" required="true"
+                                            <input name="openTime" type="text" required="true" th:value="${currentData.openTime}"
                                                    class="form-control" placeholder="起始时间"/>
                                             -
-                                            <input name="closeTime" type="text" required="true"
+                                            <input name="closeTime" type="text" required="true" th:value="${currentData.closeTime}"
                                                    class="form-control" placeholder="结束时间"/>
                                         </div>
                                     </div>
@@ -132,7 +129,7 @@
                                         <label class="col-sm-2 control-label">截单时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="deadlineTime" type="text" required="true"
+                                            <input name="deadlineTime" type="text" required="true" th:value="${currentData.deadlineTime}"
                                                    class="form-control" placeholder="截单时间"/>
                                         </div>
                                     </div>
@@ -140,7 +137,7 @@
                                         <label class="col-sm-2 control-label">店招图
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <img id="logo_uri" style="width:80px;height: 80px;" th:href="${currentData.mallLogoUri}"/>
+                                            <img id="logo_uri" style="width:80px;height: 80px;" th:src="${currentData.mallLogoUri} != null ? ${currentData.mallLogoUri} : _"/>
                                             <button class="btn btn-sm" id="uploadImage" type="button"
                                                     onclick="javascript:$('#uploadFile').click();">上传图片</button>
                                             <input onchange="uploadHandler.uploadImg('uploadFile','logo_uri','logo')"
@@ -160,7 +157,7 @@
                                     </div>
                                     <div class="form-group form-inline">
                                         <div class="col-sm-1  col-sm-offset-2 control-label">
-                                            <button type="button" class="btn btn-m btn-success" onclick="addShopHandler.saveShopBasicInfo()">
+                                            <button type="button" class="btn btn-m btn-success" onclick="editShopHandler.saveShopBasicInfo()">
                                                 确&nbsp;定
                                             </button>
                                         </div>
@@ -176,16 +173,76 @@
                         <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
-                                    <div class="form-group form-inline">
+                                    <div class="form-group">
                                         <label for="lan"></label>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="sendArea" style="height: 400px;">
                                         </div>
+                                        <div class="form-group J_Region">
+                                            <div class="col-sm-1 J_RegionInit">
+                                                <button type="button" class="btn btn-m btn-success" data-show="J_RegionDistribution" onclick="mapHandler.regionOption(this)">
+                                                    门店配送范围
+                                                </button>.
+                                                <button type="button" class="btn btn-m btn-success" data-show="J_RegionDivision" onclick="mapHandler.regionOption(this)">
+                                                    划分配送区域
+                                                </button>
+                                            </div>
+                                            <div class="col-sm-1 J_RegionDistribution displayNone">
+                                                <label>门店配送范围</label>
+                                                <div class="form-group form-inline">
+                                                    <input type="hidden" name="distributionRegions"/>
+                                                    <button type="button" class="btn btn-sm btn-success" data-show="J_RegionInit" onclick="mapHandler.saveRegionDistribution(this)">
+                                                        保存
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-success">
+                                                        取消
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-success"  data-show="J_RegionInit" onclick="mapHandler.regionOption(this)">
+                                                        删除
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-1 J_RegionDivision displayNone">
+                                                <label>配送区域划分</label>
+                                                <div class="form-group form-inline">
+                                                    <button type="button" class="btn btn-m btn-success">
+                                                        保存
+                                                    </button>
+                                                    <button type="button" class="btn btn-m btn-success"  data-show="J_RegionInit" onclick="mapHandler.regionOption(this)">
+                                                        取消
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">配送费
+                                            <span class="asterisk">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input name="deliveryCost" type="text" th:value="${currentData.deliveryCost}" required="true" maxlength="20"
+                                                   class="form-control" placeholder="请输入配送费用"/> 元
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">起送金额
+                                            <span class="asterisk">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input name="minCost" type="text" th:value="${currentData.minCost}" required="true" maxlength="20"
+                                                   class="form-control" placeholder="满一定金额才能下单"/> 元
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">免邮金额
+                                            <span class="asterisk">*</span></label>
+                                        <div class="col-sm-10">
+                                            <input name="freeCost" type="text" th:value="${currentData.freeCost}" required="true" maxlength="20"
+                                                   class="form-control" placeholder="满此金额订单免邮"/> 元
+                                        </div>
                                     </div>
                                     <div class="form-group form-inline">
                                         <div class="col-sm-1  col-sm-offset-2 control-label">
-                                            <button type="button" class="btn btn-m btn-success" onclick="addShopHandler.saveShopBasicInfo()">
+                                            <button type="button" class="btn btn-m btn-success" onclick="editShopHandler.saveShopMoreInfo()">
                                                 确&nbsp;定
                                             </button>
                                         </div>
@@ -219,11 +276,19 @@
 <!--高德地图-->
 <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=e99fce513b3e7bf7da5a28cebf1e9ffe&plugin=AMap.Autocomplete,AMap.PlaceSearch,AMap.DistrictSearch,AMap.PolyEditor,AMap.MouseTool"></script>
 <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
-<script  type="text/javascript" src="../../resources/js/shop/add_shop.js"
-         th:src="@{/resources/js/shop/add_shop.js}"></script>
 <script type="text/javascript" th:inline="javascript">
     var baseUrl = /*[[@{/}]]*/ "/";
-    var customerId = /*${customerId}*/ "1";
+    var customerId = /*[[${customerId}]]*/ "1";
+    var storeId = /*[[${currentData.id}]]*/ "0";
+    var provinceCode = /*[[${currentData.provinceCode}]]*/ "浙江省";
+    var cityCode = /*[[${currentData.cityCode}]]*/ "杭州市";
+    var districtCode = /*[[${currentData.districtCode}]]*/ "滨江区";
+    var distributionRegions = /*[[${currentData.distributionRegions}]]*/"" ;
+    if(!!distributionRegions){
+        $("input[name=distributionRegions]").val(distributionRegions);
+    }
 </script>
+<script  type="text/javascript" src="../../resources/js/shop/edit_shop.js"
+         th:src="@{/resources/js/shop/edit_shop.js}"></script>
 </body>
 </html>
