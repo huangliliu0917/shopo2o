@@ -9,4 +9,5 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public interface LoginService extends UserDetailsService{
     UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException;
+    boolean checkLogin(String userName,String passWord);
 }

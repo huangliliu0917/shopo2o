@@ -29,8 +29,13 @@ public class LoginServiceImpl implements LoginService {
             throw new UsernameNotFoundException("找不到用户信息");
         List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
         getRoles(mallCustomer, list);
-        User user = new User(mallCustomer.getUsername(), mallCustomer.getPassword(), list);
-        return user;
+        return new User(mallCustomer.getUsername(), mallCustomer.getPassword(), list);
+    }
+
+    @Override
+    public boolean checkLogin(String userName, String passWord) {
+        MallCustomer mallCustomer = mallCustomerRepository.findByUsername(userName);
+        return mallCustomer != null && passWord.equals(mallCustomer.getPassword());
     }
 
     private void getRoles(MallCustomer mallCustomer, List<GrantedAuthority> list) {
