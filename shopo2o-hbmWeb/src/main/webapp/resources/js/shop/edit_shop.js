@@ -2,8 +2,9 @@
  * Created by admin on 2017-08-22.
  */
 var map,sendAreaMap, district, polygons = [];
-var mouseTool;
-var polylineEditor;
+var mouseTool; //画多边形
+var polylineEditor;//多边形编辑
+var regionPolygon; //配送范围多边形
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
@@ -15,7 +16,7 @@ $(function () {
         return this.optional(element) || (score.test(value));
     }, "最多可输入两位小数");
 
-    if(!!storeId){
+    if(storeId != undefined && storeId != 0){
         //如果是编辑，需要初始化地图定位等信息
         //配送规则校验
         $("#shopMoreInfo").validate({
@@ -78,7 +79,7 @@ $(function () {
                 arr.push(Array(distributionRegions[i].lan,distributionRegions[i].lat));
             }
             //定义折线对象
-            var polygon=new AMap.Polygon({
+            regionPolygon=new AMap.Polygon({
                 map:sendAreaMap,
                 path:arr,     //设置折线的节点数组
                 strokeColor: "#3366FF", //线颜色
@@ -87,7 +88,7 @@ $(function () {
                 fillColor: "#1791fc", //填充色
                 fillOpacity: 0.35//填充透明度
             });
-            polylineEditor = new AMap.PolyEditor(sendAreaMap, polygon);
+            polylineEditor = new AMap.PolyEditor(sendAreaMap, regionPolygon);
         }
     }else{
         map = new AMap.Map("addressMap", {
@@ -166,13 +167,13 @@ var mapHandler = {
     init:function(){
         AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
             var autoOptions = {
-                city: "杭州",
+                // city: "杭州",
                 input: "J_address"
             };
             autocomplete = new AMap.Autocomplete(autoOptions);
             var placeSearch = new AMap.PlaceSearch({
                 type: '餐饮服务|购物服务|生活服务|住宿服务|商务住宅',
-                city: '杭州',
+                // city: '杭州',
                 map: map
             });
             AMap.event.addListener(autocomplete, "select", function (e) {
@@ -185,7 +186,7 @@ var mapHandler = {
             });
 
             AMap.event.addListener(placeSearch, "markerClick", function (e) {
-                var infoContent = this.createInfoWindow(e.data);
+                var infoContent = mapHandler.createInfoWindow(e.data);
                 var infoWindow = new AMap.InfoWindow({
                     isCustom: true,
                     content: infoContent,
@@ -329,7 +330,38 @@ var mapHandler = {
                     });
                 });
             }
+        }else if('J_RegionDivision'.indexOf(showClass) > -1){
+            //配送区域划分
+            mouseTool = new AMap.MouseTool(sendAreaMap);
+            mouseTool.polygon();
+            mouseTool.on('draw',function(type,polygonObj){
+                //计算有效区域
+                var validPath =[];
+                var path = type.obj.getPath(),regionPath = regionPolygon.getPath();
+                //画出的点是否在区域内
+                for(var i=0;i<path.length;i++){
+                    if(regionPolygon.contains(path[i])){
+                        validPath.push(path[i]);
+                    }
+                }
+                //配送范围的哪些点再画出的区域内
+                for(var i=0;i<regionPath.length;i++){
+                    if(type.obj.contains(regionPath[i])){
+                        validPath.push(regionPath[i]);
+                    }
+                }
+                type.obj.setPath(validPath);
+                sendAreaMap.plugin(["AMap.PolyEditor"],function(){
+                    polylineEditor = new AMap.PolyEditor(sendAreaMap,type.obj);
+                    polylineEditor.open();
+                    mouseTool.close();
+                });
+            });
+        }else{
+            polylineEditor.close();
         }
+    },
+    regionDivision:function(obj){
     },
     saveRegionDistribution:function(obj){
         //保存前先判断点是否在区域内
