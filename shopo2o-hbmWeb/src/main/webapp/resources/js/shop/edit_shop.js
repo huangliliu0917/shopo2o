@@ -1,7 +1,7 @@
 /**
  * Created by admin on 2017-08-22.
  */
-var map,sendAreaMap, district, polygons = [];
+var map, sendAreaMap, district, polygons = [];
 var mouseTool; //画多边形
 var polylineEditor;//多边形编辑
 var regionPolygon; //配送范围多边形
@@ -16,39 +16,39 @@ $(function () {
         return this.optional(element) || (score.test(value));
     }, "最多可输入两位小数");
 
-    if(storeId != undefined && storeId != 0){
+    if (storeId != undefined && storeId != 0) {
         //如果是编辑，需要初始化地图定位等信息
         //配送规则校验
         $("#shopMoreInfo").validate({
-            ignore:'',
+            ignore: '',
             rules: {
-                deliveryCost:{
-                    required:true,
+                deliveryCost: {
+                    required: true,
                     number: true,
                     isFloat2: true
                 },
-                minCost:{
-                    required:true,
+                minCost: {
+                    required: true,
                     number: true,
                     isFloat2: true
                 },
-                freeCost:{
-                    required:true,
+                freeCost: {
+                    required: true,
                     number: true,
                     isFloat2: true
                 }
             },
-            messages:{
-                deliveryCost:{
-                    required:"请输入配送费用",
+            messages: {
+                deliveryCost: {
+                    required: "请输入配送费用",
                     number: "请填写正确金额"
                 },
-                minCost:{
-                    required:"请输入配送费用",
+                minCost: {
+                    required: "请输入配送费用",
                     number: "请填写正确金额"
                 },
-                freeCost:{
-                    required:"请输入配送费用",
+                freeCost: {
+                    required: "请输入配送费用",
                     number: "请填写正确金额"
                 }
             }
@@ -58,29 +58,29 @@ $(function () {
         selectorHandler.jsSelectItemByValue($("#district")[0],districtCode);
         map = new AMap.Map("addressMap", {
             resizeEnable: true,
-            center:[lan,lat],
+            center: [lan, lat],
             zoom: 15
         });
         new AMap.Marker({
-            position: [lan,lat]
+            position: [lan, lat]
         }).setMap(map);
         sendAreaMap = new AMap.Map("sendArea", {
             resizeEnable: true,
-            center:[lan,lat],
+            center: [lan, lat],
             zoom: 15
         });
         new AMap.Marker({
-            position: [lan,lat]
+            position: [lan, lat]
         }).setMap(sendAreaMap);
-        if(!!distributionRegions){
+        if (!!distributionRegions) {
             var arr = [];//经纬度坐标数组
-            for(var i=0;i<distributionRegions.length;i++){
-                arr.push(Array(distributionRegions[i].lan,distributionRegions[i].lat));
+            for (var i = 0; i < distributionRegions.length; i++) {
+                arr.push(Array(distributionRegions[i].lan, distributionRegions[i].lat));
             }
             //定义折线对象
-            regionPolygon=new AMap.Polygon({
-                map:sendAreaMap,
-                path:arr,     //设置折线的节点数组
+            regionPolygon = new AMap.Polygon({
+                map: sendAreaMap,
+                path: arr,     //设置折线的节点数组
                 strokeColor: "#3366FF", //线颜色
                 strokeOpacity: 0.2, //线透明度
                 strokeWeight: 3,    //线宽
@@ -89,7 +89,7 @@ $(function () {
             });
             polylineEditor = new AMap.PolyEditor(sendAreaMap, regionPolygon);
         }
-    }else{
+    } else {
         map = new AMap.Map("addressMap", {
             resizeEnable: true,
             zoom: 5
@@ -159,11 +159,17 @@ $(function () {
     }
 
     $("#shopBasicInfo").validate({
-        ignore:''
+        ignore: ''
+    });
+
+
+    $('#J_Region').find('button').click(function () {
+        var show = $(this).attr('data-show');
+        $('#' + show).removeClass('displayNone').siblings().addClass('displayNone');
     });
 });
 var mapHandler = {
-    init:function(){
+    init: function () {
         AMap.plugin(['AMap.Autocomplete', 'AMap.PlaceSearch'], function () {
             var autoOptions = {
                 // city: "杭州",
@@ -198,19 +204,19 @@ var mapHandler = {
         });
     },
     //构建自定义信息窗体
-    createInfoWindow:function(data){
-        var addressDetail = (!!data.pname?data.pname:'')
-            + (!!data.cityname?data.cityname:'')
-            + (!!data.adname?data.adname:'')
-            + (!!data.address?data.address:'');
-        if(!!data.pname){
-            selectorHandler.jsSelectItemByValue($("#province")[0],data.pname);
+    createInfoWindow: function (data) {
+        var addressDetail = (!!data.pname ? data.pname : '')
+            + (!!data.cityname ? data.cityname : '')
+            + (!!data.adname ? data.adname : '')
+            + (!!data.address ? data.address : '');
+        if (!!data.pname) {
+            selectorHandler.jsSelectItemByValue($("#province")[0], data.pname);
         }
-        if(!!data.cityname){
-            selectorHandler.jsSelectItemByValue($("#city")[0],data.cityname);
+        if (!!data.cityname) {
+            selectorHandler.jsSelectItemByValue($("#city")[0], data.cityname);
         }
-        if(!!data.adname){
-            selectorHandler.jsSelectItemByValue($("#district")[0],data.adname);
+        if (!!data.adname) {
+            selectorHandler.jsSelectItemByValue($("#district")[0], data.adname);
 
         }
         var $wrap = $('<div></div>');
@@ -223,7 +229,7 @@ var mapHandler = {
             '                </div>\n' +
             '                <div class="amap-lib-infowindow-content">\n' +
             '                    <div class="amap-lib-infowindow-content-wrap">\n' +
-            '                        <a href="javascript:;" class="btn-link" id="J_setAddress" data-lat="'+ data.location.lat+'" data-lng="'+ data.location.lng+ '" data-address="' + addressDetail + '">设为联系地址</a>\n' +
+            '                        <a href="javascript:;" class="btn-link" id="J_setAddress" data-lat="' + data.location.lat + '" data-lng="' + data.location.lng + '" data-address="' + addressDetail + '">设为联系地址</a>\n' +
             '                    </div>\n' +
             '                </div>\n' +
             '            </div>\n' +
@@ -234,7 +240,7 @@ var mapHandler = {
         return $wrap[0];
     },
     //关闭信息窗体
-    closeInfoWindow:function(){
+    closeInfoWindow: function () {
         map.clearInfoWindow();
     },
     getData: function (data, level) {
@@ -306,75 +312,69 @@ var mapHandler = {
     setCenter: function (obj) {
         map.setCenter(obj[obj.options.selectedIndex].center);
     },
-    regionOption:function(obj){
+    regionOption: function (obj) {
         var showClass = $(obj).attr('data-show');
-        $("div[class~=J_Region]").children('div').each(function(){
-            if(!$(this).hasClass('displayNone')){
-                $(this).addClass('displayNone');
-            }
-        });
-        $("div[class~=" + showClass + "]").removeClass('displayNone');
-        if('J_RegionDistribution'.indexOf(showClass) > -1){
+        if ('J_RegionDistribution'.indexOf(showClass) > -1) {
             //门店配送范围
-            if(!!polylineEditor){
+            if (!!polylineEditor) {
                 polylineEditor.open();
-            }else{
+            } else {
                 mouseTool = new AMap.MouseTool(sendAreaMap);
                 mouseTool.polygon();
-                mouseTool.on('draw',function(type,obj){
-                    sendAreaMap.plugin(["AMap.PolyEditor"],function(){
-                        polylineEditor = new AMap.PolyEditor(sendAreaMap,type.obj);
+                mouseTool.on('draw', function (type, obj) {
+                    sendAreaMap.plugin(["AMap.PolyEditor"], function () {
+                        polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
                         polylineEditor.open();
                         mouseTool.close();
                     });
                 });
             }
-        }else if('J_RegionDivision'.indexOf(showClass) > -1){
+        } else if ('J_RegionDivision'.indexOf(showClass) > -1) {
             //配送区域划分
             mouseTool = new AMap.MouseTool(sendAreaMap);
             mouseTool.polygon();
-            mouseTool.on('draw',function(type,polygonObj){
+            mouseTool.on('draw', function (type, polygonObj) {
                 //计算有效区域
-                var validPath =[];
-                var path = type.obj.getPath(),regionPath = regionPolygon.getPath();
+                var validPath = [];
+                var path = type.obj.getPath(), regionPath = regionPolygon.getPath();
                 //画出的点是否在区域内
-                for(var i=0;i<path.length;i++){
-                    if(regionPolygon.contains(path[i])){
+                for (var i = 0; i < path.length; i++) {
+                    if (regionPolygon.contains(path[i])) {
                         validPath.push(path[i]);
                     }
                 }
                 //配送范围的哪些点再画出的区域内
-                for(var i=0;i<regionPath.length;i++){
-                    if(type.obj.contains(regionPath[i])){
-                        validPath.push(regionPath[i]);
+                for (var j = 0; j < regionPath.length; j++) {
+                    if (type.obj.contains(regionPath[j])) {
+                        validPath.push(regionPath[j]);
                     }
                 }
                 type.obj.setPath(validPath);
-                sendAreaMap.plugin(["AMap.PolyEditor"],function(){
-                    polylineEditor = new AMap.PolyEditor(sendAreaMap,type.obj);
+                sendAreaMap.plugin(["AMap.PolyEditor"], function () {
+                    polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
                     polylineEditor.open();
                     mouseTool.close();
                 });
             });
-        }else{
+        } else {
             polylineEditor.close();
         }
     },
-    regionDivision:function(obj){
+    regionDivision: function (obj) {
     },
-    saveRegionDistribution:function(obj){
+    saveRegionDistribution: function (obj) {
         //保存前先判断点是否在区域内
         var marker = sendAreaMap.getAllOverlays('marker')[0];
         var region = sendAreaMap.getAllOverlays('polygon')[0];
-        if(!region.contains(marker.getPosition())) {
+        if (!region.contains(marker.getPosition())) {
             layer.msg('门店不在该区域内');
             return;
         }
         var distributionRegions = [];
         var regionPath = region.getPath();
-        for(var i = 0 ; i < regionPath.length ; i ++){
+        for (var i = 0; i < regionPath.length; i++) {
 
-            var lngLatObj ={};
+            var lngLatObj = {};
             lngLatObj['lan'] = regionPath[i].getLng();
             lngLatObj['lat'] = regionPath[i].getLat();
             distributionRegions.push(lngLatObj);
@@ -386,32 +386,32 @@ var mapHandler = {
 }
 
 var editShopHandler = {
-    saveShopBasicInfo:function(){
-        if($("#shopBasicInfo").valid()){
+    saveShopBasicInfo: function () {
+        if ($("#shopBasicInfo").valid()) {
             var data = $('#shopBasicInfo').serializeObject();
             var provinceCode = $("#province option:selected").text();
             var cityCode = $("#city option:selected").text();
             var districtCode = $("#district option:selected").text();
-            data['provinceCode']=provinceCode;
-            data['cityCode']=cityCode;
-            data['districtCode']=districtCode;
-            if(!!storeId){
-                data['storeId']=storeId;
+            data['provinceCode'] = provinceCode;
+            data['cityCode'] = cityCode;
+            data['districtCode'] = districtCode;
+            if (!!storeId) {
+                data['storeId'] = storeId;
             }
             layer.load();
-            $.ajax(baseUrl + "mall/store/saveStoreBaseInfo",{
-                method:'POST',
-                data:data,
-                dataType:'json',
-                success:function(data){
+            $.ajax(baseUrl + "mall/store/saveStoreBaseInfo", {
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function (data) {
                     layer.closeAll('loading');
-                    if(data.code != 200){
+                    if (data.code != 200) {
                         layer.msg(data.data);
-                    }else{
+                    } else {
                         layer.msg('保存成功');
-                        setTimeout(function(){
+                        setTimeout(function () {
                             window.location.reload()
-                        },300);
+                        }, 300);
                     }
                 },
                 error: function () {
@@ -422,24 +422,24 @@ var editShopHandler = {
 
         }
     },
-    saveShopMoreInfo:function(){
-        if($("#shopMoreInfo").valid()){
+    saveShopMoreInfo: function () {
+        if ($("#shopMoreInfo").valid()) {
             layer.load();
             var data = $('#shopMoreInfo').serializeObject();
-            data['storeId']=storeId;
-            $.ajax(baseUrl + "mall/store/saveStoreMoreInfo",{
-                method:'POST',
-                data:data,
-                dataType:'json',
-                success:function(data){
+            data['storeId'] = storeId;
+            $.ajax(baseUrl + "mall/store/saveStoreMoreInfo", {
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function (data) {
                     layer.closeAll('loading');
-                    if(data.code != 200){
+                    if (data.code != 200) {
                         layer.msg(data.data);
-                    }else{
+                    } else {
                         layer.msg('保存成功');
-                        setTimeout(function(){
+                        setTimeout(function () {
                             window.location.reload()
-                        },300);
+                        }, 300);
                     }
                 },
                 error: function () {
@@ -459,7 +459,7 @@ var uploadHandler = {
             secureuri: false,//安全协议
             fileElementId: btnFile,//id
             dataType: 'json', //返回值类型 一般设置为json
-            type:'post',
+            type: 'post',
             success: function (json) {
                 layer.closeAll('loading');
                 if (json.result == 1) {
@@ -477,9 +477,9 @@ var uploadHandler = {
     }
 }
 
-var selectorHandler={
+var selectorHandler = {
     //设置select中text="paraText"的第一个Item为选中
-    jsSelectItemByValue : function(objSelect, objItemText) {
+    jsSelectItemByValue: function (objSelect, objItemText) {
         //判断是否存在
         var isExit = false;
         for (var i = 0; i < objSelect.options.length; i++) {
@@ -489,18 +489,54 @@ var selectorHandler={
                 break;
             }
         }
-        if(!isExit){
-            this.jsAddItemToSelect(objSelect,objItemText,objSelect.id);
+        if (!isExit) {
+            this.jsAddItemToSelect(objSelect, objItemText, objSelect.id);
         }
     },
     //向select选项中 加入一个Item,并选中
-    jsAddItemToSelect : function(objSelect, objItemText, objItemValue){
+    jsAddItemToSelect: function (objSelect, objItemText, objItemValue) {
         //判断是否存在
         var varItem = new Option(objItemText, objItemValue);
         varItem.selected = true;
         objSelect.options.add(varItem);
     }
 }
+
+var Region = {
+    id: 0,
+    index: 0,
+    tpl: function (id, index) {
+        return '<tr data-id="' + id + '">' +
+            '    <td>' + index + '</td>' +
+            '    <td><input type="text" value="配送区域' + index + '" class="form-control"></td>' +
+            '    <td>' +
+            '        <button type="button" class="btn btn-success btn-xs js-regionItemEdit displayNone">编辑</button>' +
+            '        <button type="button" class="btn btn-success btn-xs js-regionItemSave">保存</button>' +
+            '        <button type="button" class="btn btn-default btn-xs js-regionItemDel">删除</button>' +
+            '    </td>' +
+            '</tr>';
+    },
+    addList: function () {
+        var self = this;
+        var regionList = $('#J_regionList');
+        $('#J_addRegionItem').click(function () {
+            self.index += 1;
+            self.id -= 1;
+            var tr = self.tpl(self.id, self.index);
+            regionList.append(tr);
+        });
+    },
+    delete: function () {
+      $(document).on('click', '.js-regionItemDel', function () {
+         $(this).closest('tr').remove();
+      });
+    },
+    init: function () {
+        this.addList();
+        this.delete();
+    }
+};
+Region.init();
 
 $.fn.serializeObject = function () {
     var o = {};
@@ -516,4 +552,4 @@ $.fn.serializeObject = function () {
         }
     });
     return o;
-}
+};
