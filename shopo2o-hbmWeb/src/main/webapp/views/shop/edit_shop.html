@@ -48,7 +48,7 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div id="tab-1" class="tab-pane active">
+                        <div id="tab-1" class="tab-pane">
                             <form id="shopBasicInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group form-inline">
@@ -170,7 +170,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
+                        <div id="tab-2" class="tab-pane active"  th:if="${currentData.id!=null}">
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group">
@@ -279,11 +279,12 @@
 <script type="text/javascript" th:inline="javascript">
     var baseUrl = /*[[@{/}]]*/ "/";
     var customerId = /*[[${customerId}]]*/ "1";
-    var storeId = /*[[${currentData.id}]]*/ "0";
+    var storeId = /*[[${currentData.id}]]*/ "1";
     var provinceCode = /*[[${currentData.provinceCode}]]*/ "浙江省";
     var cityCode = /*[[${currentData.cityCode}]]*/ "杭州市";
     var districtCode = /*[[${currentData.districtCode}]]*/ "滨江区";
     var distributionRegions = /*[[${currentData.distributionRegions}]]*/"" ;
+    var lan = /*[[${currentData.lan}]]*/ "120.223807",lat = /*[[${currentData.lat}]]*/ "30.208392";
     if(!!distributionRegions){
         $("input[name=distributionRegions]").val(distributionRegions);
     }

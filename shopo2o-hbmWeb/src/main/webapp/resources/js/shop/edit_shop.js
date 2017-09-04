@@ -53,7 +53,6 @@ $(function () {
                 }
             }
         });
-        var lan = $("#lan").val(),lat = $("#lat").val();
         selectorHandler.jsSelectItemByValue($("#province")[0],provinceCode);
         selectorHandler.jsSelectItemByValue($("#city")[0],cityCode);
         selectorHandler.jsSelectItemByValue($("#district")[0],districtCode);
