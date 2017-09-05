@@ -20,7 +20,7 @@ public class LoginServiceImpl implements LoginService {
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         MallCustomer mallCustomer = mallCustomerRepository.findByUsername(userName);
         if (mallCustomer == null)
-            throw new UsernameNotFoundException("没有该代理商");
+            throw new UsernameNotFoundException("没有该账号");
         return mallCustomer;
     }
 }

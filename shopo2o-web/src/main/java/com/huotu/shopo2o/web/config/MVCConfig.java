@@ -1,7 +1,6 @@
 package com.huotu.shopo2o.web.config;
 
 import com.huotu.shopo2o.service.config.ServiceConfig;
-import com.huotu.shopo2o.web.interceptor.AuthorityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -38,20 +37,16 @@ import java.util.List;
 @EnableTransactionManagement
 @ComponentScan({
         "com.huotu.shopo2o.web.controller"
-        , "com.huotu.shopo2o.web.interceptor"
         , "com.huotu.shopo2o.web.service"
 })
-@Import({MVCConfig.ThymeleafConfig.class, ServiceConfig.class,SecurityConfig.class})
+@Import({MVCConfig.ThymeleafConfig.class, ServiceConfig.class, SecurityConfig.class})
 public class MVCConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private ThymeleafViewResolver thymeleafViewResolver;
-    @Autowired
-    private AuthorityInterceptor authorityInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
-        registry.addInterceptor(authorityInterceptor).addPathPatterns("/web/**");
     }
 
     @Override
@@ -67,21 +62,25 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/resources/**/*", "/**/*.html")
                 .addResourceLocations("/resources/", "/");
     }
+
     /**
      * 国际化设置
+     *
      * @return
      */
     @Bean
-    public ResourceBundleMessageSource messageSource(){
+    public ResourceBundleMessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setBasename("message/message");
         return messageSource;
     }
+
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(thymeleafViewResolver);
     }
+
     @Configuration
     public static class ThymeleafConfig {
         @Autowired
@@ -130,6 +129,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
             viewResolver.setContentType("text/html;charset=utf-8");
             return viewResolver;
         }
+
         @Bean
         public CommonsMultipartResolver multipartResolver() {
             return new CommonsMultipartResolver();

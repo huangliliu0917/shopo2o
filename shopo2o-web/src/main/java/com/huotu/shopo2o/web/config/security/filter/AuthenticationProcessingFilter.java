@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,11 +14,6 @@ import javax.servlet.http.HttpServletResponse;
  * Created by hxh on 2017-09-04.
  */
 public class AuthenticationProcessingFilter extends UsernamePasswordAuthenticationFilter {
-    public static final String SPRING_SECURITY_FORM_ROLE_TYPE_KEY = "roleType";
-
-
-    public String roleTypeParameter = SPRING_SECURITY_FORM_ROLE_TYPE_KEY;
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         if (!request.getMethod().equals("POST")) {
@@ -28,7 +22,6 @@ public class AuthenticationProcessingFilter extends UsernamePasswordAuthenticati
         }
         String username = obtainUsername(request);
         String password = obtainPassword(request);
-        int roleType = obtainRoleType(request);
         if (username == null) {
             username = "";
         }
@@ -45,17 +38,8 @@ public class AuthenticationProcessingFilter extends UsernamePasswordAuthenticati
                     "AbstractUserDetailsAuthenticationProvider.nullPassword",
                     "password can't be null"));
         }
-        AuthenticationToken supAuthenticationToken = new AuthenticationToken(username, password, roleType);
+        AuthenticationToken supAuthenticationToken = new AuthenticationToken(username, password);
         setDetails(request, supAuthenticationToken);
-        Authentication authentication = this.getAuthenticationManager().authenticate(supAuthenticationToken);
-        return authentication;
-    }
-
-    private int obtainRoleType(HttpServletRequest request) {
-        String param = request.getParameter(roleTypeParameter);
-        if (StringUtils.isEmpty(param)) {
-            return 0;
-        }
-        return Integer.parseInt(param);
+        return this.getAuthenticationManager().authenticate(supAuthenticationToken);
     }
 }
