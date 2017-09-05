@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -40,7 +41,7 @@ import java.util.List;
         , "com.huotu.shopo2o.web.interceptor"
         , "com.huotu.shopo2o.web.service"
 })
-@Import({MVCConfig.ThymeleafConfig.class, ServiceConfig.class, SecurityConfig.class})
+@Import({MVCConfig.ThymeleafConfig.class, ServiceConfig.class,SecurityConfig.class})
 public class MVCConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private ThymeleafViewResolver thymeleafViewResolver;
@@ -66,7 +67,17 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/resources/**/*", "/**/*.html")
                 .addResourceLocations("/resources/", "/");
     }
-
+    /**
+     * 国际化设置
+     * @return
+     */
+    @Bean
+    public ResourceBundleMessageSource messageSource(){
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename("message/message");
+        return messageSource;
+    }
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.viewResolver(thymeleafViewResolver);
