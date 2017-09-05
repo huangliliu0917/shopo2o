@@ -71,7 +71,7 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
         AuthenticationToken authenticationToken = (AuthenticationToken) authentication;
         UserDetailsService currentService = null;
 
-        if (authenticationToken.getRoleType() == CustomerTypeEnum.HUOBAN_MALL.getCode() || authenticationToken.getRoleType() == CustomerTypeEnum.AGENT.getCode()) {
+        if (authenticationToken.getRoleType() == CustomerTypeEnum.AGENT_SHOP.getCode() || authenticationToken.getRoleType() == CustomerTypeEnum.AGENT.getCode()) {
             currentService = mallCustomerService;
         }
         return currentService;
