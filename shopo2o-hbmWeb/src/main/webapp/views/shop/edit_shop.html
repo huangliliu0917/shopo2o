@@ -48,7 +48,7 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div id="tab-1" class="tab-pane active">
+                        <div id="tab-1" class="tab-pane">
                             <form id="shopBasicInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group form-inline">
@@ -170,7 +170,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
+                        <div id="tab-2" class="tab-pane active"  th:if="${currentData.id!=null}">
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group">
@@ -179,8 +179,8 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="sendArea" style="height: 400px;">
                                         </div>
-                                        <div class="form-group J_Region">
-                                            <div class="col-sm-1 J_RegionInit">
+                                        <div class="col-sm-4" id="J_Region">
+                                            <div  id="J_RegionInit">
                                                 <button type="button" class="btn btn-m btn-success" data-show="J_RegionDistribution" onclick="mapHandler.regionOption(this)">
                                                     门店配送范围
                                                 </button>.
@@ -188,9 +188,9 @@
                                                     划分配送区域
                                                 </button>
                                             </div>
-                                            <div class="col-sm-1 J_RegionDistribution displayNone">
-                                                <label>门店配送范围</label>
-                                                <div class="form-group form-inline">
+                                            <div class="displayNone" id="J_RegionDistribution">
+                                                <h3 class="text-muted">门店配送范围</h3>
+                                                <div class="form-inline">
                                                     <input type="hidden" name="distributionRegions"/>
                                                     <button type="button" class="btn btn-sm btn-success" data-show="J_RegionInit" onclick="mapHandler.saveRegionDistribution(this)">
                                                         保存
@@ -203,15 +203,30 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-1 J_RegionDivision displayNone">
-                                                <label>配送区域划分</label>
-                                                <div class="form-group form-inline">
+                                            <div class="displayNone" id="J_RegionDivision">
+                                                <h3 class="text-muted">配送区域划分</h3>
+                                                <div class="form-inline">
                                                     <button type="button" class="btn btn-m btn-success" onclick="mapHandler.regionDivision(this)">
                                                         保存
+                                                    </button>
+                                                    <button type="button" class="btn btn-m btn-success" id="J_addRegionItem">
+                                                        添加
                                                     </button>
                                                     <button type="button" class="btn btn-m btn-success"  data-show="J_RegionInit" onclick="mapHandler.regionOption(this)">
                                                         取消
                                                     </button>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>编号</th>
+                                                            <th>区域名称</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody id="J_regionList"></tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -279,11 +294,12 @@
 <script type="text/javascript" th:inline="javascript">
     var baseUrl = /*[[@{/}]]*/ "/";
     var customerId = /*[[${customerId}]]*/ "1";
-    var storeId = /*[[${currentData.id}]]*/ "0";
+    var storeId = /*[[${currentData.id}]]*/ "1";
     var provinceCode = /*[[${currentData.provinceCode}]]*/ "浙江省";
     var cityCode = /*[[${currentData.cityCode}]]*/ "杭州市";
     var districtCode = /*[[${currentData.districtCode}]]*/ "滨江区";
     var distributionRegions = /*[[${currentData.distributionRegions}]]*/"" ;
+    var lan = /*[[${currentData.lan}]]*/ "120.223807",lat = /*[[${currentData.lat}]]*/ "30.208392";
     if(!!distributionRegions){
         $("input[name=distributionRegions]").val(distributionRegions);
     }
