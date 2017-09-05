@@ -162,11 +162,6 @@ $(function () {
         ignore: ''
     });
 
-
-    $('#J_Region').find('button').click(function () {
-        var show = $(this).attr('data-show');
-        $('#' + show).removeClass('displayNone').siblings().addClass('displayNone');
-    });
 });
 var mapHandler = {
     init: function () {
@@ -314,6 +309,7 @@ var mapHandler = {
     },
     regionOption: function (obj) {
         var showClass = $(obj).attr('data-show');
+        $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
         if ('J_RegionDistribution'.indexOf(showClass) > -1) {
             //门店配送范围
             if (!!polylineEditor) {
@@ -361,6 +357,7 @@ var mapHandler = {
         }
     },
     regionDivision: function (obj) {
+        console.log(RegionListObj);
     },
     saveRegionDistribution: function (obj) {
         //保存前先判断点是否在区域内
@@ -383,7 +380,7 @@ var mapHandler = {
         polylineEditor.close();
         this.regionOption(obj);
     }
-}
+};
 
 var editShopHandler = {
     saveShopBasicInfo: function () {
@@ -449,7 +446,7 @@ var editShopHandler = {
             })
         }
     }
-}
+};
 
 var uploadHandler = {
     uploadImg: function (btnFile, showImgId, pathId) {
@@ -500,14 +497,25 @@ var selectorHandler = {
         varItem.selected = true;
         objSelect.options.add(varItem);
     }
-}
+};
 
+var RegionListObj = {};
+
+// 模拟API
+function tmpPosition() {
+    return [
+        {lan:1,lat:2},
+        {lan:11,lat:21},
+        {lan:12,lat:22},
+        {lan:13,lat:23},
+        {lan:14,lat:24}
+    ]
+}
 var Region = {
     id: 0,
-    index: 0,
+    index: Object.keys(RegionListObj).length,
     tpl: function (id, index) {
         return '<tr data-id="' + id + '">' +
-            '    <td>' + index + '</td>' +
             '    <td><input type="text" value="配送区域' + index + '" class="form-control"></td>' +
             '    <td>' +
             '        <button type="button" class="btn btn-success btn-xs js-regionItemEdit displayNone">编辑</button>' +
@@ -526,13 +534,40 @@ var Region = {
             regionList.append(tr);
         });
     },
+    save: function () {
+        $(document).on('click', '.js-regionItemSave', function () {
+            $(this).addClass('displayNone').siblings('.js-regionItemEdit').removeClass('displayNone');
+            var parent = $(this).closest('tr');
+            var input = parent.find('input');
+            var id = parent.attr('data-id');
+            RegionListObj[id] = {};
+            RegionListObj[id]['name'] = input.val();
+            // 临时方案
+            RegionListObj[id]['position'] = tmpPosition();
+            input.prop('readonly', true);
+            console.info(RegionListObj);
+        });
+    },
+    edit: function () {
+        $(document).on('click', '.js-regionItemEdit', function () {
+            $(this).addClass('displayNone').siblings('.js-regionItemSave').removeClass('displayNone');
+            var input = $(this).closest('tr').find('input');
+            input.prop('readonly', false);
+        });
+    },
     delete: function () {
       $(document).on('click', '.js-regionItemDel', function () {
-         $(this).closest('tr').remove();
+          var parent = $(this).closest('tr');
+          var id = parent.attr('data-id');
+          parent.remove();
+          delete RegionListObj[id];
+          console.info(RegionListObj);
       });
     },
     init: function () {
         this.addList();
+        this.save();
+        this.edit();
         this.delete();
     }
 };
