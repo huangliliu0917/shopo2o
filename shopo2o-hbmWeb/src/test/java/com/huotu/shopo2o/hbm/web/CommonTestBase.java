@@ -58,7 +58,7 @@ public class CommonTestBase extends SpringWebTest {
         store.setAddress(UUID.randomUUID().toString());
         store.setLogo(UUID.randomUUID().toString());
         store.setErpId(UUID.randomUUID().toString());
-        store.setLan(random.nextDouble());
+        store.setLng(random.nextDouble());
         store.setLat(random.nextDouble());
         // TODO: 2017-08-24 这个时间以后测试要用到了再改吧
         store.setOpenTime(LocalTime.now());

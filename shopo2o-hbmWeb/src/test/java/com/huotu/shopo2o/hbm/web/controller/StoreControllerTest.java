@@ -66,7 +66,7 @@ public class StoreControllerTest extends CommonTestBase {
                 .param("cityCode", store.getCityCode())
                 .param("districtCode", store.getDistrictCode())
                 .param("address", store.getAddress())
-                .param("lan", String.valueOf(store.getLan()))
+                .param("lan", String.valueOf(store.getLng()))
                 .param("lat", String.valueOf(store.getLat()))
                 .param("openTime",openTime)
                 .param("closeTime",closeTime)
@@ -119,7 +119,7 @@ public class StoreControllerTest extends CommonTestBase {
         store.setAddress(UUID.randomUUID().toString());
         store.setLogo(UUID.randomUUID().toString());
         store.setErpId(UUID.randomUUID().toString());
-        store.setLan(random.nextDouble());
+        store.setLng(random.nextDouble());
         store.setLat(random.nextDouble());
         return store;
     }

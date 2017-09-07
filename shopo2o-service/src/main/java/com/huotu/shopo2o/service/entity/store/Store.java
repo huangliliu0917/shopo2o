@@ -81,8 +81,8 @@ public class Store {
     /**
      * 经度
      */
-    @Column(name = "Lan")
-    private Double lan;
+    @Column(name = "Lng")
+    private Double lng;
 
     /**
      * 纬度

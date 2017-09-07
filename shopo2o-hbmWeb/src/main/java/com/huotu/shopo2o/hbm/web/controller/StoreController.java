@@ -112,7 +112,7 @@ public class StoreController extends MallBaseController {
         store.setCityCode(cityCode);
         store.setDistrictCode(districtCode);
         store.setAddress(address);
-        store.setLan(lan);
+        store.setLng(lan);
         store.setLat(lat);
         store.setOpenTime(openTime);
         store.setCloseTime(closeTime);
