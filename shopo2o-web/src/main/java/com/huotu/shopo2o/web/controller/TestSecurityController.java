@@ -15,7 +15,7 @@ public class TestSecurityController {
 
     @RequestMapping(value = {"", "/", "/login"})
     public String index() {
-        return "index";
+        return "login";
     }
 
     @RequestMapping("/loginFailed")
