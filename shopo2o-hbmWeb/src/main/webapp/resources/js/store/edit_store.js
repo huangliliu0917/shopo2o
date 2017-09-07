@@ -172,11 +172,6 @@ $(function () {
         ignore: ''
     });
 
-
-    $('#J_Region').find('button').click(function () {
-        var show = $(this).attr('data-show');
-        $('#' + show).removeClass('displayNone').siblings().addClass('displayNone');
-    });
 });
 var mapHandler = {
     init: function () {
@@ -351,6 +346,7 @@ var mapHandler = {
     },
     regionOption: function (obj) {
         var showClass = $(obj).attr('data-show');
+        $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
         if ('J_RegionDistribution'.indexOf(showClass) > -1) {
             //门店配送范围
             //todo 如果已划分区域，则不允许修改
