@@ -8,9 +8,9 @@ import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.hbm.web.service.StaticResourceService;
 import com.huotu.shopo2o.service.entity.DistributionRegion;
 import com.huotu.shopo2o.service.entity.MallCustomer;
-import com.huotu.shopo2o.service.entity.Shop;
+import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.service.MallCustomerService;
-import com.huotu.shopo2o.service.service.ShopService;
+import com.huotu.shopo2o.service.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,9 +34,9 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/mall/store")
-public class ShopController extends MallBaseController {
+public class StoreController extends MallBaseController {
     @Autowired
-    private ShopService shopService;
+    private StoreService storeService;
     @Autowired
     private MallCustomerService customerService;
     @Autowired
@@ -48,35 +48,35 @@ public class ShopController extends MallBaseController {
             , @RequestParam(value = "pageNo", required = false, defaultValue = "1") Integer pageNo
             , Model model) {
         Pageable pageable = new PageRequest(pageNo - 1, Constant.PAGE_SIZE);
-        Page<Shop> shopPage = shopService.findAll(customerId, pageable);
+        Page<Store> shopPage = storeService.findAll(customerId, pageable);
         model.addAttribute("shopPage", shopPage);
         model.addAttribute("pageSize", Constant.PAGE_SIZE);
         model.addAttribute("pageNo", pageNo);
-        return "shop/shop_manager";
+        return "store/store_manager";
     }
 
     @GetMapping("/edit")
     public String edit(@ModelAttribute("customerId") Long customerId
             , @RequestParam(value = "storeId", required = false, defaultValue = "0") Long storeId
             , Model model) {
-        Shop shop = null;
+        Store store = null;
         if (storeId != null && storeId != 0) {
-            shop = shopService.findOne(storeId, customerId);
+            store = storeService.findOne(storeId, customerId);
             MallCustomer shopCustomer = customerService.findOne(storeId);
             if(shopCustomer != null){
                 model.addAttribute("loginName",shopCustomer.getUsername());
             }
             try {
-                URI imgUri = resourceService.getResource(StaticResourceService.huobanmallMode, shop.getLogo());
-                shop.setMallLogoUri(imgUri.toString());
+                URI imgUri = resourceService.getResource(StaticResourceService.huobanmallMode, store.getLogo());
+                store.setMallLogoUri(imgUri.toString());
             } catch (URISyntaxException ignored) {
             }
         }
-        if (shop == null) {
-            shop = new Shop();
+        if (store == null) {
+            store = new Store();
         }
-        model.addAttribute("currentData", shop);
-        return "shop/edit_shop";
+        model.addAttribute("currentData", store);
+        return "store/edit_store";
     }
 
     @PostMapping("/saveStoreBaseInfo")
@@ -90,36 +90,36 @@ public class ShopController extends MallBaseController {
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime openTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime closeTime
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime, @RequestParam String logo
             , @RequestParam String erpId) {
-        Shop shop;
+        Store store;
         if (storeId != null && storeId != 0) {
-            shop = shopService.findOne(storeId, customerId);
-            if (shop == null) {
+            store = storeService.findOne(storeId, customerId);
+            if (store == null) {
                 return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
             }
         } else {
-            shop = new Shop();
-            shop.setCreateTime(new Date());
+            store = new Store();
+            store.setCreateTime(new Date());
             //判断门店登录名是否唯一
             boolean isExist = customerService.isExist(loginName);
             if(isExist){
                 return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR,"登录用户名已存在");
             }
         }
-        shop.setName(name);
-        shop.setAreaCode(areaCode);
-        shop.setTelephone(telephone);
-        shop.setProvinceCode(provinceCode);
-        shop.setCityCode(cityCode);
-        shop.setDistrictCode(districtCode);
-        shop.setAddress(address);
-        shop.setLan(lan);
-        shop.setLat(lat);
-        shop.setOpenTime(openTime);
-        shop.setCloseTime(closeTime);
-        shop.setDeadlineTime(deadlineTime);
-        shop.setLogo(logo);
-        shop.setErpId(erpId);
-        return shopService.saveShop(customerId, shop, loginName);
+        store.setName(name);
+        store.setAreaCode(areaCode);
+        store.setTelephone(telephone);
+        store.setProvinceCode(provinceCode);
+        store.setCityCode(cityCode);
+        store.setDistrictCode(districtCode);
+        store.setAddress(address);
+        store.setLan(lan);
+        store.setLat(lat);
+        store.setOpenTime(openTime);
+        store.setCloseTime(closeTime);
+        store.setDeadlineTime(deadlineTime);
+        store.setLogo(logo);
+        store.setErpId(erpId);
+        return storeService.saveStore(customerId, store, loginName);
     }
 
     @PostMapping("/saveStoreMoreInfo")
@@ -128,8 +128,8 @@ public class ShopController extends MallBaseController {
     public ApiResult save(@ModelAttribute("customerId")Long customerId
             ,@RequestParam Long storeId,@RequestParam String distributionRegions
             ,@RequestParam Double deliveryCost,@RequestParam Double minCost,@RequestParam Double freeCost){
-        Shop shop = shopService.findOne(storeId, customerId);
-        if(shop == null){
+        Store store = storeService.findOne(storeId, customerId);
+        if(store == null){
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
         }
         List<DistributionRegion> distributionRegionList;
@@ -141,11 +141,11 @@ public class ShopController extends MallBaseController {
         if(distributionRegionList == null){
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "请设置配送范围");
         }
-        shop.setDistributionRegions(distributionRegionList);
-        shop.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        shop.setMinCost(new BigDecimal(minCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        shop.setFreeCost(new BigDecimal(freeCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        shopService.saveShop(customerId,shop,null);
+        store.setDistributionRegions(distributionRegionList);
+        store.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
+        store.setMinCost(new BigDecimal(minCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
+        store.setFreeCost(new BigDecimal(freeCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
+        storeService.saveStore(customerId, store,null);
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 
@@ -153,12 +153,12 @@ public class ShopController extends MallBaseController {
     @ResponseBody
     public ApiResult changeOption(@ModelAttribute("customerId") Long customerId
             , @RequestParam Long storeId, @RequestParam boolean isDisabled) {
-        Shop shop = shopService.findOne(storeId, customerId);
-        if (shop == null) {
+        Store store = storeService.findOne(storeId, customerId);
+        if (store == null) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
         }
-        if (shop.isDisabled() != isDisabled) {
-            shopService.disableShop(shop, isDisabled);
+        if (store.isDisabled() != isDisabled) {
+            storeService.disableStore(store, isDisabled);
         }
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
@@ -167,12 +167,12 @@ public class ShopController extends MallBaseController {
     @ResponseBody
     public ApiResult remove(@ModelAttribute("customerId") Long customerId
             , @RequestParam Long storeId) {
-        Shop shop = shopService.findOne(storeId, customerId);
-        if (shop == null) {
+        Store store = storeService.findOne(storeId, customerId);
+        if (store == null) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
         }
-        if (!shop.isDeleted()) {
-            shopService.deleteShop(shop);
+        if (!store.isDeleted()) {
+            storeService.deleteStore(store);
         }
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }

@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @ComponentScan({
-        "com.huotu.shopo2o.service",
+        "com.huotu.shopo2o.service.service",
+        "com.huotu.shopo2o.service.config",
         "com.huotu.shopo2o.common"
 })
 @EnableJpaRepositories(basePackages = "com.huotu.shopo2o.service.repository")

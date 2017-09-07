@@ -1,5 +1,7 @@
 package com.huotu.shopo2o.service.entity;
 
+import com.huotu.shopo2o.service.entity.store.Store;
+import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.AuthorityEnum;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import lombok.Getter;
@@ -44,7 +46,7 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn(referencedColumnName = "Store_Id")
-    private Shop shop;
+    private Store store;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -64,7 +66,7 @@ public class MallCustomer implements UserDetails , Serializable {
     @Override
     public boolean isAccountNonLocked() {
         if(this.customerType == CustomerTypeEnum.SHOP){
-            return shop != null && !shop.isDisabled();
+            return store != null && !store.isDisabled();
         }
         return false;
     }
@@ -77,7 +79,7 @@ public class MallCustomer implements UserDetails , Serializable {
     @Override
     public boolean isEnabled() {
         if(this.customerType == CustomerTypeEnum.SHOP){
-            return shop != null && !shop.isDeleted();
+            return store != null && !store.isDeleted();
         }
         return false;
     }
