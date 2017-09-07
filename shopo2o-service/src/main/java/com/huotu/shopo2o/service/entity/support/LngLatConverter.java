@@ -3,7 +3,7 @@ package com.huotu.shopo2o.service.entity.support;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.huotu.shopo2o.service.entity.DistributionRegion;
+import com.huotu.shopo2o.service.entity.store.LngLat;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by helloztt on 2017-08-31.
  */
-@Converter(autoApply = true)
-public class DistributionRegionConverter implements AttributeConverter<List<DistributionRegion>,String> {
+@Converter
+public class LngLatConverter implements AttributeConverter<List<LngLat>,String> {
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Override
-    public String convertToDatabaseColumn(List<DistributionRegion> attribute) {
+    public String convertToDatabaseColumn(List<LngLat> attribute) {
         if (CollectionUtils.isEmpty(attribute)||attribute.size()==0) {
             return null;
         }
@@ -31,12 +31,12 @@ public class DistributionRegionConverter implements AttributeConverter<List<Dist
     }
 
     @Override
-    public List<DistributionRegion> convertToEntityAttribute(String dbData) {
+    public List<LngLat> convertToEntityAttribute(String dbData) {
         if(StringUtils.isEmpty(dbData)){
             return null;
         }
         try {
-            return objectMapper.readValue(dbData,new TypeReference<List<DistributionRegion>>() {
+            return objectMapper.readValue(dbData,new TypeReference<List<LngLat>>() {
             });
         } catch (IOException e) {
             throw new IllegalStateException("Broken JSON", e);

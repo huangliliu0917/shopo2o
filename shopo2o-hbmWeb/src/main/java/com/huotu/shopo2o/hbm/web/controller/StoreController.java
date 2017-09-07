@@ -6,8 +6,9 @@ import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.hbm.web.service.StaticResourceService;
-import com.huotu.shopo2o.service.entity.DistributionRegion;
+import com.huotu.shopo2o.service.entity.store.DistributionRegion;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.store.LngLat;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.service.MallCustomerService;
 import com.huotu.shopo2o.service.service.StoreService;
@@ -112,8 +113,7 @@ public class StoreController extends MallBaseController {
         store.setCityCode(cityCode);
         store.setDistrictCode(districtCode);
         store.setAddress(address);
-        store.setLng(lan);
-        store.setLat(lat);
+        store.setLngLat(new LngLat(lan,lat));
         store.setOpenTime(openTime);
         store.setCloseTime(closeTime);
         store.setDeadlineTime(deadlineTime);
@@ -132,9 +132,9 @@ public class StoreController extends MallBaseController {
         if(store == null){
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
         }
-        List<DistributionRegion> distributionRegionList;
+        List<LngLat> distributionRegionList;
         try {
-            distributionRegionList = objectMapper.readValue(distributionRegions,new TypeReference<List<DistributionRegion>>() {});
+            distributionRegionList = objectMapper.readValue(distributionRegions,new TypeReference<List<LngLat>>() {});
         } catch (IOException e) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送范围解析失败");
         }

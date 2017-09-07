@@ -3,6 +3,7 @@ package com.huotu.shopo2o.hbm.web;
 import com.huotu.shopo2o.hbm.web.config.MVCConfig;
 import com.huotu.shopo2o.service.config.MallPasswordEncoder;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.store.LngLat;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
@@ -58,8 +59,7 @@ public class CommonTestBase extends SpringWebTest {
         store.setAddress(UUID.randomUUID().toString());
         store.setLogo(UUID.randomUUID().toString());
         store.setErpId(UUID.randomUUID().toString());
-        store.setLng(random.nextDouble());
-        store.setLat(random.nextDouble());
+        store.setLngLat(new LngLat(random.nextDouble(),random.nextDouble()));
         // TODO: 2017-08-24 这个时间以后测试要用到了再改吧
         store.setOpenTime(LocalTime.now());
         store.setCloseTime(LocalTime.now());

@@ -1,8 +1,7 @@
 package com.huotu.shopo2o.service.entity.store;
 
-import com.huotu.shopo2o.service.entity.DistributionRegion;
 import com.huotu.shopo2o.service.entity.MallCustomer;
-import com.huotu.shopo2o.service.entity.support.DistributionRegionConverter;
+import com.huotu.shopo2o.service.entity.support.LngLatConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -79,16 +78,10 @@ public class Store {
     private String address;
 
     /**
-     * 经度
+     * 坐标
      */
-    @Column(name = "Lng")
-    private Double lng;
-
-    /**
-     * 纬度
-     */
-    @Column(name = "Lat")
-    private Double lat;
+    @Embedded
+    private LngLat lngLat;
 
     /**
      * 营业起始时间
@@ -127,8 +120,9 @@ public class Store {
      * 配送区域坐标
      */
     @Column(name = "Distribution_Regions",columnDefinition = "varchar(MAX)")
-    @Convert(converter = DistributionRegionConverter.class)
-    private List<DistributionRegion> distributionRegions;
+    @Convert(converter = LngLatConverter.class)
+    @SuppressWarnings("JpaAttributeTypeInspection")
+    private List<LngLat> distributionRegions;
 
     /**
      * 配送费

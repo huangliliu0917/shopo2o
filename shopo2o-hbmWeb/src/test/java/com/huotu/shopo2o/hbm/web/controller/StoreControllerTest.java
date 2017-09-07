@@ -3,8 +3,9 @@ package com.huotu.shopo2o.hbm.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.hbm.web.CommonTestBase;
-import com.huotu.shopo2o.service.entity.DistributionRegion;
+import com.huotu.shopo2o.service.entity.store.DistributionRegion;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.store.LngLat;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.service.StoreService;
 import org.junit.Before;
@@ -66,8 +67,8 @@ public class StoreControllerTest extends CommonTestBase {
                 .param("cityCode", store.getCityCode())
                 .param("districtCode", store.getDistrictCode())
                 .param("address", store.getAddress())
-                .param("lan", String.valueOf(store.getLng()))
-                .param("lat", String.valueOf(store.getLat()))
+                .param("lan", String.valueOf(store.getLngLat().getLng()))
+                .param("lat", String.valueOf(store.getLngLat().getLat()))
                 .param("openTime",openTime)
                 .param("closeTime",closeTime)
                 .param("deadlineTime",deadlineTime)
@@ -85,10 +86,10 @@ public class StoreControllerTest extends CommonTestBase {
         String saveUrl = baseUrl + "/saveStoreMoreInfo";
         MallCustomer mockShopCustomer = mockCustomer();
         Store mockStore = mockShop(mockShopCustomer,mockCustomer);
-        List<DistributionRegion> regionList = new ArrayList<>();
+        List<LngLat> regionList = new ArrayList<>();
         int randomNum = random.nextInt(10);
         for(int i=0;i< randomNum ; i++){
-            regionList.add(new DistributionRegion(random.nextDouble(),random.nextDouble()));
+            regionList.add(new LngLat(random.nextDouble(),random.nextDouble()));
         }
         mockMvc.perform(post(saveUrl)
                 .cookie(cookie)
@@ -103,7 +104,7 @@ public class StoreControllerTest extends CommonTestBase {
         Store realStore = storeService.findOne(mockStore.getId());
         assertEquals(randomNum, realStore.getDistributionRegions().size());
         for(int i = 0;i<randomNum;i++){
-            assertEquals(regionList.get(i).getLan(), realStore.getDistributionRegions().get(i).getLan());
+            assertEquals(regionList.get(i).getLng(), realStore.getDistributionRegions().get(i).getLng());
             assertEquals(regionList.get(i).getLat(), realStore.getDistributionRegions().get(i).getLat());
         }
     }
@@ -119,8 +120,7 @@ public class StoreControllerTest extends CommonTestBase {
         store.setAddress(UUID.randomUUID().toString());
         store.setLogo(UUID.randomUUID().toString());
         store.setErpId(UUID.randomUUID().toString());
-        store.setLng(random.nextDouble());
-        store.setLat(random.nextDouble());
+        store.setLngLat(new LngLat(random.nextDouble(),random.nextDouble()));
         return store;
     }
 
