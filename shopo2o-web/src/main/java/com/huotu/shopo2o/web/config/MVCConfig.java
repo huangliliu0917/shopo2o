@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.web.config;
 
+import com.huotu.shopo2o.common.SysConstant;
 import com.huotu.shopo2o.service.config.ServiceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -43,7 +44,9 @@ import java.util.List;
 public class MVCConfig extends WebMvcConfigurerAdapter {
     @Autowired
     private ThymeleafViewResolver thymeleafViewResolver;
-
+    //只是为了初始化
+    @Autowired
+    private SysConstant sysConstant;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);

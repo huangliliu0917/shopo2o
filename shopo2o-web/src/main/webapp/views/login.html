@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>登录界面</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet">
+    <style>
+        .loginFormIpt {
+            position: relative;
+            width: 360px;
+            height: 44px;
+            line-height: 42px;
+            margin: 0 0 10px 25px;
+            padding: 10px;
+            clear: both;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+<div class="ibox float-e-margins">
+<form method="post" class="form-horizontal" id="login" action="/login" style="margin: 0">
+    <div class="form-group">
+        <label class="col-sm-3 control-label" for="userName">用户名:</label>
+        <div class="col-sm-3">
+            <input type="text" placeholder="用户名" class="form-control" id="userName"
+                   maxlength="20"
+                   name="username">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label" for="passWord">密码:</label>
+        <div class="col-sm-3">
+            <input type="passWord" placeholder="密码" class="form-control" id="passWord"
+                   maxlength="20"
+                   name="password">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-8 col-sm-offset-5">
+            <button class="btn btn-sm btn-success" type="submit" onclick="login()">保存
+            </button>
+        </div>
+    </div>
+    <div style="text-align: center; margin: 0 auto; width: 389px; padding-top: 10px;"
+         th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}">
+        <p style="width: 50%;margin: auto">
+                    <span id="errorInfo" style="color: red"
+                          th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
+        </p>
+    </div>
+</form>
+</div>
+</div>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/l10n/zh.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
+<!--valid-->
+<script type="text/javascript"
+        src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script type="text/javascript"
+        src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+<script type="text/javascript">
+</script>
+</body>
+</html>

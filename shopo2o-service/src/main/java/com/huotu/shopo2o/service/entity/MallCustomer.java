@@ -1,7 +1,6 @@
 package com.huotu.shopo2o.service.entity;
 
 import com.huotu.shopo2o.service.entity.store.Store;
-import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.AuthorityEnum;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import lombok.Getter;
@@ -10,7 +9,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,7 +81,7 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
