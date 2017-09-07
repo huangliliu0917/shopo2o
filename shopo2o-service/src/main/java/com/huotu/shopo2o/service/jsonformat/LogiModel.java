@@ -1,4 +1,4 @@
-package com.huotu.shopo2o.service.entity.jsonformat;
+package com.huotu.shopo2o.service.jsonformat;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;

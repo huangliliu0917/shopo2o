@@ -7,6 +7,7 @@ package com.huotu.shopo2o.common.utils;
 public class Constant {
     public static final int PAGE_SIZE = 20;
     public static final String UTF8 = "utf-8";
+    public static final String TIME_WITHOUT_SECOND_PATTERN = "yyyy-MM-dd HH:mm";
     /**
      * 默认排名人数
      */

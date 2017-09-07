@@ -15,10 +15,6 @@
 <body class="horizontal-menu-sidebar" style="overflow: hidden;">
 <section>
     <div class="leftpanel">
-        <div class="logopanel">
-
-            <img src="resource/3rdParty/ResPdmall/images/bglogo_Ultimate.png" height="48px" style="margin-left: 15px"/>
-        </div>
         <!--账号信息BEGIN-->
         <div class="leftpanelinner" style="border-bottom: 1px dotted #444;">
             <ul class="nav nav-pills nav-stacked nav-bracket" style="margin-bottom: 0px;">
@@ -26,11 +22,11 @@
                 <li>
                     <p style="margin-left: 15px">
                             <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
-                                <a href="javascript:;" style="color: #8f939e" th:text="${#authentication.principal.loginName}">chinahtwx@163.com</a>
+                                <a href="javascript:;" style="color: #8f939e" >用户名：<span th:text="${mallCustomer.username}">10000005</span></a>
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
-                                <a href="javascript:;" style="color: #8f939e" title="该编号用于大伙伴/操作员登录时填写">商户编号：<span th:text="${supplierId}">10000005</span></a>
+                                <a href="javascript:;" style="color: #8f939e" >商户编号：<span th:text="${mallCustomer.customerId}">10000005</span></a>
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
@@ -41,224 +37,17 @@
                 </li>
             </ul>
         </div>
-        <!--账号信息END-->
-
-        <!--菜单BEGIN-->
-        <div id="con_left">
-            <script type="text/javascript">
-                adaptFrame.outputLeftMenu();
-            </script>
-        </div>
-        <!--菜单END-->
-    </div>
-
-    <div class="mainpanel" style="min-width: 1000px; overflow: hidden;">
-        <!--商城一级菜单BEGIN-->
-        <div class="headerbar">
-            <div class="header-left" style="padding-left: 5px;">
-                <div class="topnav">
-                    <ul class="nav nav-horizontal">
-                        <li class="active" id="menu04" sec:authorize="hasRole('SUPPLIER')">
-                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>商品管理</span></a>
-                        </li>
-
-                        <li class="" id="menu01" sec:authorize="hasAnyRole('ORDER','SUPPLIER')">
-                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>订单管理</span></a>
-                        </li>
-
-                        <li class="" id="menu02" sec:authorize="hasAnyRole('ACCOUNT','SUPPLIER')">
-                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>账号管理</span><span class="fa pull-right badge badge-success" id="warning02" style="display: none; background-color: red;">!</span></a>
-                        </li>
-
-
-                        <!--<li class="" id="menu03" sec:authorize="hasRole('SUPPLIER')">-->
-                        <!--<a style="cursor: pointer;"><i class="fa fa-folder-o"></i>-->
-                        <!--<span>结算管理</span></a>-->
-                        <!--</li>-->
-                        <li class="" id="menu05" sec:authorize="hasAnyRole('ACCOUNT','SUPPLIER')">
-                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>基本配置</span></a>
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!--商城一级菜单END-->
-
-        <!--公告条BEGIN-->
-        <div style="clear: both"></div>
-        <div class="pageheader" style="padding-left: 12px;">
-        </div>
-        <div style="clear: both"></div>
-        <!--公告条END-->
-
-        <!--主体BEGIN-->
-        <div id="con_right">
-            <div id="loading" style="height: auto; text-align: center; padding-top: 436px; display: none; width: 1061px;">
-                <img src="resource/3rdParty/images/loading.gif" alt="loading" border="0"/>
-            </div>
-            <script type="text/javascript">
-                adaptFrame.outputMain('about:blank');
-            </script>
-        </div>
-        <!--主体END-->
     </div>
 </section>
+<button type="button" class="btn btn-default" onclick="homeHandle.order()">订单管理</button>
 </body>
-<script type="text/javascript" th:inline="javascript">
-    //#region 框架自适应
-    var adaptFrame = {};
-    adaptFrame.init = function () {
-        // 浏览改大小
-        $(window).bind('resize', function () {
-            var heightLeft = adaptFrame._getLeftHeight();
-            var heightMain = adaptFrame._getMainHeight();
-            var widthMain = adaptFrame._getMainWidth();
-
-            $("#con_left").height(heightLeft);
-
-            $("#content").attr('height', heightMain);
-            $("#content").attr('width', widthMain);
-
-            $('#con_right').height(heightMain);
-
-            $('#loading').css('padding-top', heightMain / 2).width(widthMain);
-            //alert(Math.random());
-        });
-    };
-
-    adaptFrame._getLeftHeight = function () {
-        return $(window).height() - 177;
-    };
-
-    adaptFrame._getMainHeight = function () {
-        return $(window).height() - 51;
-    };
-
-    adaptFrame._getMainWidth = function () {
-        return $(window).width() - $('#con_left').width();
-    };
-
-    adaptFrame.outputLeftMenu = function () {
-        var width = $('#con_left').width();
-        var scrolling = 'auto';
-        var height = this._getLeftHeight();
-        var ifSrc = /*[["ordersManage"]]*/ "ordersManage.html";
-        document.write('<iframe id="content_left" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + ifSrc + '" style="overflow-x:hidden;"></iframe>');
-    };
-
-    adaptFrame.outputMain = function (src) {
-        var width = adaptFrame._getMainWidth();
-        var scrolling = $.isIE6 == true ? 'yes' : 'auto';
-        var height = this._getMainHeight();
-        document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
-        $('#con_right').height(height);
-    };
-
-    adaptFrame.layoutRootMenu = function () {//自适应显示一级菜单
-
-    }
-    //#endregion
-
-    //#region 菜单
-    var mallMenuManager = {};
-    mallMenuManager.init = function () {
-        $('.dropdown-toggle').click(function () {
-            $('.dropdown-menu').toggle();
-        });
-        $('#menu01').click(function () {
-            mallMenuManager.showOrders();
-        });
-        $('#menu02').click(function () {
-            mallMenuManager.showAccounts();
-        });
-        $('#menu03').click(function () {
-            mallMenuManager.showSettlementQuery();
-        });
-        $('#menu04').click(function () {
-            mallMenuManager.showGood();
-        });
-        $("#menu05").click(function () {
-            mallMenuManager.showConfig();
-        })
-    };
-    mallMenuManager.showSettlementQuery = function () {
-        $(".active").removeClass("active");
-        $("#menu03").addClass("active");
-        var _url = /*[['settlements']]*/ "settlements.html";
-        _loadMain(_url);
-        _loadLeftMenu("invoiceMenu.html");
-    };
-    mallMenuManager.showAccounts = function () {
-        $(".active").removeClass("active");
-        $("#menu02").addClass("active");
-        var _url = /*[['accountManage']]*/ "accountManage.html";
-        _loadMain(_url);
-        _loadLeftMenu('');
-    };
-    mallMenuManager.showOrders = function () {
-        $(".active").removeClass("active");
-        $("#menu01").addClass("active");
-        var _url = /*[['getOrdersPage']]*/ "ordersList.html";
-        _loadMain(_url);
-        _loadLeftMenu('ordersMenu.html');
-    };
-    mallMenuManager.showGood = function () {
-        $(".active").removeClass("active");
-        $("#menu04").addClass("active");
-        var _url = /*[['good/showGoodsList']]*/ "/good/showGoodsList.html";
-        _loadMain(_url);
-        _loadLeftMenu('goodMenu.html');
-    };
-    mallMenuManager.showConfig = function () {
-        $(".active").removeClass("active");
-        $("#menu05").addClass("active");
-        var _url = _url = /*[[${erpHost+'/erpService/platform/erpConfig?erpUserType=1'}]]*/ "http://localhost:8081/erpService/platform/erpConfig?erpUserType=1";
-
-        _loadMain(_url);
-        _loadLeftMenu(/*[[@{/supplier/index/configMenu}]]*/ 'configMenu.html');
-    };
-    //#endregion
-
-    $(function () {
-        adaptFrame.init();
-        mallMenuManager.init();
-        mallMenuManager.showOrders();
-    });
-
-    function clickMenu(menuid) {
-        $(".dropdown-menu").hide();
-        $(".active").removeClass("active");
-        $("#menu" + menuid).addClass("active");
-        _loadLeftMenu("");
-        var _url = "";
-        if (menuid == "01") {
-            _url = /*[['accountManage']]*/ "accountManage.html";
-        } else if (menuid == "02") {
-            _url = /*[[getOrdersPage]]*/ "ordersList.html";
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script>
+    var homeHandle = {
+        order:function () {
+            window.location.href= "/order/getOrderList"
         }
-        _loadMain(_url)
-    }
-
-    function _loadMain(url) {
-        $('#loading').show();
-        var randomNo = Math.random();
-        /*<![CDATA[*/
-        $('#content').hide().attr('src', url);
-        /*]]>*/
-    }
-
-    function _loadLeftMenu(leftUrl) {
-        document.getElementById("content_left").src = leftUrl;
-    }
-    function createRight() {//左页面事件，传递给右页面
-        document.getElementById('content').contentWindow.createRight();
     }
 </script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="../resources/js/plugins/hot/bootstrap.hot.extra-utils.js" th:src="@{/resources/js/plugins/hot/bootstrap.hot.extra-utils.js}"></script>
 </html>

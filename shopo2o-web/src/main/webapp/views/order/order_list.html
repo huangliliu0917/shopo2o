@@ -30,44 +30,6 @@
     <script type="text/javascript" src="../../resources/3rdParty/My97DatePicker/WdatePicker.js"
             th:src="@{/resources/3rdParty/My97DatePicker/WdatePicker.js}"></script>
     <script type="text/javascript" th:inline="javascript">
-        var customerId = /*[[${supplierId}]]*/ 1;
-
-        /*<![CDATA[*/
-        var _oldCass = ''
-        $(function () {
-            var authority = "";
-            if (authority != "") {
-                $(".aucontrol").hide();
-            }
-
-//            $('tr').mouseover(function () {
-//                _oldCass = this.className;
-//                this.className = 'over';
-//            }).mouseout(function () {
-//                this.className = _oldCass;
-//            });
-
-        });
-
-        function showList(statu) {
-            if (statu == 0) {
-                $("#shipStatus").attr("value", -1);
-                $('#form1').submit();
-            } else if (statu == 2) {
-                $("#shipStatus").attr("value", 0);
-                $('#form1').submit();
-                //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
-            } else if (statu == 3) {
-                $("#shipStatus").attr("value", 1);
-                $('#form1').submit();
-            } else if (statu == 4) {
-                $("#shipStatus").attr("value", 4);
-                $('#form1').submit();
-            }
-        }
-        /*]]>*/
-    </script>
-    <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         //#region 导出助手
         var exportHelper = {};
@@ -180,8 +142,8 @@
 </head>
 <body marginwidth="0" marginheight="0">
 
-<form method="get" action="/order/getOrdersPage" th:action="@{/order/getOrdersPage}" id="form1"
-      th:object="${searchCondition}">
+<form method="post" action="/order/getOrderList" th:action="@{/order/getOrderList}" id="form1"
+      th:object="${orderSearchCondition}">
     <div class="container">
         <div class="blank10">
         </div>
@@ -218,19 +180,17 @@
                         <label class="first ">付款状态：</label>
                         <select name="payStatus" id="payStatus">
                             <option selected="selected" value="-1" th:selected="*{payStatus == -1}">==所有==</option>
-                            <!--/*@thymesVar id="payStatusEnums" type="com.huotu.hotsupplier.common.ienum.OrderEnum.PayStatus"*/-->
                             <option th:each="payStatusEnum:${payStatusEnums}" th:value="${payStatusEnum.code}"
                                     th:text="${payStatusEnum.value}"
-                                    th:selected="${payStatusEnum.code == searchCondition.payStatus}">未支付
+                                    th:selected="${payStatusEnum.code == orderSearchCondition.payStatus}">未支付
                             </option>
                         </select>
                         <label class="first ">发货状态：</label>
                         <select name="shipStatus" id="shipStatus">
                             <option selected="selected" value="-1" th:selected="*{shipStatus == -1}">==所有==</option>
-                            <!--/*@thymesVar id="shipStatusEnums" type="com.huotu.hotsupplier.common.ienum.OrderEnum.ShipStatus"*/-->
                             <option th:each="shipStatusEnum:${shipStatusEnums}" th:value="${shipStatusEnum.code}"
                                     th:text="${shipStatusEnum.value}"
-                                    th:selected="${shipStatusEnum.code == searchCondition.shipStatus}">未发货
+                                    th:selected="${shipStatusEnum.code == orderSearchCondition.shipStatus}">未发货
                             </option>
                         </select>
                         &nbsp;
@@ -337,27 +297,27 @@
                         <ul style="height: 28px; line-height: 28px;">
                             <span class="left-placeholder"></span>
                             <li class="om-state-default om-corner-top"
-                                th:classappend="${searchCondition.shipStatus==-1?'om-tabs-activated om-state-active':''}"
+                                th:classappend="${orderSearchCondition.shipStatus==-1?'om-tabs-activated om-state-active':''}"
                                 id="ddgl1">
                                 <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner"
                                                                style="width: auto; height: 27px;">全部</a><span
                                     class="liright"></span>
                             </li>
                             <li class="om-state-default om-corner-top"
-                                th:classappend="${searchCondition.shipStatus==0?'om-tabs-activated om-state-active':''}"
+                                th:classappend="${orderSearchCondition.shipStatus==0?'om-tabs-activated om-state-active':''}"
                                 id="ddgl2"><span class="lileft"></span><a
                                     href="javascript:showList(2);" class="om-tabs-inner"
                                     style="width: auto; height: 27px;">未发货</a><span class="liright"></span></li>
 
                             <li class="om-state-default om-corner-top"
-                                th:classappend="${searchCondition.shipStatus==1?'om-tabs-activated om-state-active':''}"
+                                th:classappend="${orderSearchCondition.shipStatus==1?'om-tabs-activated om-state-active':''}"
                                 id="ddgl3"><span class="lileft">
                             </span><a
                                     href="javascript:showList(2);" class="om-tabs-inner"
                                     style="width: auto; height: 27px;">已发货</a><span class="liright"></span></li>
 
                             <li class="om-state-default om-corner-top"
-                                th:classappend="${searchCondition.shipStatus==4?'om-tabs-activated om-state-active':''}"
+                                th:classappend="${orderSearchCondition.shipStatus==4?'om-tabs-activated om-state-active':''}"
                                 id="ddgl4"><span class="lileft"></span><a
                                     href="javascript:showList(4);" class="om-tabs-inner"
                                     style="width: auto; height: 27px;">已退货</a><span class="liright"></span></li>

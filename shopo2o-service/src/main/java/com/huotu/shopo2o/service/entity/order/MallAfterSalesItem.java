@@ -1,7 +1,7 @@
 package com.huotu.shopo2o.service.entity.order;
 
 
-import com.huotu.shopo2o.service.entity.jsonformat.LogiModel;
+import com.huotu.shopo2o.service.jsonformat.LogiModel;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
 import lombok.Getter;
 import lombok.Setter;

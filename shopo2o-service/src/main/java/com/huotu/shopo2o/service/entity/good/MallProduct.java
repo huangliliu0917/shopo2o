@@ -85,5 +85,4 @@ public class MallProduct {
     @Column(name = "DisRebateCustomPercent")
     private Double disRebateCustomPercent;
 
-    // TODO: 3/17/16
 }
