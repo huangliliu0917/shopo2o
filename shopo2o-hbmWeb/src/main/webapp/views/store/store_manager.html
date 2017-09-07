@@ -45,7 +45,7 @@
                             </thead>
                             <tbody th:remove="all-but-first">
                             <tr th:each="shop ,infoState: ${shopPage.content}">
-                                <!--/*@thymesVar id="shop" type="com.huotu.shopo2o.service.entity.Shop"*/-->
+                                <!--/*@thymesVar id="shop" type="com.huotu.shopo2o.service.entity.store.Store"*/-->
                                 <td th:text="${shop.id}">1</td>
                                 <td th:text="${shop.name}">门店1</td>
                                 <td th:text="${shop.address}">浙江省杭州市滨江区智慧e谷</td>
@@ -98,7 +98,7 @@
 <script src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
 <script src="../../resources/js/plugins/hot/bootstrap.hot.extra-utils.js"
         th:src="@{/resources/js/plugins/hot/bootstrap.hot.extra-utils.js}"></script>
-<script src="../../resources/js/shop/shop_manager.js" th:src="@{/resources/js/shop/shop_manager.js}"></script>
+<script src="../../resources/js/store/store_manager.js" th:src="@{/resources/js/store/store_manager.js}"></script>
 
 <script type="text/javascript" th:inline="javascript">
     var pageIndex = /*[[${pageNo}]]*/ 1;

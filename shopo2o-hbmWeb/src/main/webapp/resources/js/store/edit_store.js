@@ -3,8 +3,13 @@
  */
 var map, sendAreaMap, district, polygons = [];
 var mouseTool; //画多边形
-var polylineEditor;//多边形编辑
+var editor = {};
+var storeMarker; //sendAreaMap 中门店点标记
 var regionPolygon; //配送范围多边形
+var regionMarkerIndex = 2; //划分配送范围点序号
+var regionMarkerPosition = {}; //划分配送范围点集合
+var regionRegionDivision = {}; //配送区域集合
+var contextMenu = {}; //右键菜单
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
@@ -53,25 +58,30 @@ $(function () {
                 }
             }
         });
-        selectorHandler.jsSelectItemByValue($("#province")[0],provinceCode);
-        selectorHandler.jsSelectItemByValue($("#city")[0],cityCode);
-        selectorHandler.jsSelectItemByValue($("#district")[0],districtCode);
+        selectorHandler.jsSelectItemByValue($("#province")[0], provinceCode);
+        selectorHandler.jsSelectItemByValue($("#city")[0], cityCode);
+        selectorHandler.jsSelectItemByValue($("#district")[0], districtCode);
         map = new AMap.Map("addressMap", {
             resizeEnable: true,
             center: [lan, lat],
             zoom: 15
         });
         new AMap.Marker({
-            position: [lan, lat]
-        }).setMap(map);
+            position: [lan, lat],
+            map: map
+        });
         sendAreaMap = new AMap.Map("sendArea", {
             resizeEnable: true,
             center: [lan, lat],
-            zoom: 15
+            zoom: 15,
         });
-        new AMap.Marker({
-            position: [lan, lat]
-        }).setMap(sendAreaMap);
+        storeMarker = new AMap.Marker({
+            position: [lan, lat],
+            map: sendAreaMap,
+            title: 1,
+            content:'<div class="marker-route">1</div>'
+        });
+        regionMarkerPosition[1]=storeMarker.getPosition();
         if (!!distributionRegions) {
             var arr = [];//经纬度坐标数组
             for (var i = 0; i < distributionRegions.length; i++) {
@@ -87,7 +97,7 @@ $(function () {
                 fillColor: "#1791fc", //填充色
                 fillOpacity: 0.35//填充透明度
             });
-            polylineEditor = new AMap.PolyEditor(sendAreaMap, regionPolygon);
+            editor.polylineEditor = new AMap.PolyEditor(sendAreaMap, regionPolygon);
         }
     } else {
         map = new AMap.Map("addressMap", {
@@ -197,6 +207,33 @@ var mapHandler = {
             });
 
         });
+        //增加标记的右键菜单
+        contextMenu.addMarker = new AMap.ContextMenu();  //创建右键菜单
+        //右键添加Marker标记
+        contextMenu.addMarker.addItem("添加标记", function (e) {
+            //判断该点是否在配送区域范围
+            if (!regionPolygon.contains(contextMenuMarker.lnglat)) {
+                layer.msg('不在配送区域');
+                return;
+            }
+            var newMarker = new AMap.Marker({
+                map: sendAreaMap,
+                position: contextMenuMarker.lnglat, //基点位置
+                title: regionMarkerIndex,
+                content:'<div class="marker-route">'+regionMarkerIndex + '</div>'
+            }).on('rightclick', function (e) {
+                contextMenu.removeMarker.open(sendAreaMap, e.lnglat);
+                contextMenuMarker = e;
+            });
+            regionMarkerPosition[regionMarkerIndex] = newMarker.getPosition();
+            regionMarkerIndex++;
+        }, 1);
+        //删除标记的右键菜单
+        contextMenu.removeMarker = new AMap.ContextMenu();  //创建右键菜单
+        contextMenu.removeMarker.addItem("删除标记", function (e) {
+            //todo 判断是否有区域使用到该点
+            sendAreaMap.remove(contextMenuMarker.target);
+        }, 1);
     },
     //构建自定义信息窗体
     createInfoWindow: function (data) {
@@ -312,48 +349,34 @@ var mapHandler = {
         $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
         if ('J_RegionDistribution'.indexOf(showClass) > -1) {
             //门店配送范围
-            if (!!polylineEditor) {
-                polylineEditor.open();
+            //todo 如果已划分区域，则不允许修改
+            if (!!editor.polylineEditor) {
+                editor.polylineEditor.open();
             } else {
                 mouseTool = new AMap.MouseTool(sendAreaMap);
                 mouseTool.polygon();
                 mouseTool.on('draw', function (type, obj) {
                     sendAreaMap.plugin(["AMap.PolyEditor"], function () {
-                        polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
-                        polylineEditor.open();
+                        editor.polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
+                        editor.polylineEditor.open();
                         mouseTool.close();
                     });
                 });
             }
         } else if ('J_RegionDivision'.indexOf(showClass) > -1) {
             //配送区域划分
-            mouseTool = new AMap.MouseTool(sendAreaMap);
-            mouseTool.polygon();
-            mouseTool.on('draw', function (type, polygonObj) {
-                //计算有效区域
-                var validPath = [];
-                var path = type.obj.getPath(), regionPath = regionPolygon.getPath();
-                //画出的点是否在区域内
-                for (var i = 0; i < path.length; i++) {
-                    if (regionPolygon.contains(path[i])) {
-                        validPath.push(path[i]);
-                    }
-                }
-                //配送范围的哪些点再画出的区域内
-                for (var j = 0; j < regionPath.length; j++) {
-                    if (type.obj.contains(regionPath[j])) {
-                        validPath.push(regionPath[j]);
-                    }
-                }
-                type.obj.setPath(validPath);
-                sendAreaMap.plugin(["AMap.PolyEditor"], function () {
-                    polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
-                    polylineEditor.open();
-                    mouseTool.close();
-                });
-            });
+            //如果门店配送范围多边形还未设置，就先设置
+            if (regionPolygon == undefined) {
+                layer.msg('请先设置门店配送范围');
+                return;
+            }
+
+            sendAreaMap.on('rightclick', function (e) {
+                contextMenu.addMarker.open(sendAreaMap, e.lnglat);
+                contextMenuMarker = e;
+            })
         } else {
-            polylineEditor.close();
+            editor.polylineEditor.close();
         }
     },
     regionDivision: function (obj) {
@@ -361,24 +384,35 @@ var mapHandler = {
     },
     saveRegionDistribution: function (obj) {
         //保存前先判断点是否在区域内
-        var marker = sendAreaMap.getAllOverlays('marker')[0];
-        var region = sendAreaMap.getAllOverlays('polygon')[0];
-        if (!region.contains(marker.getPosition())) {
+        regionPolygon = editor.polylineEditor.cf;
+        if (!regionPolygon.contains(storeMarker.getPosition())) {
             layer.msg('门店不在该区域内');
             return;
         }
         var distributionRegions = [];
-        var regionPath = region.getPath();
+        var regionPath = regionPolygon.getPath();
         for (var i = 0; i < regionPath.length; i++) {
 
             var lngLatObj = {};
             lngLatObj['lan'] = regionPath[i].getLng();
             lngLatObj['lat'] = regionPath[i].getLat();
             distributionRegions.push(lngLatObj);
+            regionMarkerPosition[regionMarkerIndex] = regionPath[i];
+            //这些点是不允许删除的
+            new AMap.Marker({
+                map: sendAreaMap,
+                position: regionPath[i],
+                title: regionMarkerIndex,
+                content:'<div class="marker-route">'+regionMarkerIndex + '</div>'
+            });
+            regionMarkerIndex++;
         }
         $("input[name=distributionRegions]").val(JSON.stringify(distributionRegions));
-        polylineEditor.close();
+        editor.polylineEditor.close();
         this.regionOption(obj);
+    },
+    saveRegionDivision : function(obj){
+        //保存点标记和配送区域
     }
 };
 
@@ -500,23 +534,33 @@ var selectorHandler = {
 };
 
 var RegionListObj = {};
-
+function getRegionArea(markerStr) {
+    var markers = markerStr.split(",");
+    var position =[];
+    for(var i = 0 ;i<markers.length ;i++){
+        position.push(regionMarkerPosition[markers[i]]);
+    }
+    return position;
+}
 // 模拟API
-function tmpPosition() {
-    return [
-        {lan:1,lat:2},
-        {lan:11,lat:21},
-        {lan:12,lat:22},
-        {lan:13,lat:23},
-        {lan:14,lat:24}
-    ]
+function tmpPosition(positionArr) {
+    var position =[];
+    for(var i = 0 ;i<positionArr.length ;i++){
+        var lngLatObj = {};
+        lngLatObj['lan'] = positionArr[i].getLng();
+        lngLatObj['lat'] = positionArr[i].getLat();
+        position.push(lngLatObj);
+    }
+    return position;
 }
 var Region = {
     id: 0,
     index: Object.keys(RegionListObj).length,
     tpl: function (id, index) {
         return '<tr data-id="' + id + '">' +
-            '    <td><input type="text" value="配送区域' + index + '" class="form-control"></td>' +
+            '    <td><input type="text" value="区域名称' + index + '" class="form-control"></td>' +
+            '    <td><input type="text" placeholder="区域范围" class="form-control"></td>' +
+            '    <td><div class="input-group colorpicker-component"><input type="hidden" placeholder="区域范围" class="form-control"><span class="input-group-addon"><i></i></span></div></td>' +
             '    <td>' +
             '        <button type="button" class="btn btn-success btn-xs js-regionItemEdit displayNone">编辑</button>' +
             '        <button type="button" class="btn btn-success btn-xs js-regionItemSave">保存</button>' +
@@ -532,20 +576,43 @@ var Region = {
             self.id -= 1;
             var tr = self.tpl(self.id, self.index);
             regionList.append(tr);
+            $(".colorpicker-component").colorpicker();
         });
     },
     save: function () {
         $(document).on('click', '.js-regionItemSave', function () {
             $(this).addClass('displayNone').siblings('.js-regionItemEdit').removeClass('displayNone');
             var parent = $(this).closest('tr');
-            var input = parent.find('input');
+            var nameInput = parent.find('input').eq(0),
+                valueInput = parent.find('input').eq(1),
+                colorInput = parent.find('input').eq(2);
             var id = parent.attr('data-id');
             RegionListObj[id] = {};
-            RegionListObj[id]['name'] = input.val();
-            // 临时方案
-            RegionListObj[id]['position'] = tmpPosition();
-            input.prop('readonly', true);
+            RegionListObj[id]['name'] = nameInput.val();
+            RegionListObj[id]['marker'] = valueInput.val();
+            RegionListObj[id]['color'] = colorInput.val();
+            var regionItemArea = getRegionArea(RegionListObj[id]['marker']);
+            RegionListObj[id]['position'] = tmpPosition(regionItemArea);
+            nameInput.prop('readonly', true);
+            valueInput.prop('readonly', true);
+            colorInput.prop('readonly', true);
+            colorInput.prop('disabled', true);
             console.info(RegionListObj);
+            //如果已经存在区域，先把这个区域删除
+            if(regionRegionDivision[id] != undefined){
+                sendAreaMap.remove(regionRegionDivision[id]);
+            }
+            //在地图上画出该区域
+            var newPolygon = new AMap.Polygon({
+                map: sendAreaMap,
+                path: regionItemArea,     //设置折线的节点数组
+                strokeColor: ''+colorInput.val(), //线颜色
+                strokeOpacity: 0.5, //线透明度
+                strokeWeight: 3,    //线宽
+                fillColor: ''+colorInput.val(), //填充色
+                fillOpacity: 0.5//填充透明度
+            });
+            regionRegionDivision[id] = newPolygon;
         });
     },
     edit: function () {
@@ -556,13 +623,13 @@ var Region = {
         });
     },
     delete: function () {
-      $(document).on('click', '.js-regionItemDel', function () {
-          var parent = $(this).closest('tr');
-          var id = parent.attr('data-id');
-          parent.remove();
-          delete RegionListObj[id];
-          console.info(RegionListObj);
-      });
+        $(document).on('click', '.js-regionItemDel', function () {
+            var parent = $(this).closest('tr');
+            var id = parent.attr('data-id');
+            parent.remove();
+            delete RegionListObj[id];
+            console.info(RegionListObj);
+        });
     },
     init: function () {
         this.addList();

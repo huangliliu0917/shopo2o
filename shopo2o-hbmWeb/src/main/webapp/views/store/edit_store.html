@@ -18,10 +18,21 @@
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet"/>
 
     <!--高德地图-->
     <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
     <link href="../../resources/css/custom.css" th:href="@{/resources/css/custom.css}" rel="stylesheet"/>
+    <style type="text/css">
+        .marker-route{
+            background: url(http://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png);
+            position: absolute;
+            width: 19px;
+            height: 33px;
+            text-align: center;
+            color: #ffffff;
+        }
+    </style>
 
 </head>
 <body class="gray-bg">
@@ -200,7 +211,7 @@
                                                 </div>
                                             </div>
                                             <div class="displayNone" id="J_RegionDivision">
-                                                <h3 class="text-muted">配送区域划分</h3>
+                                                <h3 class="text-muted">配送区域划分</h3><small>在地图上右键点击可添加或删除点标记</small>
                                                 <div class="form-inline">
                                                     <button type="button" class="btn btn-m btn-success" onclick="mapHandler.regionDivision(this)">
                                                         保存
@@ -216,8 +227,10 @@
                                                     <table class="table table-striped">
                                                         <thead>
                                                         <tr>
-                                                            <th>区域名称</th>
-                                                            <th>操作</th>
+                                                            <th class="col-sm-4">区域名称</th>
+                                                            <th class="col-sm-4">区域范围</th>
+                                                            <th class="col-sm-2">颜色</th>
+                                                            <th class="col-sm-2">操作</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody id="J_regionList"></tbody>
@@ -277,6 +290,7 @@
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/l10n/zh.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
 
 <!--valid-->
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
@@ -297,7 +311,7 @@
         $("input[name=distributionRegions]").val(distributionRegions);
     }
 </script>
-<script  type="text/javascript" src="../../resources/js/shop/edit_shop.js"
-         th:src="@{/resources/js/shop/edit_shop.js}"></script>
+<script  type="text/javascript" src="../../resources/js/store/edit_store.js"
+         th:src="@{/resources/js/store/edit_store.js}"></script>
 </body>
 </html>

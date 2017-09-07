@@ -1,5 +1,7 @@
-package com.huotu.shopo2o.service.entity;
+package com.huotu.shopo2o.service.entity.store;
 
+import com.huotu.shopo2o.service.entity.DistributionRegion;
+import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.support.DistributionRegionConverter;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +21,7 @@ import java.util.List;
 @Getter
 @Setter
 @Cacheable(false)
-public class Shop {
+public class Store {
 
     @Id
     @Column(name = "Store_Id")
