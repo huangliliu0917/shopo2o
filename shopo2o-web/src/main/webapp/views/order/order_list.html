@@ -1,383 +1,353 @@
 <!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+<!--@thymesVar id="ordersList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallOrder>"-->
+<head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-    <title>
+    <title>订单列表</title>
 
-        订单列表
-    </title>
-    <link href="../../resources/3rdParty/css/admin.global.css" th:href="@{/resources/3rdParty/css/admin.global.css}"
-          rel="stylesheet" type="text/css"/>
-    <link href="../../resources/3rdParty/css/admin.content.css" th:href="@{/resources/3rdParty/css/admin.content.css}"
-          rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="../../resources/3rdParty/js/jquery-1.7.2.min.js"
-            th:src="@{/resources/3rdParty/js/jquery-1.7.2.min.js}"></script>
-    <script type="text/javascript" src="../../resources/3rdParty/js/jquery.utils.js"
-            th:src="@{/resources/3rdParty/js/jquery.utils.js}"></script>
-    <link href="../../resources/3rdParty/jBox/Skins/Green/jbox.css"
-          th:href="@{/resources/3rdParty/jBox/Skins/Green/jbox.css}" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="../../resources/3rdParty/jBox/jquery.jBox-2.3.min.js"
-            th:src="@{/resources/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
-    <script type="text/javascript" src="../../resources/3rdParty/js/admin.js"
-            th:src="@{/resources/3rdParty/js/admin.js}"></script>
-    <link href="../../resources/3rdParty/omTabs/themes/default/operamasks-ui.min.css"
-          th:href="@{/resources/3rdParty/omTabs/themes/default/operamasks-ui.min.css}" rel="stylesheet" type="text/css"/>
-    <script src="../../resources/3rdParty/jqueryui/jquery-ui-1.8.20.min.js"
-            th:src="@{/resources/3rdParty/jqueryui/jquery-ui-1.8.20.min.js}"></script>
-    <link href="../../resources/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css"
-          th:href="@{/resources/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css}" rel="stylesheet"/>
-    <script type="text/javascript" src="../../resources/3rdParty/My97DatePicker/WdatePicker.js"
-            th:src="@{/resources/3rdParty/My97DatePicker/WdatePicker.js}"></script>
-    <script type="text/javascript" th:inline="javascript">
-        var isInteger = /^[0-9]*[1-9][0-9]*$/;
-        //#region 导出助手
-        var exportHelper = {};
-        exportHelper.checkPage = function (txtBeginPage, txtEndPage) {
-            var numberBug = pageCount;//总页数
-            if (txtBeginPage == '' || txtEndPage == ''||!isInteger.test(txtBeginPage)||!isInteger.test(txtEndPage)) {
-                return {flag: false, msg: '请输入正确的起止页码'};
-            }
-            var beginPage = parseInt(txtBeginPage);
-            var endPage = parseInt(txtEndPage);
-            var maxPage = parseInt(numberBug);
-            if (endPage < beginPage) {
-                return {flag: false, msg: '结束页不能小于起始页'};
-            }
-            if (endPage > maxPage) {
-                return {flag: false, msg: '结束页不能大于总页数'};
-            }
-            return {flag: true};
-        };
-
-        exportHelper.showDialogV2 = function () {
-            var txtBeginPage = $("#txtBeginPage").val();
-            var txtEndPage = $("#txtEndPage").val();
-            var chkResult = this.checkPage(txtBeginPage, txtEndPage);
-            if (!chkResult.flag) {
-                jBox.tip(chkResult.msg, 'info');
-                return;
-            }
-            var url = /*[[@{/order/orderExport}]]*/ "";
-        };
-        $(function () {
-        });
-    </script>
-    <style>
-        #jbox {
-            left: 20%;
-        }
-    </style>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+    <!--checkbox-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
+          rel="stylesheet"/>
 </head>
-<body marginwidth="0" marginheight="0">
-
-<form method="post" action="/order/getOrderList" th:action="@{/order/getOrderList}" id="form1"
-      th:object="${orderSearchCondition}">
-    <div class="container">
-        <div class="blank10">
-        </div>
-        <div class="search block">
-            <div class="h">
-                <span class="icon-sprite icon-magnifier"></span>
-                <h3>订单筛选</h3>
-            </div>
-            <div class="tl corner">
-            </div>
-            <div class="tr corner">
-            </div>
-            <div class="bl corner">
-            </div>
-            <div class="br corner">
-            </div>
-            <div class="cnt-wp">
-                <div class="cnt">
-                    <div class="search-bar">
-                        <label class="first ">订单号：</label>
-                        <input name="orderId" type="text" th:value="*{orderId}" id="orderId" class="input-small"
-                               style="width: 120px;"/>
-                        <label class="first ">商品名称：</label>
-                        <input name="orderItemName" type="text" th:value="*{orderItemName}" id="orderItemName"
-                               class="input-small" style="width: 120px;"/>
-                        <label class="first ">收货人姓名：</label>
-                        <input name="shipName" type="text" th:value="*{shipName}" id="shipName" class="input-small"
-                               style="width: 120px;"/>
-                        <label class="first ">收货人电话：</label>
-                        <input name="shipMobile" type="text" th:value="*{shipMobile}" id="shipMobile"
-                               class="input-small" style="width: 120px;"/>
-                        <br/>
-                        <br/>
-                        <label class="first ">付款状态：</label>
-                        <select name="payStatus" id="payStatus">
-                            <option selected="selected" value="-1" th:selected="*{payStatus == -1}">==所有==</option>
-                            <option th:each="payStatusEnum:${payStatusEnums}" th:value="${payStatusEnum.code}"
-                                    th:text="${payStatusEnum.value}"
-                                    th:selected="${payStatusEnum.code == orderSearchCondition.payStatus}">未支付
-                            </option>
-                        </select>
-                        <label class="first ">发货状态：</label>
-                        <select name="shipStatus" id="shipStatus">
-                            <option selected="selected" value="-1" th:selected="*{shipStatus == -1}">==所有==</option>
-                            <option th:each="shipStatusEnum:${shipStatusEnums}" th:value="${shipStatusEnum.code}"
-                                    th:text="${shipStatusEnum.value}"
-                                    th:selected="${shipStatusEnum.code == orderSearchCondition.shipStatus}">未发货
-                            </option>
-                        </select>
-                        &nbsp;
-                        <label class="first ">排序：</label>
-                        <select name="orderType" id="orderType">
-                            <option selected="selected" value="0" th:selected="*{orderType==0}">按下单时间</option>
-                            <option value="1" th:selected="*{orderType==1}">按支付时间</option>
-                            <option value="2" th:selected="*{orderType==2}">按订单金额</option>
-                        </select>
-                        <style type="text/css">
-                            #raSortType label {
-                                padding-left: 0px;
-                            }
-                        </style>
-                        <span id="raSortType">
-                            <input id="raSortType_0" type="radio" name="raSortType" value="0"
-                                   th:checked="*{orderRule==0}" checked="checked"/>
-                            <label for="raSortType_0">倒序</label>
-                            <input id="raSortType_1" type="radio" name="raSortType" value="1"
-                                   th:checked="*{orderRule==1}"/>
-                            <label for="raSortType_1">顺序</label>
-                            <input type="hidden" name="orderRule" th:value="*{orderRule}"/>
-                        </span>
-
-                        <br/>
-                        <br/>
-
-                        <label class="first ">下单时间：</label>
-
-                        <input name="beginTime" type="text" id="beginTime" placeholder=" [开始日期]"
-                               class="input-normal Wdate" th:value="*{beginTime}"
-                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>---
-                        <input name="endTime" type="text" id="endTime" placeholder=" [结束日期]"
-                               class="input-normal Wdate" th:value="*{endTime}"
-                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'beginTime\')}'})"/>
-
-                        <br/>
-                        <br/>
-
-                        <label class="first ">支付时间：</label>
-
-                        <input name="beginPayTime" type="text" id="beginPayTime" th:value="*{beginPayTime}"
-                               placeholder=" [开始日期]"
-                               class="input-normal Wdate"
-                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>---
-                        <input name="endPayTime" type="text" id="endPayTime" th:value="*{endPayTime}"
-                               placeholder=" [结束日期]"
-                               class="input-normal Wdate"
-                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'beginPayTime\')}'})"/>
-
-                        <div style="display: none;">
-                            <input type="submit" name="btnSearch" value="" id="btnSearch"/>
-                            <input type="submit" name="btnSearchAll" value="" id="btnSearchAll"/>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${searchCondition}">
+    <!--search-->
+    <form role="form" class="search-panel" method="get" action="/order/getOrdersPage"
+          th:action="@{/order/getOrderList}" id="form1">
+        <input type="hidden" name="pageIndex" value="1" th:value="${pageIndex}"/>
+        <input type="hidden" name="version" value="V2"/>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>订单列表</h5></div>
+                    <div class="ibox-content p-m">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="orderId">订单号：</label>
+                                <input type="text" class="form-control input-sm mb10" id="orderId" name="orderId"
+                                       th:value="*{orderId}"
+                                       runat="server" placeholder="订单号" style="width: 156px;"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="orderItemName">商品名称：</label>
+                                <input type="text" class="form-control input-sm mb10" id="orderItemName"
+                                       th:value="*{orderItemName}"
+                                       name="orderItemName" runat="server" placeholder="用户名"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="shipName">收货人姓名：</label>
+                                <input type="text" class="form-control input-sm mb10" id="shipName" name="shipName"
+                                       th:value="*{shipName}"
+                                       runat="server" placeholder="收货人姓名"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="shipMobile">收货人电话：</label>
+                                <input type="text" class="form-control input-sm mb10" id="shipMobile" name="shipMobile"
+                                       th:value="*{shipMobile}"
+                                       runat="server" placeholder="收货人电话"/>
+                            </div>
                         </div>
-                        <label><a class="btn-lit btn-middle" id="search" href="javascript:searchOrder();"
-                                  style="margin-bottom: 3px;"><span>搜索</span></a></label>
-                        <label><a class="btn-lit btn-middle" id="searchAll" href="javascript:searchOrderAll();"
-                                  style="margin-bottom: 3px;"><span>显示全部</span></a></label>
-
-                        <br/>
-                        <br/>
-                        <label class="first ">导出订单：</label>
-                        第<input name="txtBeginPage" type="text" value="1" id="txtBeginPage"
-                                style="height:15px;width:28px;"/>页
-                        至 第<input name="txtEndPage" type="text" value="5" id="txtEndPage" th:value="${totalPages}"
-                                  class="input-small OnlyNum"
-                                  style="height:15px;width:28px;"/>页
-                        <label>
-                            <a id="A1" class="btn-lit btn-middle" style="margin-bottom: 3px;"
-                               href="javascript:exportHelper.showDialogV2();">
-                                <span>导出主订单</span>
-                            </a>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="blank10">
-        </div>
-        <div class="block">
-            <div class="h">
-                <span class="icon-sprite icon-list"></span>
-
-                <h3 style="float: left; width: 144px;">订单管理 </h3>
-
-                <div class="bar">
-                    <a class="btn-lit aucontrol" href="javascript:showBatchDelivery();">
-                        <span>批量发货</span></a>
-                </div>
-            </div>
-            <div class="tl corner">
-            </div>
-            <div class="tr corner">
-            </div>
-            <div class="bl corner">
-            </div>
-            <div class="br corner">
-            </div>
-            <div class="cnt-wp">
-
-                <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
-                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border"
-                         style="height: 28px;">
-                        <ul style="height: 28px; line-height: 28px;">
-                            <span class="left-placeholder"></span>
-                            <li class="om-state-default om-corner-top"
-                                th:classappend="${orderSearchCondition.shipStatus==-1?'om-tabs-activated om-state-active':''}"
-                                id="ddgl1">
-                                <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner"
-                                                               style="width: auto; height: 27px;">全部</a><span
-                                    class="liright"></span>
-                            </li>
-                            <li class="om-state-default om-corner-top"
-                                th:classappend="${orderSearchCondition.shipStatus==0?'om-tabs-activated om-state-active':''}"
-                                id="ddgl2"><span class="lileft"></span><a
-                                    href="javascript:showList(2);" class="om-tabs-inner"
-                                    style="width: auto; height: 27px;">未发货</a><span class="liright"></span></li>
-
-                            <li class="om-state-default om-corner-top"
-                                th:classappend="${orderSearchCondition.shipStatus==1?'om-tabs-activated om-state-active':''}"
-                                id="ddgl3"><span class="lileft">
-                            </span><a
-                                    href="javascript:showList(2);" class="om-tabs-inner"
-                                    style="width: auto; height: 27px;">已发货</a><span class="liright"></span></li>
-
-                            <li class="om-state-default om-corner-top"
-                                th:classappend="${orderSearchCondition.shipStatus==4?'om-tabs-activated om-state-active':''}"
-                                id="ddgl4"><span class="lileft"></span><a
-                                    href="javascript:showList(4);" class="om-tabs-inner"
-                                    style="width: auto; height: 27px;">已退货</a><span class="liright"></span></li>
-
-                            <span class="right-placeholder"></span>
-                        </ul>
-                    </div>
-                    <div class="om-tabs-panels om-widget-content om-corner-bottom">
-
-                        <div class="om-widget om-panel ">
-                            <div id="Div2"
-                                 class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
-                                <div class="cnt">
-                                    <style>
-
-                                        .kkl td {
-                                            max-width: 110px;
-                                            text-align: center;
-                                            word-wrap: break-word;
-                                            word-break: break-all
-                                        }
-                                    </style>
-                                    <table class="data-table even1 " width="100%" border="0" cellspacing="0"
-                                           cellpadding="0">
-                                        <tr class="kkl">
-                                            <th scope="col">订单号
-                                            </th>
-                                            <th scope="col">商品
-                                            </th>
-                                            <th scope="col">
-                                                下单时间/支付时间
-                                            </th>
-
-                                            <th scope="col">总额(¥)
-                                            </th>
-
-                                            <th scope="col">收货人
-                                            </th>
-
-                                            <th scope="col">状态
-                                            </th>
-                                            <th scope="col">支付方式
-                                            </th>
-                                            <th scope="col">订单类型
-                                            </th>
-                                            <th scope="col">操作
-                                            </th>
-                                        </tr>
-                                        <tbody>
-                                        <tr class="kkl" th:each="orders:${ordersList}"
-                                            th:classappend="${ordersStat.odd}? 'even'">
-                                            <td style="width: 165px;">
-                                                <a href="javascript:void(0)" th:attr="orderId=''+${orders.orderId}"
-                                                   onclick="showDetail(this)" title="查看详细"
-                                                   th:text="${orders.orderId}"></a>
-                                            </td>
-                                            <td style="width: 265px">
-                                                <div style="clear: both" th:each="item:${orders.orderItems}">
-                                                    <div style="width: 50px; height: 50px;margin: 0 5px; float: left">
-                                                        <!--商品-->
-                                                        <img style="width: 100%;"
-                                                             src=""
-                                                             th:src="${item.picUri != null ? item.picUri.toString() : '../resource/3rdParty/images/none.png'}"/>
-                                                    </div>
-                                                    <div style="float: left; width:200px; text-align: left">
-                                                        <p style="white-space:nowrap; text-overflow:ellipsis;-o-text-overflow:ellipsis; overflow: hidden;width:80%;"
-                                                           th:text="${item.name}">商品名称</p>
-
-                                                        <p th:text="'X' + ${item.nums}">X1</p></div>
-                                                </div>
-                                            </td>
-                                            <td style="width: 150px;">
-                                                <p th:text="${#dates.format(orders.createTime,'yyyy-MM-dd HH:mm:ss')}">
-                                                    2015/9/21 20:18:01</p>
-                                                <p style='color:#ccc;'
-                                                   th:if="${orders.payTime!=null and orders.payTime!='——无——'}"
-                                                   th:text="${#dates.format(orders.payTime,'yyyy-MM-dd HH:mm:ss')}">
-                                                    ——无——</p>
-                                            </td>
-                                            <td th:text="${orders.finalAmount}">100</td>
-                                            <td style="width: 100px;" th:text="${orders.shipName}">
-                                                asdf
-                                            </td>
-                                            <td>
-                                                <p th:text="${orders.payStatus.value}">未支付</p>
-                                                <p th:text="${orders.shipStatus.value}">未发货</p>
-                                            </td>
-                                            <td th:text="${orders.paymentType.value}">
-                                                银联在线支付
-                                            </td>
-                                            <td th:text="${orders.orderSourceType.value}">
-                                                普通订单
-                                            </td>
-                                            <td style="width: 80px;">
-                                                <div th:inline="text">
-                                                    <p th:if="${orders.deliveryable()}">
-                                                        <a href="javascript:void(0)"
-                                                           th:attr="orderId=''+${orders.orderId}"
-                                                           th:onclick="|showConsignFlow(this,${orders.orderSourceType.code})|"
-                                                           onclick="showConsignFlow(this)" id="btnConsignFlow"
-                                                           title="发货" th:if="${orders.deliveryable()}">发货</a>
-                                                    </p>
-                                                    <p>
-                                                        <a href="javascript:void(0)"
-                                                           th:attr="orderId=''+${orders.orderId}"
-                                                           onclick="showDetail(this)" id="btnDetail"
-                                                           title="查看详细">查看详细</a>
-                                                    </p>
-                                                    <p>
-                                                        <a href="javascript:void(0)"
-                                                           th:attr="orderId=''+${orders.orderId}"
-                                                           onclick="showRemark(this)" id="supplierRemark"
-                                                           title="备注">备注</a>
-                                                    </p>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        </tbody>
-                                    </table>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="createTimePick">下单时间：</label>
+                                <input type="text" class="form-control input-sm mb10"
+                                       id="createTimePick" name="createTimePick"
+                                       placeholder="开始时间-结束时间" style="width: 310px;"
+                                       th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') ">
+                                <input type="hidden" id="beginTime" name="beginTime" runat="server"
+                                       th:value="*{beginTime}"/>
+                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="payTimePick">支付时间：</label>
+                                <input type="text" class="form-control input-sm mb10"
+                                       id="payTimePick" name="payTimePick" placeholder="开始时间-结束时间" style="width: 310px;"
+                                       th:value="(*{beginPayTime!= null and beginPayTime != ''}  ? *{beginPayTime} :'')  + (*{endPayTime != null and endPayTime != ''} ?  ' - ' + *{endPayTime} :'') "/>
+                                <input type="hidden" id="beginPayTime" name="beginPayTime"
+                                       th:value="*{beginPayTime}"/>
+                                <input type="hidden" id="endPayTime" name="endPayTime"
+                                       th:value="*{endPayTime}"/>
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline" style="max-width: 926px;">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label">排序：</label>
+                                <select class="form-control input-sm" name="orderType" id="orderType">
+                                    <option selected="selected" value="0" th:selected="*{orderType==0}">按下单时间</option>
+                                    <option value="1" th:selected="*{orderType==1}">按支付时间</option>
+                                    <option value="2" th:selected="*{orderType==2}">按订单金额</option>
+                                </select>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <div class="radio radio-primary" style="padding-left: 8px;">
+                                    <input type="radio" id="raSortType_0" name="orderRule"
+                                           checked="checked" value="0" th:checked="*{orderRule==0}"/>
+                                    <label for="raSortType_0">倒序</label>
                                 </div>
-                                <script type="text/javascript" th:inline="javascript">
-                                    /*<![CDATA[*/
-                                    var pageSize = /*[[${pageSize}]]*/ '1';
-                                    var pageIndex = /*[[${pageIndex}]]*/ '1';
-                                    var pageCount = /*[[${totalPages}]]*/ '1';
-                                    var recordCount = /*[[${totalRecords}]]*/ '1';
-                                    var formName = 'form1';
-                                    Pager.Output(formName, 'pageIndex', pageSize, pageIndex, pageCount, recordCount);
-                                    /*]]>*/
-                                </script>
+                                <div class="radio radio-primary" style="padding-left: 8px;">
+                                    <input type="radio" id="raSortType_1" name="orderRule" value="1"
+                                           th:checked="*{orderRule==1}"/>
+                                    <label for="raSortType_1">顺序</label>
+                                </div>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="ddlShipStatus">发货状态：</label>
+                                <select class="form-control input-sm" name="shipStatus" id="ddlShipStatus">
+                                    <option selected="selected" value="-1" th:selected="*{shipStatus == -1}">
+                                        ==所有==
+                                    </option>
+                                    <!--/*@thymesVar id="shipStatusEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.ShipStatus>"*/-->
+                                    <option th:each="shipStatusEnum:${shipStatusEnums}"
+                                            th:value="${shipStatusEnum.code}" th:text="${shipStatusEnum.value}"
+                                            th:selected="${shipStatusEnum.code == searchCondition.shipStatus}">未发货
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">结算状态：</label>
+                                <select class="form-control input-sm" name="settleStatus" id="settleStatus">
+                                    <option selected="selected" value="-1">请选择</option>
+                                    <option value="1" th:selected="*{settleStatus == 1}">待结算</option>
+                                    <option value="2" th:selected="*{settleStatus == 2}">已结算</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div id="extraSearch_panel">
+                            <div class="form-inline">
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="ddlOrderStatus">订单状态：</label>
+                                    <select class="form-control input-sm" name="orderStatus" id="ddlOrderStatus">
+                                        <option selected="selected" value="-2" th:selected="*{orderStatus == -2}">
+                                            ==所有==
+                                        </option>
+                                        <!--/*@thymesVar id="orderStatusEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.OrderStatus>"*/-->
+                                        <option th:each="orderStatusEnum:${orderStatusEnums}"
+                                                th:value="${orderStatusEnum.code}" th:text="${orderStatusEnum.value}"
+                                                th:selected="${orderStatusEnum.code == searchCondition.orderStatus}">活动
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="ddlPayStatus">支付状态：</label>
+                                    <select class="form-control input-sm" name="payStatus" id="ddlPayStatus">
+                                        <option selected="selected" value="-1" th:selected="*{payStatus == -1}">==所有==
+                                        </option>
+                                        <!--/*@thymesVar id="payStatusEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.PayStatus>"*/-->
+                                        <option th:each="payStatusEnum:${payStatusEnums}"
+                                                th:value="${payStatusEnum.code}" th:text="${payStatusEnum.value}"
+                                                th:selected="${payStatusEnum.code == searchCondition.payStatus}">未支付
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="ddlOrderSource">订单类型：</label>
+                                    <select class="form-control input-sm" name="sourceTypeStatus" id="ddlOrderSource">
+                                        <option selected="selected" value="-1" th:selected="*{sourceTypeStatus == -1}">
+                                            ==所有==
+                                        </option>
+                                        <!--/*@thymesVar id="sourceTypeEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.OrderSourceType>"*/-->
+                                        <option th:each="sourceTypeEnum:${sourceTypeEnums}"
+                                                th:value="${sourceTypeEnum.code}" th:text="${sourceTypeEnum.value}"
+                                                th:selected="${sourceTypeEnum.code == searchCondition.sourceTypeStatus}">
+                                            普通订单
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group m-r-sm">
+                                    <label class=" control-label" for="ddlPayType">支付类型：</label>
+                                    <!--/*@thymesVar id="paymentTypeEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.PaymentOptions>"*/-->
+                                    <select class="form-control input-sm" id="ddlPayType" name="paymentTypeStatus">
+                                        <option selected="selected" value="-1" th:selected="*{paymentTypeStatus == -1}">
+                                            ==所有==
+                                        </option>
+                                        <option th:each="paymentTypeEnum:${paymentTypeEnums}"
+                                                th:value="${paymentTypeEnum.code}" th:text="${paymentTypeEnum.value}"
+                                                th:selected="${paymentTypeEnum.code == searchCondition.paymentTypeStatus}">
+                                            微信支付
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline" style="max-width: 926px; text-align: right;">
+                            <button type="button" onclick="orderListHandler.search(1)" class="btn btn-success btn-sm">筛选
+                            </button>
+                            <button type="button" onclick="orderListHandler.searchAll()" class="btn btn-success btn-sm">
+                                显示全部
+                            </button>
+                            <button type="button" class="btn btn-white btn-sm" id="btnBatchExport">批量导出</button>
+                            <button type="button" id="btnBatchDeliver" class="btn btn-white btn-sm">批量发货</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li th:class="*{shipStatus == -1} ? 'active' : ''"><a href="javascript:showList('',-1);">全部</a>
+                        </li>
+                        <!--<li th:class="*{payStatus == 0} ? 'active' : _"><a href="javascript:showList('#ddlPayStatus',0)">待付款</a></li>-->
+                        <li th:class="*{shipStatus == 0} ? 'active' : ''"><a href="javascript:showList('shipStatus',0)">未发货</a>
+                        </li>
+                        <li th:class="*{shipStatus == 1} ? 'active' : ''"><a href="javascript:showList('shipStatus',1)">已发货</a>
+                        </li>
+                        <li th:class="*{shipStatus == 4} ? 'active' : ''"><a href="javascript:showList('shipStatus',4)">已退货</a>
+                        </li>
+                        <!--<li th:class="*{orderStatus == -1} ? 'active' : _"><a href="javascript:showList('#ddlOrderStatus',-1)">已关闭</a></li>-->
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div class="panel-body">
+                                <table th:each="orders:${ordersList}"
+                                       class="table table-bordered table-hover table-center">
+                                    <thead>
+                                    <tr>
+                                        <th colspan="8" style="color: #636e7b; padding-bottom: 0px; text-align: left;">
+                                            <label th:if="${orders.supplierMarkType != null and orders.supplierMarkType != ''}">
+                                                <img src="../resource/images/remark_icons/b1.gif"
+                                                     th:src="@{/resource/images/remark_icons/} + ${orders.supplierMarkType} + '.gif'"
+                                                     width="20" height="20"/></label>
+                                            订单号：
+                                            <th:block th:text="${orders.orderId}">2016081638541286</th:block>
+                                            <span class="text-danger" th:text="'（' + ${orders.orderStatus.value} + '）'">（活动）</span>
+                                            <th:block
+                                                    th:if="${orders.settleStatus != null and orders.settleStatus ==2}">
+                                                <span class="text-warning">（已结算）</span></th:block>
+                                            <p style="float: right;">
+                                                <span class="glyphicon glyphicon-time" data-placement="top"
+                                                      data-toggle="tooltip" data-original-title="下单时间"></span>：
+                                                <th:block
+                                                        th:text="${#dates.format(orders.createTime,'yyyy-MM-dd HH:mm:ss')}">
+                                                    2016-04-19 17:20:12
+                                                </th:block>
+                                                &nbsp;
+                                                <span th:if="${orders.payTime != null}"><i class="fa fa-cny"
+                                                                                           data-placement="top"
+                                                                                           data-toggle="tooltip"
+                                                                                           data-original-title="支付时间"></i>：<th:block
+                                                        th:text="${#dates.format(orders.payTime,'yyyy-MM-dd HH:mm:ss')}">2016-10-22 17:46:13</th:block>&nbsp;</span>
+
+                                                <span class="glyphicon glyphicon-copyright-mark" data-placement="top"
+                                                      data-toggle="tooltip" data-original-title="支付类型"></span>
+                                                <th:block
+                                                        th:text="${orders.paymentType != null ? orders.paymentType.value : '未知'}">
+                                                    预付款
+                                                </th:block>
+                                            </p>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>商品信息</td>
+                                        <td>金额</td>
+                                        <td>收货人</td>
+                                        <td>订单类型</td>
+                                        <td>支付状态</td>
+                                        <td>发货状态</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 40%;">
+                                            <p th:each="item:${orders.orderItems}" style="width: 100%; height: 50px;">
+                                                <!--商品-->
+                                                <img style="width: 50px; height: 50px; float: left; margin-left: 5px;"
+                                                     src=""
+                                                     th:src="${item.picUri != null ? item.picUri.toString() : '../resource/3rdParty/images/none.png'}"/>
+                                                <span style="overflow: hidden; text-align: left; margin-left: 10px; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1;
+                                                 -webkit-box-orient: vertical; width: 54%; float: left;"
+                                                      th:text="${item.name}">商品名称</span>
+                                                <span style="float: right; margin-top: 30px"
+                                                      th:text="'X' + ${item.nums}">X1</span>
+                                            </p>
+                                        </td>
+                                        <td>
+                                            <p th:text="'实付金额：' + ${orders.finalAmount}"></p>
+                                            <p th:text="'成本价：' + ${#aggregates.sum(orders.orderItems.![cost * nums])}"></p>
+                                        </td>
+                                        <td th:text="${orders.shipName}">allan</td>
+                                        <td th:text="${orders.orderSourceType != null ? orders.orderSourceType.value : '未知'}">
+                                            普通订单
+                                        </td>
+                                        <td th:text="${orders.payStatus.value}">已支付</td>
+                                        <td th:text="${orders.shipStatus.value}">已发货</td>
+                                        <td style="width: 15%;">
+                                            <span class="cursor-point" th:if="${orders.deliveryable()}"
+                                                  th:attr="orderId=''+${orders.orderId}"
+                                                  th:onclick="|orderListHandler .showConsignFlow(this,${orders.orderSourceType != null ? orders.orderSourceType.code : ''})|"
+                                                  onclick="orderListHandler.showConsignFlow(this)" id="btnConsignFlow">
+                                                        <i class="fa fa-truck fa-lg tooltips"
+                                                           data-placement="top" data-toggle="tooltip"
+                                                           data-original-title="发货"></i>
+                                            </span>
+                                            &nbsp;
+                                            <span class="cursor-point" th:attr="orderId=''+${orders.orderId}"
+                                                  onclick="showDetail(this)" id="btnDetail">
+                                                <i class="fa fa-pencil fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip"
+                                                   data-original-title="操作订单"></i></span>
+                                            &nbsp;
+                                            <span class="cursor-point"
+                                                  th:attr="orderId=''+${orders.orderId},markType = ${orders.supplierMarkType},markText = ${orders.supplierMarkText}"
+                                                  onclick="showRemark(this)" id="supplierRemark">
+                                                <i class="fa fa-edit fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip" data-original-title="备注"></i></span>
+                                        </td>
+                                    </tr>
+                                    <thead th:if="${orders.memo != null and orders.memo != ''}">
+                                    <tr>
+                                        <th colspan="8" style="color: #636e7b; padding-bottom: 0px; text-align: left;">
+                                            <i class="fa fa-commenting-o" data-placement="top" data-toggle="tooltip"
+                                               data-original-title="备注"></i>：
+                                            <th:block th:text="${orders.memo}">备注备注备注备注备注备注备注备注备注备注</th:block>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    </tbody>
+                                </table>
+                                <p style="float: left; margin: 20px 0;">共
+                                    <th:block th:text="${totalRecords}">100</th:block>
+                                    条记录，当前第
+                                    <th:block th:text="${pageIndex}">1</th:block>
+                                    /
+                                    <th:block th:text="${totalPages}">15</th:block>
+                                    ，每页
+                                    <th:block th:text="${pageSize}">10</th:block>
+                                    条记录
+                                </p>
+                                <ul style="float: right;" class="pagination pagination-split">
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -385,70 +355,351 @@
             </div>
         </div>
     </div>
-</form>
+</div>
+<!--批量导出-->
+<div id="batchExportModal" class="modal-content-tag">
+    <div class="form-inline">
+        <div class="form-group">
+            <label class=" control-label" for="orderId">导出订单：</label>
+            第<input type="text" class="form-control input-sm mb10" id="txtBeginPage" style="width: 80px;" value="1"/>页 至
+            第<input type="text" class="form-control input-sm mb10" id="txtEndPage" style="width: 80px;"
+                    th:value="${totalPages}"/>页
+        </div>
+    </div>
+</div>
+<!--批量发货modal-->
+<div id="batchDeliverModal" class="modal-content-tag tooltip-demo">
+    <form id="batchDeliver_form" novalidate="novalidate">
+        <div class="form-horizontal" style="width: 500px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Excel：</label>
+                <div class="col-sm-8">
+                    <div class="form-group">
+                        <input type="file" class="form-control" name="FileData" id="batchDeliverFile" required=""
+                               aria-required="true"/>
+                    </div>
+                </div>
+                <label class="col-sm-2 control-label">
+                    <a th:href="@{/resource/tmpl_delivery_orders2.xls}">
+                        <span class="fa fa-download tooltips cursor-point" data-placement="top" data-toggle="tooltip"
+                              data-original-title="批量发货模板下载"></span>
+                    </a>
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-12 control-label" style="text-align:left;color:#d9534f;">供应商用户，请重新下载模板。</label>
+            </div>
+            <div class="form-group">
+                <div id="msgPanel" class="col-sm-12 text-danger">
+                    <p id="msgField">本次批量操作成功,其中成功发货</p>
+
+                    <!--<p style="height: 20px;"></p>-->
+                    <ul style="list-style: none" id="failedList">
+                        <li>20123123123:订单号不存在</li>
+                        <button type="button" onclick="exportHelper.exportDeliverExport()"
+                                class="btn btn-success btn-sm">复制所有结果
+                        </button>
+                    </ul>
+                    <textarea rows="10" id="failedListExport" style="width: 100%;">批量发货结果</textarea>
+                    <button type="button" onclick="exportHelper.exportDeliverExport()" class="btn btn-success btn-sm">
+                        复制所有结果
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--订单备注-->
+<div id="remarkModal" class="modal-content-tag">
+    <form id="remark_form" novalidate="novalidate" action="/order/remark" th:action="@{/order/remark}">
+        <input type="hidden" id="remark_orderId" name="orderId"/>
+        <div class="form-horizontal" style="width: 479px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label" style="padding-top: 0px;">标记：</label>
+                <div class="col-sm-10">
+                    <label>
+                        <input type="radio" checked="checked" name="supplierMarkType" value="b1"/>
+                        <label>
+                            <img src="../resource/images/remark_icons/b1.gif"
+                                 th:src="@{/resource/images/remark_icons/b1.gif}" width="20"
+                                 height="20"/></label></label>
+                    <label>
+                        <input type="radio" name="supplierMarkType" value="b2"/>
+                        <label>
+                            <img src="../resource/images/remark_icons/b2.gif"
+                                 th:src="@{/resource/images/remark_icons/b2.gif}" width="20"
+                                 height="20"/></label></label>
+                    <label>
+                        <input type="radio" name="supplierMarkType" value="b3"/>
+                        <label>
+                            <img src="../resource/images/remark_icons/b3.gif"
+                                 th:src="@{/resource/images/remark_icons/b3.gif}" width="20"
+                                 height="20"/></label></label>
+                    <label>
+                        <input type="radio" name="supplierMarkType" value="b4"/>
+                        <label>
+                            <img src="../resource/images/remark_icons/b4.gif"
+                                 th:src="@{/resource/images/remark_icons/b4.gif}" width="20"
+                                 height="20"/></label></label>
+                    <label>
+                        <input type="radio" name="supplierMarkType" value="b5"/>
+                        <label>
+                            <img src="../resource/images/remark_icons/b5.gif"
+                                 th:src="@{/resources/images/remark_icons/b5.gif}" width="20"
+                                 height="20"/></label></label>
+                    <label>
+                        <input type="radio" name="supplierMarkType" value="b0"/>
+                        <label>
+                            <img src="../resource/images/remark_icons/b0.gif"
+                                 th:src="@{/resource/images/remark_icons/b0.gif}" width="20"
+                                 height="20"/></label></label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea name="supplierMarkText" class="form-control" rows="5" style="height: 90px; width: 100%;"
+                              required="" aria-required="true"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--日期选择-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/moment.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/daterangepicker.js"></script>
+<!--file-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
+<!--validate-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+
+<script src="../../resources/js/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/js/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}"></script>
+<script src="../../resources/js/order/timeInit.js" th:src="@{/resources/js/order/timeInit.js}"></script>
 <script th:inline="javascript">
+    var orderUrl = /*[[@{/order}]]*/ "/order";
+    var customerId = /*[[${supplierId}]]*/ 1;
+    var pageIndex = /*[[${pageIndex}]]*/ 1;
+    var totalPage = /*[[${totalPages}]]*/ 20;
+    $(function () {
+        $("#remark_form").validate();
+        $("#batchDeliver_form").validate();
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+        pageinate.init(function (p) {
+            orderListHandler.search(p);
+        });
+    })
     /*<![CDATA[*/
-    var orderUrl = /*[[@{/order/}]]*/ "/order/";
-    function showBatchDelivery() {
-        var url = orderUrl + 'batchDeliver';
-        J.PopupIFrame(url, "发货操作", 370, 220, "ifrm", "", "auto", "");
-    }
-
-    function showConsignFlow(obj, sourceType) {//发货
-        var orderId = $(obj).attr("orderId");
-
-        //判断是否是拼团订单,如果为成团不能发货
-        J.GetJsonRespons(orderUrl + "pintuanCheck", {
+    //初始化modal
+    var remarkModal = $("#remarkModal").modal("备注", function () {
+        if (!$("#remark_form").valid()) {
+            return;
+        }
+        var orderId = $("#remark_form input[name=orderId]").val();
+        var supplierMarkType = $("input[name=supplierMarkType]:checked").val();
+        var supplierMarkText = $("#remark_form textarea[name=supplierMarkText]").val();
+        var requestData = {
             orderId: orderId,
-            orderSource: sourceType
-        }, function (json) {
-            if (json.code == 200) {
-                $.jBox.tip("该订单为拼团订单并且未成团,无法发货");
+            supplierMarkType: supplierMarkType,
+            supplierMarkText: supplierMarkText
+        };
+        hot.loading.show();
+        hot.ajax(orderUrl + "/remark", requestData, function (result) {
+            if (result.code != 200) {
+                hot.tip.error("保存失败--");
             } else {
-                var title = "发货操作";
-//        if (type == 1) {
-//            title = "退货操作";
-//        }
-                var url = orderUrl + 'delivery?orderId=' + orderId + "&pageIndex=" + pageIndex;
-                J.PopupIFrame(url, title, 900, 500, "ifrm", "", "auto", "");
+                remarkModal.hide();
+                $('#form1').submit();
             }
         }, function () {
-        }, "post");
+            $.jBox.tip("保存失败，请重试", "error");
+        }, "post", 400);
+    });
+    var batchExportModal = $("#batchExportModal").modal("批量导出", function () {
+        var txtBeginPage = $("#txtBeginPage").val();
+        var txtEndPage = $("#txtEndPage").val();
 
-
+        var chkResult = exportHelper.checkPage(txtBeginPage, txtEndPage);
+        if (!chkResult.flag) {
+            jBox.tip(chkResult.msg, 'info');
+            return;
+        }
+        var txtOrderId = $("#orderId").val();
+        var shipName = $("#shipName").val();
+        var shipMobile = $("#shipMobile").val();
+        var shipStatus = $("select[name=shipStatus]").val();
+        var orderStatus = $("select[name=orderStatus]").val();
+        var payStatus = $("select[name=payStatus]").val();
+        var orderType = $("select[name=orderType]").val();
+        var orderRule = $("input[name=orderRule]:checked").val();
+        var txtBeginTime = $("#beginTime").val();
+        var txtEndTime = $("#endTime").val();
+        var txtEndPaytime = $("#endPayTime").val();
+        var txtBeginPaytime = $("#beginPayTime").val();
+        var paymentTypeStatus = $("select[name=paymentTypeStatus]").val();
+        var sourceTypeStatus = $("select[name=sourceTypeStatus]").val();
+        var orderItemName = $("#orderItemName").val();
+        var url = orderUrl + "/exportExcel";
+        url += '?rnd='
+            + Math.random()
+            + '&customerId=' + customerId
+            + '&orderId=' + txtOrderId
+            + '&shipName=' + shipName
+            + '&shipMobile=' + shipMobile
+            + '&orderStatus=' + orderStatus
+            + '&shipStatus=' + shipStatus
+            + '&payStatus=' + payStatus
+            + '&paymentTypeStatus=' + paymentTypeStatus
+            + '&sourceTypeStatus=' + sourceTypeStatus
+            + '&orderType=' + orderType
+            + '&orderRule=' + orderRule
+            + '&beginTime=' + txtBeginTime
+            + '&endTime=' + txtEndTime
+            + '&endPayTime=' + txtEndPaytime
+            + '&beginPayTime=' + txtBeginPaytime
+            + '&orderItemName=' + orderItemName
+            + '&txtBeginPage=' + txtBeginPage
+            + '&txtEndPage=' + txtEndPage;
+        window.location.href = url;
+    });
+    var batchDeliverModal = $("#batchDeliverModal").modal("批量发货", function () {
+        if (!$("#batchDeliver_form").valid()) {
+            return;
+        }
+        hot.loading.show();
+        hot.uploadFile(orderUrl + "/batchDeliver", 'batchDeliverFile', function (result) {
+            if (result.code == 200) {
+//                var deliverResult = JSON.parse(result);
+                $("#msgField").html("本次批量操作成功,其中成功发货" + result.data.successCount + "单,失败" + result.data.failedCount + "单");
+                $("#failedList").empty();
+                /*$.each(result.data.lstFailedMsg, function (i) {
+                 if(i<10){
+                 $("#failedList").append('<li>' + this + '</li>');
+                 }else{
+                 $("#failedList").append('<li>......</li>');
+                 $("#failedList").append('<button type="button" onclick="exportHelper.exportDeliverExport()" class="btn btn-success btn-sm">复制所有结果</button>');
+                 $("#failedListExport").val(result.data.lstFailedMsg.join('\n'));
+                 return false;
+                 }
+                 });*/
+                $("#failedListExport").val(result.data.lstFailedMsg.join('\n'));
+                $("#msgPanel").show();
+            } else {
+                $("#msgField").html("操作失败：" + result.msg);
+                $("#failedList").empty();
+                $("#msgPanel").show();
+                hot.tip.error(result.msg);
+            }
+        }, function (result) {
+            hot.tip.error(result.msg);
+        })
+    });
+    //选项卡
+    function showList(name, value) {
+        if (name == '') {
+            $("#ddlShipStatus").val(-1);
+            $("input[name=pageIndex]").val(1);
+            $('#form1').submit();
+        } else {
+            $("select[name=" + name + "]").val(value);
+            $("input[name=pageIndex]").val(1);
+            $('#form1').submit();
+        }
     }
 
+    var orderListHandler = {
+        search: function (pageIndex) {
+            $("input[name=pageIndex]").val(pageIndex);
+            $('#form1').submit();
+        },
+        searchAll: function () {
+            window.location.href = orderUrl + "/getOrderList";
+        },
+        showConsignFlow: function (obj, sourceType) {
+            var orderId = $(obj).attr("orderId");
+
+            //判断是否是拼团订单,如果为成团不能发货
+            hot.ajax(orderUrl + "/pintuanCheck", {
+                orderId: orderId,
+                orderSource: sourceType
+            }, function (json) {
+                if (json.code == 200) {
+                    $.jBox.tip("该订单为拼团订单并且未成团,无法发货");
+                } else {
+                    var title = "发货操作";
+                    var url = orderUrl + '/delivery?version=V2&orderId=' + orderId + "&pageIndex=" + pageIndex;
+                    hot.iframeModal(url, '900px', '730px', title);
+                }
+            }, function () {
+            }, "post");
+        }
+    }
+    var exportHelper = {
+        checkPage: function (txtBeginPage, txtEndPage) {
+            var numberBug = totalPage;//总页数
+            if (txtBeginPage == '' || txtEndPage == '') {
+                return {flag: false, msg: '请输入正确的起止页码'};
+            }
+            var beginPage = parseInt(txtBeginPage);
+            var endPage = parseInt(txtEndPage);
+            if (endPage < beginPage) {
+                return {flag: false, msg: '结束页不能小于起始页'};
+            }
+            if (endPage > numberBug) {
+                return {flag: false, msg: '结束页不能大于总页数'};
+            }
+            var _maxPage = 500;
+            if (endPage - beginPage >= _maxPage) {
+                $('#txtEndPage').focus().select();
+                return {flag: false, msg: '最多导出' + _maxPage + '页'};
+            }
+            return {flag: true};
+        },
+        exportDeliverExport: function () {
+            var copyText = document.getElementById("failedListExport");
+            copyText.select();//选择对象
+            document.execCommand("Copy"); // 执行浏览器复制命令
+            hot.tip.success("复制成功！");
+        }
+    }
+    //批量发货
+    $("#btnBatchDeliver").click(function () {
+        batchDeliverModal.show();
+        $("#msgPanel").hide();
+    });
+    //批量导出
+    $("#btnBatchExport").click(function () {
+        batchExportModal.show();
+    });
+    //备注
+    function showRemark(obj) {
+        remarkModal.show();
+        var orderId = $(obj).attr('orderId');
+        var markType = $(obj).attr('markType');
+        var markText = $(obj).attr('markText');
+        $("#remark_form input[name=orderId]").val(orderId);
+        if (markType.length > 0) {
+            $("#remark_form input[name=supplierMarkType][value=" + markType + "]").attr("checked", "checked");
+        }
+        if (markText.length > 0) {
+            $("#remark_form textarea[name=supplierMarkText]").text(markText);
+        }
+    }
     //查看详细
     function showDetail(obj) {
         var orderId = $(obj).attr("orderId");
-        window.location.href = orderUrl + "showOrderDetail?orderId=" + orderId + "&pageIndex=" + $("input[name=pageIndex]").val();
+        window.location.href = orderUrl + "/showOrderDetail?version=V2&orderId=" + orderId;
 //        J.PopupIFrame(url, "订单详情", 1100, 680, "ifrm", "", "auto", "");
-    }
-
-    //备注
-    function showRemark(obj) {
-        var orderId = $(obj).attr("orderId");
-        var url = orderUrl + 'showRemark?orderId=' + orderId;
-        J.PopupIFrame(url, "订单 " + orderId + " 备注", 500, 300, "ifrm", "", "auto", "");
-    }
-
-    //退货
-    function showRefunds(obj) {
-        var orderId = $(obj).attr("orderId");
-        var url = orderUrl + 'showRefundForm?orderId=' + orderId;
-        J.PopupIFrame(url, "退货操作", 900, 480, "ifrm", "", "auto", "");
-    }
-
-    function searchOrder() {
-        $("input[name=orderRule]").val($("input[name=raSortType]:checked").val());
-        $("input[name=pageIndex]").val(1);
-        $('#form1').submit();
-    }
-    function searchOrderAll() {
-        window.location.href = /*[[@{/order/getOrdersPage}]]*/ "";
-    }
-    function createRight() {//左页面点击事件
-        searchOrderAll();
     }
     /*]]>*/
 </script>

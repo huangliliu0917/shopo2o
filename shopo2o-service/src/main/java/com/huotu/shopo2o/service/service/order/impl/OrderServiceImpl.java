@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
             predicates.add(cb.or(cb.isNull(root.get("shipDisabled").as(Boolean.class)),
                     cb.equal(root.get("shipDisabled").as(Boolean.class), false)));
             if (!StringUtils.isEmpty(searchCondition.getOrderId())) {
-                predicates.add(cb.like(root.get("orderId").as(String.class), searchCondition.getOrderId() + "%"));
+                predicates.add(cb.like(root.get("orderId").as(String.class), "%" + searchCondition.getOrderId() + "%"));
             }
             if (!StringUtils.isEmpty(searchCondition.getOrderItemName())) {
                 predicates.add(cb.like(root.get("orderItems").get("name").as(String.class), "%" + searchCondition.getOrderItemName() + "%"));
