@@ -34,6 +34,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<MallOrder> findAll(int pageIndex, OrderSearchCondition searchCondition) {
         Specification<MallOrder> specification = (root, query, cb) -> {
+            query.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("supplierId").as(Long.class), searchCondition.getSupplierId()));
             predicates.add(cb.or(cb.isNull(root.get("shipDisabled").as(Boolean.class)),
