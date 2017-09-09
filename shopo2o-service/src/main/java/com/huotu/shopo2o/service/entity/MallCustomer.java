@@ -73,10 +73,11 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @Override
     public boolean isAccountNonLocked() {
-        if(this.customerType == CustomerTypeEnum.SHOP){
-            return store != null && !store.isDisabled();
-        }
-        return false;
+//        if(this.customerType == CustomerTypeEnum.SHOP){
+//            return store != null && !store.isDisabled();
+//        }
+//        return false;
+        return true;
     }
 
     @Override
@@ -86,10 +87,11 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @Override
     public boolean isEnabled() {
-        if(this.customerType == CustomerTypeEnum.SHOP){
-            return store != null && !store.isDeleted();
-        }
-        return false;
+//        if(this.customerType == CustomerTypeEnum.SHOP){
+//            return store != null && !store.isDeleted();
+//        }
+//        return false;
+        return true;
     }
 
     // TODO: 2017-08-31 delete
