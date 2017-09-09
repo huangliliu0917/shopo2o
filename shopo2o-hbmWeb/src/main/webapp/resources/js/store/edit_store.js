@@ -14,7 +14,6 @@ var contextMenu = {}; //右键菜单
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
-var openTime, closeTime, deadlineTime;
 $(function () {
     // 最多两位小数
     $.validator.addMethod("isFloat2", function (value, element) {
@@ -55,45 +54,34 @@ $(function () {
         }
     });
 
-    //初始化时间空间
-    openTime = $('input[name=openTime]').flatpickr({
-        enableTime: true,
-        noCalendar: true,
-        enableSeconds: false,
-        time_24hr: true,
-        dateFormat: "H:i",
-        minuteIncrement: 15,
-        locale: 'zh',
-        // allowInput:true,
-        defaultMinute: 0
+    $('input[name="openTime"]').pickatime({
+        format: 'HH:i',
+        interval: 30,
+        clear: '清除',
+        onSet: function(context) {
+            var time = context.select+30
+            var hour = parseInt(time/60);
+            var minute = time%60;
+            picker.set({
+                'select':time,
+                'min':[hour,minute]
+            });
+        }
     });
-    closeTime = $('input[name=closeTime]').flatpickr({
-        enableTime: true,
-        noCalendar: true,
-        enableSeconds: false,
-        time_24hr: true,
-        dateFormat: "H:i",
-        minuteIncrement: 15,
-        locale: 'zh',
-        // allowInput:true,
-        defaultMinute: 0
-    });
-    deadlineTime = $('input[name=deadlineTime]').flatpickr({
-        enableTime: true,
-        noCalendar: true,
-        enableSeconds: false,
-        time_24hr: true,
-        dateFormat: "H:i",
-        minuteIncrement: 15,
-        locale: 'zh',
-        // allowInput:true,
-        defaultMinute: 0
-    });
-    openTime.config.onChange = function (dateobj, datestr) {
-        console.info(dateobj, datestr);
-        console.info(specific_calendar.input);
-    }
 
+    var $end = $('input[name="closeTime"]').pickatime({
+        format: 'HH:i',
+        interval: 30,
+        clear: '清除'
+    });
+    var picker = $end.pickatime('picker');
+
+
+    $('input[name="deadlineTime"]').pickatime({
+        format: 'HH:i',
+        interval: 30,
+        clear: '清除'
+    });
     $("#shopBasicInfo").validate({
         ignore: ''
     });
