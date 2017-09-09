@@ -78,7 +78,6 @@ public class StoreServiceImpl implements StoreService {
                 oldMarker = newMarker;
                 oldMarker.setStore(store);
             }else{
-                oldMarker = markerRepository.findOne(markerKey);
                 oldMarker.setLngLat(markers.get(markerKey).getLngLat());
             }
             markerList.add(oldMarker);

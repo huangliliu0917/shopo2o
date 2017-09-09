@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.web;
 
+import com.huotu.shopo2o.service.repository.store.StoreRepository;
 import com.huotu.shopo2o.web.config.MVCConfig;
 import com.huotu.shopo2o.service.config.MallPasswordEncoder;
 import com.huotu.shopo2o.service.entity.MallCustomer;
@@ -7,7 +8,6 @@ import com.huotu.shopo2o.service.entity.store.LngLat;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
-import com.huotu.shopo2o.service.repository.StoreRepository;
 import org.junit.runner.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
