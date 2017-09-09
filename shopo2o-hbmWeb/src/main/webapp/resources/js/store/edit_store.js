@@ -483,7 +483,7 @@ var mapHandler = {
         $("input[name=distributionDivisionRegions]").val(JSON.stringify(RegionListObj));
         this.regionOption(obj);
         for (var i = 0; i < sendAreaMap.getAllOverlays("polygon").length; i++) {
-            console.log(sendAreaMap.getAllOverlays("polygon")[i]);
+            // console.log(sendAreaMap.getAllOverlays("polygon")[i]);
             sendAreaMap.getAllOverlays("polygon")[i].off('rightclick', mapHandler.addMarkerListenFn);
         }
         sendAreaMap.off('rightclick', mapHandler.addMarkerListenFn);
@@ -737,14 +737,14 @@ var Region = {
             RegionListObj[id]['markerNum'] = valueInput.val();
             RegionListObj[id]['color'] = colorInput.val();
             var regionItemArea = getRegionArea(RegionListObj[id]['markerNum']);
-            console.log(regionItemArea);
-            console.log(lngLat2Arr(regionItemArea));
+            // console.log(regionItemArea);
+            // console.log(lngLat2Arr(regionItemArea));
             RegionListObj[id]['distributionRegions'] = tmpPosition(regionItemArea);
             nameInput.prop('readonly', true);
             valueInput.prop('readonly', true);
             colorInput.prop('readonly', true);
             colorInput.prop('disabled', true);
-            console.info(RegionListObj);
+            // console.info(RegionListObj);
             //如果已经存在区域，先把这个区域删除
             if (regionRegionDivision[id] != undefined) {
                 sendAreaMap.remove(regionRegionDivision[id]);
@@ -785,7 +785,7 @@ var Region = {
             if(regionRegionDivision[id] != undefined){
                 sendAreaMap.remove(regionRegionDivision[id]);
             }
-            console.info(RegionListObj);
+            // console.info(RegionListObj);
         });
     },
     init: function () {
