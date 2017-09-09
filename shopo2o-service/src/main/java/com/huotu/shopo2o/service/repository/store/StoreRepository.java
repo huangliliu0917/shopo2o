@@ -1,4 +1,4 @@
-package com.huotu.shopo2o.service.repository;
+package com.huotu.shopo2o.service.repository.store;
 
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.store.Store;

@@ -1,5 +1,7 @@
 package com.huotu.shopo2o.service.entity.store;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,7 @@ import javax.persistence.*;
 @Table(name = "ST_DistributionMarker")
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DistributionMarker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,8 +25,10 @@ public class DistributionMarker {
     /**
      * 门店ID
      */
-    @Column(name = "Store_Id")
-    private Long storeId;
+    @ManyToOne
+    @JoinColumn(name = "Store_Id")
+    @JsonIgnore
+    private Store store;
 
     /**
      * 序号
@@ -36,5 +41,8 @@ public class DistributionMarker {
      */
     @Embedded
     private LngLat lngLat;
+
+    @Column(name = "Deletable")
+    private boolean deletable = true;
 
 }

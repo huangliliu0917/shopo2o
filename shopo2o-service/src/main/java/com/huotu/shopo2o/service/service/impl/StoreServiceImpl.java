@@ -4,16 +4,26 @@ import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.MallCustomer_;
+import com.huotu.shopo2o.service.entity.store.DistributionMarker;
+import com.huotu.shopo2o.service.entity.store.DistributionRegion;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.store.Store_;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
-import com.huotu.shopo2o.service.repository.StoreRepository;
+import com.huotu.shopo2o.service.repository.store.DistributionMarkerRepository;
+import com.huotu.shopo2o.service.repository.store.DistributionRegionRepository;
+import com.huotu.shopo2o.service.repository.store.StoreRepository;
 import com.huotu.shopo2o.service.service.MallCustomerService;
 import com.huotu.shopo2o.service.service.StoreService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -21,10 +31,15 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class StoreServiceImpl implements StoreService {
+    private static final Log log = LogFactory.getLog(StoreServiceImpl.class);
     @Autowired
     private StoreRepository storeRepository;
     @Autowired
     private MallCustomerService customerService;
+    @Autowired
+    private DistributionMarkerRepository markerRepository;
+    @Autowired
+    private DistributionRegionRepository regionRepository;
 
     @Override
     public ApiResult saveStore(Long customerId, Store store, String loginName) {
@@ -42,6 +57,62 @@ public class StoreServiceImpl implements StoreService {
         }
         storeRepository.save(store);
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public List<DistributionMarker> saveMarker(Store store, Map<Long,DistributionMarker> markers) {
+        //先删掉不在 markerList 中的点标记
+        if(store.getDistributionMarkers() != null){
+            store.getDistributionMarkers().stream().filter(p->
+                !markers.containsKey(p.getNumber())
+            ).forEach(marker-> {
+                log.debug("id:"+marker.getId() + ",num:" + marker.getNumber());
+                markerRepository.delete(marker);
+            });
+        }
+        List<DistributionMarker> markerList = new ArrayList<>();
+        markers.keySet().forEach(markerKey->{
+            DistributionMarker newMarker = markers.get(markerKey);
+            DistributionMarker oldMarker = markerRepository.findByStore_IdAndNumber(store.getId(),newMarker.getNumber());
+            if(oldMarker == null){
+                oldMarker = newMarker;
+                oldMarker.setStore(store);
+            }else{
+                oldMarker = markerRepository.findOne(markerKey);
+                oldMarker.setLngLat(markers.get(markerKey).getLngLat());
+            }
+            markerList.add(oldMarker);
+        });
+        markerRepository.save(markerList);
+        markerRepository.flush();
+        return markerList;
+    }
+
+    @Override
+    public List<DistributionRegion> saveRegion(Store store, Map<Long,DistributionRegion> regions) {
+        //先删除不在 regionList 中的区域
+        if(store.getDistributionDivisionRegions() != null){
+            store.getDistributionDivisionRegions().stream().filter(p->!regions.containsKey(p.getId())).forEach(region->regionRepository.delete(region));
+        }
+        List<DistributionRegion> regionList = new ArrayList<>();
+        regions.keySet().forEach(regionKey->{
+            DistributionRegion oldRegion;
+            DistributionRegion newRegion = regions.get(regionKey);
+            if(newRegion.getId() == null || newRegion.getId() <= 0){
+                oldRegion = newRegion;
+                oldRegion.setStore(store);
+            }else {
+                oldRegion = regionRepository.findOne(regionKey);
+                oldRegion.setName(newRegion.getName());
+                oldRegion.setMarkerNum(newRegion.getMarkerNum());
+                oldRegion.setColor(newRegion.getColor());
+                oldRegion.setDistributionRegions(newRegion.getDistributionRegions());
+            }
+            regionList.add(oldRegion);
+        });
+        regionRepository.save(regionList);
+        regionRepository.flush();
+        return regionList;
     }
 
     @Override

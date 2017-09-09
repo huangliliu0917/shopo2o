@@ -1,8 +1,10 @@
 package com.huotu.shopo2o.hbm.web.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.hbm.web.CommonTestBase;
+import com.huotu.shopo2o.service.entity.store.DistributionMarker;
 import com.huotu.shopo2o.service.entity.store.DistributionRegion;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.store.LngLat;
@@ -15,8 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import javax.servlet.http.Cookie;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -91,10 +95,14 @@ public class StoreControllerTest extends CommonTestBase {
         for(int i=0;i< randomNum ; i++){
             regionList.add(new LngLat(random.nextDouble(),random.nextDouble()));
         }
+        String distributionMarkers = "{\"1\":{\"number\":1,\"lngLat\":{\"O\":30.208392,\"M\":120.22380699999997,\"lng\":120.223807,\"lat\":30.208392},\"isUsed\":true},\"2\":{\"number\":2,\"lngLat\":{\"O\":30.211989420618668,\"M\":120.21789205856987,\"lng\":120.217892,\"lat\":30.211989}},\"3\":{\"number\":3,\"lngLat\":{\"O\":30.211655644859277,\"M\":120.23351324387261,\"lng\":120.233513,\"lat\":30.211656}},\"4\":{\"number\":4,\"lngLat\":{\"O\":30.20268036105437,\"M\":120.23394239731499,\"lng\":120.233942,\"lat\":30.20268},\"isUsed\":true},\"5\":{\"number\":5,\"lngLat\":{\"O\":30.20438646974161,\"M\":120.21214140244194,\"lng\":120.212141,\"lat\":30.204386},\"isUsed\":true}}";
+        String distributionDivisionRegions = "{\"-1\":{\"name\":\"区域名称1\",\"markerNum\":\"1,5,4\",\"color\":\"#3480b8\",\"distributionRegions\":[{\"lng\":120.223807,\"lat\":30.208392},{\"lng\":120.212141,\"lat\":30.204386},{\"lng\":120.233942,\"lat\":30.20268}]}}";
         mockMvc.perform(post(saveUrl)
                 .cookie(cookie)
                 .param("storeId", String.valueOf(mockStore.getId()))
                 .param("distributionRegions",objectMapper.writeValueAsString(regionList))
+                .param("distributionMarkers",distributionMarkers)
+                .param("distributionDivisionRegions",distributionDivisionRegions)
                 .param("deliveryCost", String.valueOf(random.nextDouble()))
                 .param("minCost",String.valueOf(random.nextDouble()))
                 .param("freeCost",String.valueOf(random.nextDouble())))
@@ -107,6 +115,21 @@ public class StoreControllerTest extends CommonTestBase {
             assertEquals(regionList.get(i).getLng(), realStore.getDistributionRegions().get(i).getLng());
             assertEquals(regionList.get(i).getLat(), realStore.getDistributionRegions().get(i).getLat());
         }
+    }
+
+    @Test
+    public void testJsonToObject() throws IOException {
+        String distributionMarkers = "{\"1\":{\"lngLat\":{\"O\":30.208392,\"M\":120.22380699999997,\"lng\":120.223807,\"lat\":30.208392},\"number\":1,\"isUsed\":true},\"2\":{\"lngLat\":{\"O\":30.211989420618668,\"M\":120.21789205856987,\"lng\":120.217892,\"lat\":30.211989},\"number\":2,},\"3\":{\"number\":3,\"lngLat\":{\"O\":30.211655644859277,\"M\":120.23351324387261,\"lng\":120.233513,\"lat\":30.211656},\"number\":3,},\"4\":{\"number\":4,\"lngLat\":{\"O\":30.20268036105437,\"M\":120.23394239731499,\"lng\":120.233942,\"lat\":30.20268},\"isUsed\":true},\"5\":{\"number\":5,\"lngLat\":{\"O\":30.20438646974161,\"M\":120.21214140244194,\"lng\":120.212141,\"lat\":30.204386},\"isUsed\":true}";
+        String distributionDivisionRegions = "{\"-1\":{\"name\":\"区域名称1\",\"markerNum\":\"1,5,4\",\"color\":\"#3480b8\",\"distributionRegions\":[{\"lng\":120.223807,\"lat\":30.208392},{\"lng\":120.212141,\"lat\":30.204386},{\"lng\":120.233942,\"lat\":30.20268}]}}";
+
+        Map<Long,DistributionMarker> distributionMarkerMap = objectMapper.readValue(distributionMarkers, new TypeReference<Map<Long,DistributionMarker>>() {});
+        assertNotNull(distributionMarkerMap);
+        distributionMarkerMap.keySet().forEach(key->{
+            System.out.println("key:" + key + ",value:" + distributionMarkerMap.get(key).toString());
+        });
+
+        Map<Long,DistributionRegion> distributionDivisionRegionsMap = objectMapper.readValue(distributionDivisionRegions, new TypeReference<Map<Long,DistributionRegion>>() {});
+        assertNotNull(distributionDivisionRegionsMap);
     }
 
     private Store mockShopWithoutSave(){

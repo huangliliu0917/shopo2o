@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 线下门店。非代理商门店
@@ -117,13 +118,25 @@ public class Store {
     private String erpId;
 
     /**
-     * 配送区域坐标
+     * 配送范围坐标
      */
     @Column(name = "Distribution_Regions",columnDefinition = "varchar(MAX)")
     @Convert(converter = LngLatConverter.class)
     @SuppressWarnings("JpaAttributeTypeInspection")
     private List<LngLat> distributionRegions;
 
+    /**
+     * 配送区域点坐标
+     */
+    @OneToMany(mappedBy = "store")
+    private List<DistributionMarker> distributionMarkers;
+
+
+    /**
+     * 配送区域
+     */
+    @OneToMany(mappedBy = "store")
+    private List<DistributionRegion> distributionDivisionRegions;
     /**
      * 配送费
      */
@@ -159,4 +172,6 @@ public class Store {
      */
     @Column(name = "CreateTime")
     private Date createTime;
+
+
 }

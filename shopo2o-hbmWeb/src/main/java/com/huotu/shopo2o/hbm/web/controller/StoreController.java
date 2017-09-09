@@ -6,6 +6,7 @@ import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.hbm.web.service.StaticResourceService;
+import com.huotu.shopo2o.service.entity.store.DistributionMarker;
 import com.huotu.shopo2o.service.entity.store.DistributionRegion;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.store.LngLat;
@@ -27,8 +28,10 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by helloztt on 2017-08-22.
@@ -125,13 +128,14 @@ public class StoreController extends MallBaseController {
     @PostMapping("/saveStoreMoreInfo")
     @ResponseBody
     @Transactional
-    public ApiResult save(@ModelAttribute("customerId")Long customerId
-            ,@RequestParam Long storeId,@RequestParam String distributionRegions
+    public ApiResult save(@ModelAttribute("customerId")Long customerId,@RequestParam Long storeId
+            ,@RequestParam String distributionRegions,@RequestParam String distributionMarkers,@RequestParam String distributionDivisionRegions
             ,@RequestParam Double deliveryCost,@RequestParam Double minCost,@RequestParam Double freeCost){
         Store store = storeService.findOne(storeId, customerId);
         if(store == null){
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
         }
+        //解析配送范围点坐标
         List<LngLat> distributionRegionList;
         try {
             distributionRegionList = objectMapper.readValue(distributionRegions,new TypeReference<List<LngLat>>() {});
@@ -141,7 +145,23 @@ public class StoreController extends MallBaseController {
         if(distributionRegionList == null){
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "请设置配送范围");
         }
+        //解析配送区域点坐标
+        Map<Long,DistributionMarker> distributionMarkerMap;
+        try {
+            distributionMarkerMap = objectMapper.readValue(distributionMarkers, new TypeReference<Map<Long,DistributionMarker>>() {});
+        } catch (IOException e) {
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域点标记解析失败");
+        }
+        //解析配送区域
+        Map<Long,DistributionRegion> distributionDivisionRegionMap;
+        try {
+            distributionDivisionRegionMap = objectMapper.readValue(distributionDivisionRegions, new TypeReference<Map<Long,DistributionRegion>>() {});
+        } catch (IOException e) {
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域解析失败");
+        }
         store.setDistributionRegions(distributionRegionList);
+        store.setDistributionMarkers(storeService.saveMarker(store,distributionMarkerMap));
+        store.setDistributionDivisionRegions(storeService.saveRegion(store,distributionDivisionRegionMap));
         store.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
         store.setMinCost(new BigDecimal(minCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
         store.setFreeCost(new BigDecimal(freeCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));

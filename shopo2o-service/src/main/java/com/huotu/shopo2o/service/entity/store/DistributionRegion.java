@@ -1,5 +1,7 @@
 package com.huotu.shopo2o.service.entity.store;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.huotu.shopo2o.service.entity.support.LngLatConverter;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +17,17 @@ import java.util.List;
 @Table(name= "ST_DistributionRegion")
 @Getter
 @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DistributionRegion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
 
-    @Column(name = "Store_Id")
-    private Long storeId;
+    @ManyToOne
+    @JoinColumn(name = "Store_Id")
+    @JsonIgnore
+    private Store store;
 
     @Column(name = "Name")
     private String name;

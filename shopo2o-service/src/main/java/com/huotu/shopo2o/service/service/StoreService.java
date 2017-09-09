@@ -1,11 +1,16 @@
 package com.huotu.shopo2o.service.service;
 
 import com.huotu.shopo2o.common.utils.ApiResult;
+import com.huotu.shopo2o.service.entity.store.DistributionMarker;
+import com.huotu.shopo2o.service.entity.store.DistributionRegion;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.store.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by helloztt on 2017-08-22.
@@ -21,6 +26,10 @@ public interface StoreService {
      * @return 添加门店结果
      */
     ApiResult saveStore(Long customerId, Store store, String loginName);
+
+    List<DistributionMarker> saveMarker(Store store,Map<Long,DistributionMarker> markers);
+
+    List<DistributionRegion> saveRegion(Store store,Map<Long,DistributionRegion> regions);
 
     Page<Store> findAll(Long customerId, Pageable pageable);
 

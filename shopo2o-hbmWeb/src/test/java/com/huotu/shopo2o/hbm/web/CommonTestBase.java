@@ -7,7 +7,7 @@ import com.huotu.shopo2o.service.entity.store.LngLat;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
-import com.huotu.shopo2o.service.repository.StoreRepository;
+import com.huotu.shopo2o.service.repository.store.StoreRepository;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;

@@ -59,7 +59,7 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div id="tab-1" class="tab-pane">
+                        <div id="tab-1" class="tab-pane active">
                             <form id="shopBasicInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group form-inline">
@@ -118,8 +118,8 @@
                                     </div>
                                     <div class="form-group form-inline">
                                         <label for="lan"></label>
-                                        <input type="hidden" name="lan" id="lan" th:value="${currentData.lan}" required="true"/>
-                                        <input type="hidden" name="lat" id="lat" th:value="${currentData.lat}"/>
+                                        <input type="hidden" name="lan" id="lan" th:value="${currentData.lngLat.lng}" required="true"/>
+                                        <input type="hidden" name="lat" id="lat" th:value="${currentData.lngLat.lat}"/>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="addressMap" style="height: 400px;">
@@ -148,7 +148,7 @@
                                         <label class="col-sm-2 control-label">店招图
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <img id="logo_uri" style="width:80px;height: 80px;" th:src="${currentData.mallLogoUri} != null ? ${currentData.mallLogoUri} : _"/>
+                                            <img id="logo_uri" style="width:80px;height: 80px;" th:src="${currentData.mallLogoUri} != null ? ${currentData.mallLogoUri} : ''"/>
                                             <button class="btn btn-sm" id="uploadImage" type="button"
                                                     onclick="javascript:$('#uploadFile').click();">上传图片</button>
                                             <input onchange="uploadHandler.uploadImg('uploadFile','logo_uri','logo')"
@@ -177,7 +177,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="tab-2" class="tab-pane active"  th:if="${currentData.id!=null}">
+                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group">
@@ -190,37 +190,30 @@
                                             <div  id="J_RegionInit">
                                                 <button type="button" class="btn btn-m btn-success" data-show="J_RegionDistribution" onclick="mapHandler.regionOption(this)">
                                                     门店配送范围
-                                                </button>.
+                                                </button>
                                                 <button type="button" class="btn btn-m btn-success" data-show="J_RegionDivision" onclick="mapHandler.regionOption(this)">
                                                     划分配送区域
                                                 </button>
+                                                <input type="hidden" name="distributionRegions" id="distributionRegions"/>
+                                                <input type="hidden" name="distributionMarkers" />
+                                                <input type="hidden" name="distributionDivisionRegions" id="distributionDivisionRegions"/>
                                             </div>
                                             <div class="displayNone" id="J_RegionDistribution">
                                                 <h3 class="text-muted">门店配送范围</h3>
                                                 <div class="form-inline">
-                                                    <input type="hidden" name="distributionRegions"/>
                                                     <button type="button" class="btn btn-sm btn-success" data-show="J_RegionInit" onclick="mapHandler.saveRegionDistribution(this)">
                                                         保存
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-success">
-                                                        取消
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-success"  data-show="J_RegionInit" onclick="mapHandler.regionOption(this)">
-                                                        删除
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="displayNone" id="J_RegionDivision">
                                                 <h3 class="text-muted">配送区域划分</h3><small>在地图上右键点击可添加或删除点标记</small>
                                                 <div class="form-inline">
-                                                    <button type="button" class="btn btn-m btn-success" onclick="mapHandler.regionDivision(this)">
+                                                    <button type="button" class="btn btn-m btn-success" data-show="J_RegionInit" onclick="mapHandler.saveRegionDivision(this)">
                                                         保存
                                                     </button>
                                                     <button type="button" class="btn btn-m btn-success" id="J_addRegionItem">
                                                         添加
-                                                    </button>
-                                                    <button type="button" class="btn btn-m btn-success"  data-show="J_RegionInit" onclick="mapHandler.regionOption(this)">
-                                                        取消
                                                     </button>
                                                 </div>
                                                 <div class="table-responsive">
@@ -233,7 +226,23 @@
                                                             <th class="col-sm-2">操作</th>
                                                         </tr>
                                                         </thead>
-                                                        <tbody id="J_regionList"></tbody>
+                                                        <tbody id="J_regionList">
+                                                        <tr th:if="${!#arrays.isEmpty(currentData.distributionDivisionRegions)}" th:each="region:${currentData.distributionDivisionRegions}" th:attr="data-id=${region.id}">
+                                                            <td><input type="text" value="区域名称' + index + '" th:value="${region.name}" class="form-control" readonly="readonly"></td>
+                                                            <td><input type="text" placeholder="区域范围" class="form-control" th:value="${region.markerNum}" readonly="readonly"></td>
+                                                            <td>
+                                                                <div class="input-group colorpicker-component">
+                                                                    <input type="hidden" value="#3366FF" th:value="${region.color}" placeholder="区域范围" class="form-control" readonly="readonly" disabled="disabled">
+                                                                    <span class="input-group-addon"><i></i></span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-success btn-xs js-regionItemEdit">编辑</button>
+                                                                <button type="button" class="btn btn-success btn-xs js-regionItemSave displayNone">保存</button>
+                                                                <button type="button" class="btn btn-default btn-xs js-regionItemDel">删除</button>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
                                                     </table>
                                                 </div>
                                             </div>
@@ -306,10 +315,9 @@
     var cityCode = /*[[${currentData.cityCode}]]*/ "杭州市";
     var districtCode = /*[[${currentData.districtCode}]]*/ "滨江区";
     var distributionRegions = /*[[${currentData.distributionRegions}]]*/"" ;
-    var lan = /*[[${currentData.lan}]]*/ "120.223807",lat = /*[[${currentData.lat}]]*/ "30.208392";
-    if(!!distributionRegions){
-        $("input[name=distributionRegions]").val(distributionRegions);
-    }
+    var distributionMarkers = /*[[${currentData.distributionMarkers}]]*/ "";
+    var distributionDivisionRegions = /*[[${currentData.distributionDivisionRegions}]]*/ "";
+    var lng = /*[[${currentData.lngLat.lng}]]*/ "120.223807",lat = /*[[${currentData.lngLat.lat}]]*/ "30.208392";
 </script>
 <script  type="text/javascript" src="../../resources/js/store/edit_store.js"
          th:src="@{/resources/js/store/edit_store.js}"></script>
