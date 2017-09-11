@@ -15,6 +15,25 @@ public class SysConstant {
     public static String HUOBANMALL_PUSH_APPID = "huotuacf89c9231848c9f49";
     public static String HUOBANMALL_PUSH_APP_SECRET = "0ad8abe244331aacf89c9231848c9f49";
     public static String DAY_SORT_NUM;
+    public static String[] ORDER_EXPORT_HEADER = {
+            "订单编号",
+            "订单名称",
+            "状态",
+            "货品数量",
+            "下单时间",
+            "支付时间",
+            "支付状态",
+            "发货状态",
+            "订单金额",
+            "运费",
+            "优惠金额",
+            "收货人",
+            "收货人身份证",
+            "收货人手机",
+            "收货人地址",
+            "货品列表",
+            "自定义字段"
+    };
 
     @Autowired
     public SysConstant(Environment env){

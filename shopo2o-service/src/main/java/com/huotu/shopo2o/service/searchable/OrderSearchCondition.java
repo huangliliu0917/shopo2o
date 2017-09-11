@@ -43,14 +43,6 @@ public class OrderSearchCondition {
      */
     private long customerId;
     /**
-     * 预计结算时间起始日期
-     */
-    private String startPreSettleDate;
-    /**
-     * 预计结算时间结束日期
-     */
-    private String endPreSettleDate;
-    /**
      * 供应商名称
      */
     private String supplierName;

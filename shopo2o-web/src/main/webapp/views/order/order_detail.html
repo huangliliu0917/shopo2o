@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>订单详情</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${orderDetail}">
+    <!--search-->
+    <form method="get" id="searchForm">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5 th:text = "'订单-' + *{orderId}">订单-1234</h5>&nbsp;
+                        <span class="text-warning" th:text="*{payStatus.value}">已支付</span>&nbsp;
+                        <span class="text-success" th:text="*{shipStatus.value}">待发货</span>&nbsp;
+                        <span class="text-navy" th:text="*{orderStatus.value}">活动</span>&nbsp;
+                        <div class="ibox-tools">
+                            <label class="control-label">订单状态操作：</label>
+                            <button  type="button" class="btn btn-success btn-sm" th:disabled="*{deliveryable} ? 'false' : 'true'" onclick="deliveryOrder()">发货</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">基本信息</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">收发货记录</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="ibox float-e-margins m-b-none">
+                                            <div class="ibox-content p-xxs no-borders">
+                                                <label>商品列表：</label>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>商家编码</th>
+                                                        <th>商品名称</th>
+                                                        <th>价格</th>
+                                                        <th>购买数量</th>
+                                                        <th>小计</th>
+                                                        <th>已发数量</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="supOrderItem:${orderDetail.supOrderItemList}">
+                                                        <td th:text="${supOrderItem.bn}">3447zT6w2ZyC</td>
+                                                        <td th:text="${supOrderItem.name}">打算发的说法(1)</td>
+                                                        <td th:text="${supOrderItem.price}">1.000</td>
+                                                        <td th:text="${supOrderItem.nums}">1</td>
+                                                        <td th:text="${#numbers.formatDecimal(supOrderItem.price*supOrderItem.nums,1,2)}">1.000</td>
+                                                        <td th:text="${supOrderItem.sendNum}">0</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <div class="ibox float-e-margins m-b-none">
+                                            <div class="ibox-content p-xxs no-borders">
+                                                <label>订单详情：</label>
+                                                <table class="table table-bordered order-detail-table">
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>订单号：</th>
+                                                        <td th:text="*{orderId}">1234</td>
+                                                        <th>订单来源：</th>
+                                                        <td th:text="*{orderSourceType.value}">普通订单</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>下单时间：</th>
+                                                        <td th:text="*{createTime}">2016-01-01 00:00:00</td>
+                                                        <th>付款时间：</th>
+                                                        <td th:text="*{payTime}">2016-01-01 00:00:00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>实付金额：</th>
+                                                        <td>
+                                                            ¥
+                                                            <th:block th:text="*{finalAmount}">100</th:block>
+                                                            （运费：<th:block th:text="*{costFreight}">10</th:block>）
+                                                        </td>
+                                                        <th>成本价：</th>
+                                                        <td>
+                                                            ¥
+                                                            <th:block th:text="*{costPrice}">50</th:block>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>是否需要发票：</th>
+                                                        <td th:text="*{isTax} ? '是' : '否'"></td>
+                                                        <th:block th:if="*{isTax}">
+                                                            <th>发票抬头：</th>
+                                                            <td th:text="*{taxCompany}"></td>
+                                                        </th:block>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>用户附言：</th>
+                                                        <td colspan="3" th:text="${orderDetail.memo}">平台备注</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>平台备注：</th>
+                                                        <td colspan="3" th:text="${orderDetail.remark}">平台备注</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="ibox float-e-margins m-b-none">
+                                            <div class="ibox-content p-xxs no-borders">
+                                                <label>收货人信息：</label>
+                                                <table class="table table-bordered order-detail-table">
+                                                    <tbody>
+                                                    <tr>
+                                                        <th>姓名：</th>
+                                                        <td th:text="*{shipName}">陆军</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>电话：</th>
+                                                        <td th:text="*{shipTel}"></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>手机：</th>
+                                                        <td th:text="*{shipMobile}">13967147031</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>地区：</th>
+                                                        <td th:text="*{shipArea}">浙江省杭州市萧山区</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>地址：</th>
+                                                        <td th:text="*{shipAddr}">浙江省杭州市萧山区靖江农贸市场西门如意童装店</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="ibox float-e-margins m-b-none">
+                                            <div class="ibox-content p-xxs no-borders">
+                                                <label>发货单据列表：</label>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>建立日期</th>
+                                                        <th>发货单号</th>
+                                                        <th>物流公司</th>
+                                                        <th>物流单号</th>
+                                                        <th>收件人</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="delivery:*{deliveryList}">
+                                                        <td th:text="${#dates.format(delivery.createTime,'yyyy-MM-dd HH:mm:ss')}">2016-01-01 00:00:00</td>
+                                                        <td th:text="${delivery.deliveryId}">1234</td>
+                                                        <td th:text="${delivery.logisticsName}">天天快递</td>
+                                                        <td th:text="${delivery.logisticsNo}">4567</td>
+                                                        <td th:text="${delivery.shipName}">天天快递</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="ibox float-e-margins m-b-none">
+                                            <div class="ibox-content p-xxs no-borders">
+                                                <label>退货单据列表：</label>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>建立日期</th>
+                                                        <th>退货单号</th>
+                                                        <th>物流公司</th>
+                                                        <th>物流单号</th>
+                                                        <th>收件人</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr th:each="refunds:*{refundsList}">
+                                                        <td th:text="${#dates.format(refunds.createTime,'yyyy-MM-dd HH:mm:ss')}">2016-01-01 00:00:00</td>
+                                                        <td th:text="${refunds.deliveryId}">1234</td>
+                                                        <td th:text="${refunds.logisticsName}">天天快递</td>
+                                                        <td th:text="${refunds.logisticsNo}">4567</td>
+                                                        <td th:text="${refunds.shipName}">天天快递</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+</div>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--日期选择-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/moment.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/daterangepicker.js"></script>
+
+<script src="../../resources/js/hot/bootstrap.hot.extra-utils.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/js/hot/bootstrap.hot.extra-init.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}" ></script>
+<script  th:inline="javascript">
+    var orderUrl = /*[[@{/order}]]*/ "/order";
+    var orderId = /*[[${orderDetail.orderId}]]*/ "123";
+    /*<![CDATA[*/
+    function deliveryOrder(){
+        var title = "发货操作";
+        var url = orderUrl + '/deliveryView?orderId=' + orderId;
+        hot.iframeModal(url, '900px', '730px', title);
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

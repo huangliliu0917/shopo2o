@@ -10,7 +10,6 @@
   -->
 
 <html xmlns:th="http://www.thymeleaf.org">
-<!--@thymesVar id="ordersList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallOrder>"-->
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
@@ -34,7 +33,6 @@
     <form role="form" class="search-panel" method="get" action="/order/getOrdersPage"
           th:action="@{/order/getOrderList}" id="form1">
         <input type="hidden" name="pageIndex" value="1" th:value="${pageIndex}"/>
-        <input type="hidden" name="version" value="V2"/>
         <div class="row">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
@@ -45,25 +43,25 @@
                                 <label class=" control-label" for="orderId">订单号：</label>
                                 <input type="text" class="form-control input-sm mb10" id="orderId" name="orderId"
                                        th:value="*{orderId}"
-                                       runat="server" placeholder="订单号" style="width: 156px;"/>
+                                       placeholder="订单号" style="width: 156px;"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="orderItemName">商品名称：</label>
                                 <input type="text" class="form-control input-sm mb10" id="orderItemName"
                                        th:value="*{orderItemName}"
-                                       name="orderItemName" runat="server" placeholder="用户名"/>
+                                       name="orderItemName" placeholder="用户名"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="shipName">收货人姓名：</label>
                                 <input type="text" class="form-control input-sm mb10" id="shipName" name="shipName"
                                        th:value="*{shipName}"
-                                       runat="server" placeholder="收货人姓名"/>
+                                       placeholder="收货人姓名"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="shipMobile">收货人电话：</label>
                                 <input type="text" class="form-control input-sm mb10" id="shipMobile" name="shipMobile"
                                        th:value="*{shipMobile}"
-                                       runat="server" placeholder="收货人电话"/>
+                                       placeholder="收货人电话"/>
                             </div>
                         </div>
                         <p class="divider-vertical"></p>
@@ -74,9 +72,9 @@
                                        id="createTimePick" name="createTimePick"
                                        placeholder="开始时间-结束时间" style="width: 310px;"
                                        th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') ">
-                                <input type="hidden" id="beginTime" name="beginTime" runat="server"
+                                <input type="hidden" id="beginTime" name="beginTime"
                                        th:value="*{beginTime}"/>
-                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                                <input type="hidden" id="endTime" name="endTime" th:value="*{endTime}"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="payTimePick">支付时间：</label>
@@ -224,7 +222,6 @@
                         </li>
                         <li th:class="*{shipStatus == 4} ? 'active' : ''"><a href="javascript:showList('shipStatus',4)">已退货</a>
                         </li>
-                        <!--<li th:class="*{orderStatus == -1} ? 'active' : _"><a href="javascript:showList('#ddlOrderStatus',-1)">已关闭</a></li>-->
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active">
@@ -234,16 +231,9 @@
                                     <thead>
                                     <tr>
                                         <th colspan="8" style="color: #636e7b; padding-bottom: 0px; text-align: left;">
-                                            <label th:if="${orders.supplierMarkType != null and orders.supplierMarkType != ''}">
-                                                <img src="../resource/images/remark_icons/b1.gif"
-                                                     th:src="@{/resource/images/remark_icons/} + ${orders.supplierMarkType} + '.gif'"
-                                                     width="20" height="20"/></label>
                                             订单号：
                                             <th:block th:text="${orders.orderId}">2016081638541286</th:block>
                                             <span class="text-danger" th:text="'（' + ${orders.orderStatus.value} + '）'">（活动）</span>
-                                            <th:block
-                                                    th:if="${orders.settleStatus != null and orders.settleStatus ==2}">
-                                                <span class="text-warning">（已结算）</span></th:block>
                                             <p style="float: right;">
                                                 <span class="glyphicon glyphicon-time" data-placement="top"
                                                       data-toggle="tooltip" data-original-title="下单时间"></span>：
@@ -317,23 +307,8 @@
                                                 <i class="fa fa-pencil fa-lg tooltips" data-placement="top"
                                                    data-toggle="tooltip"
                                                    data-original-title="操作订单"></i></span>
-                                            &nbsp;
-                                            <span class="cursor-point"
-                                                  th:attr="orderId=''+${orders.orderId},markType = ${orders.supplierMarkType},markText = ${orders.supplierMarkText}"
-                                                  onclick="showRemark(this)" id="supplierRemark">
-                                                <i class="fa fa-edit fa-lg tooltips" data-placement="top"
-                                                   data-toggle="tooltip" data-original-title="备注"></i></span>
                                         </td>
                                     </tr>
-                                    <thead th:if="${orders.memo != null and orders.memo != ''}">
-                                    <tr>
-                                        <th colspan="8" style="color: #636e7b; padding-bottom: 0px; text-align: left;">
-                                            <i class="fa fa-commenting-o" data-placement="top" data-toggle="tooltip"
-                                               data-original-title="备注"></i>：
-                                            <th:block th:text="${orders.memo}">备注备注备注备注备注备注备注备注备注备注</th:block>
-                                        </th>
-                                    </tr>
-                                    </thead>
                                     </tbody>
                                 </table>
                                 <p style="float: left; margin: 20px 0;">共
@@ -379,88 +354,6 @@
                                aria-required="true"/>
                     </div>
                 </div>
-                <label class="col-sm-2 control-label">
-                    <a th:href="@{/resource/tmpl_delivery_orders2.xls}">
-                        <span class="fa fa-download tooltips cursor-point" data-placement="top" data-toggle="tooltip"
-                              data-original-title="批量发货模板下载"></span>
-                    </a>
-                </label>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-12 control-label" style="text-align:left;color:#d9534f;">供应商用户，请重新下载模板。</label>
-            </div>
-            <div class="form-group">
-                <div id="msgPanel" class="col-sm-12 text-danger">
-                    <p id="msgField">本次批量操作成功,其中成功发货</p>
-
-                    <!--<p style="height: 20px;"></p>-->
-                    <ul style="list-style: none" id="failedList">
-                        <li>20123123123:订单号不存在</li>
-                        <button type="button" onclick="exportHelper.exportDeliverExport()"
-                                class="btn btn-success btn-sm">复制所有结果
-                        </button>
-                    </ul>
-                    <textarea rows="10" id="failedListExport" style="width: 100%;">批量发货结果</textarea>
-                    <button type="button" onclick="exportHelper.exportDeliverExport()" class="btn btn-success btn-sm">
-                        复制所有结果
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-<!--订单备注-->
-<div id="remarkModal" class="modal-content-tag">
-    <form id="remark_form" novalidate="novalidate" action="/order/remark" th:action="@{/order/remark}">
-        <input type="hidden" id="remark_orderId" name="orderId"/>
-        <div class="form-horizontal" style="width: 479px;">
-            <div class="form-group">
-                <label class="col-sm-2 control-label" style="padding-top: 0px;">标记：</label>
-                <div class="col-sm-10">
-                    <label>
-                        <input type="radio" checked="checked" name="supplierMarkType" value="b1"/>
-                        <label>
-                            <img src="../resource/images/remark_icons/b1.gif"
-                                 th:src="@{/resource/images/remark_icons/b1.gif}" width="20"
-                                 height="20"/></label></label>
-                    <label>
-                        <input type="radio" name="supplierMarkType" value="b2"/>
-                        <label>
-                            <img src="../resource/images/remark_icons/b2.gif"
-                                 th:src="@{/resource/images/remark_icons/b2.gif}" width="20"
-                                 height="20"/></label></label>
-                    <label>
-                        <input type="radio" name="supplierMarkType" value="b3"/>
-                        <label>
-                            <img src="../resource/images/remark_icons/b3.gif"
-                                 th:src="@{/resource/images/remark_icons/b3.gif}" width="20"
-                                 height="20"/></label></label>
-                    <label>
-                        <input type="radio" name="supplierMarkType" value="b4"/>
-                        <label>
-                            <img src="../resource/images/remark_icons/b4.gif"
-                                 th:src="@{/resource/images/remark_icons/b4.gif}" width="20"
-                                 height="20"/></label></label>
-                    <label>
-                        <input type="radio" name="supplierMarkType" value="b5"/>
-                        <label>
-                            <img src="../resource/images/remark_icons/b5.gif"
-                                 th:src="@{/resources/images/remark_icons/b5.gif}" width="20"
-                                 height="20"/></label></label>
-                    <label>
-                        <input type="radio" name="supplierMarkType" value="b0"/>
-                        <label>
-                            <img src="../resource/images/remark_icons/b0.gif"
-                                 th:src="@{/resource/images/remark_icons/b0.gif}" width="20"
-                                 height="20"/></label></label>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-2 control-label">备注：</label>
-                <div class="col-sm-10">
-                    <textarea name="supplierMarkText" class="form-control" rows="5" style="height: 90px; width: 100%;"
-                              required="" aria-required="true"></textarea>
-                </div>
             </div>
         </div>
     </form>
@@ -490,6 +383,7 @@
     var customerId = /*[[${supplierId}]]*/ 1;
     var pageIndex = /*[[${pageIndex}]]*/ 1;
     var totalPage = /*[[${totalPages}]]*/ 20;
+    var isInteger = /^[0-9]*[1-9][0-9]*$/;
     $(function () {
         $("#remark_form").validate();
         $("#batchDeliver_form").validate();
@@ -500,38 +394,13 @@
         });
     })
     /*<![CDATA[*/
-    //初始化modal
-    var remarkModal = $("#remarkModal").modal("备注", function () {
-        if (!$("#remark_form").valid()) {
-            return;
-        }
-        var orderId = $("#remark_form input[name=orderId]").val();
-        var supplierMarkType = $("input[name=supplierMarkType]:checked").val();
-        var supplierMarkText = $("#remark_form textarea[name=supplierMarkText]").val();
-        var requestData = {
-            orderId: orderId,
-            supplierMarkType: supplierMarkType,
-            supplierMarkText: supplierMarkText
-        };
-        hot.loading.show();
-        hot.ajax(orderUrl + "/remark", requestData, function (result) {
-            if (result.code != 200) {
-                hot.tip.error("保存失败--");
-            } else {
-                remarkModal.hide();
-                $('#form1').submit();
-            }
-        }, function () {
-            $.jBox.tip("保存失败，请重试", "error");
-        }, "post", 400);
-    });
     var batchExportModal = $("#batchExportModal").modal("批量导出", function () {
         var txtBeginPage = $("#txtBeginPage").val();
         var txtEndPage = $("#txtEndPage").val();
 
         var chkResult = exportHelper.checkPage(txtBeginPage, txtEndPage);
         if (!chkResult.flag) {
-            jBox.tip(chkResult.msg, 'info');
+            hot.tip.error(chkResult.msg);
             return;
         }
         var txtOrderId = $("#orderId").val();
@@ -571,6 +440,7 @@
             + '&txtBeginPage=' + txtBeginPage
             + '&txtEndPage=' + txtEndPage;
         window.location.href = url;
+        batchExportModal.hide();
     });
     var batchDeliverModal = $("#batchDeliverModal").modal("批量发货", function () {
         if (!$("#batchDeliver_form").valid()) {
@@ -579,26 +449,7 @@
         hot.loading.show();
         hot.uploadFile(orderUrl + "/batchDeliver", 'batchDeliverFile', function (result) {
             if (result.code == 200) {
-//                var deliverResult = JSON.parse(result);
-                $("#msgField").html("本次批量操作成功,其中成功发货" + result.data.successCount + "单,失败" + result.data.failedCount + "单");
-                $("#failedList").empty();
-                /*$.each(result.data.lstFailedMsg, function (i) {
-                 if(i<10){
-                 $("#failedList").append('<li>' + this + '</li>');
-                 }else{
-                 $("#failedList").append('<li>......</li>');
-                 $("#failedList").append('<button type="button" onclick="exportHelper.exportDeliverExport()" class="btn btn-success btn-sm">复制所有结果</button>');
-                 $("#failedListExport").val(result.data.lstFailedMsg.join('\n'));
-                 return false;
-                 }
-                 });*/
-                $("#failedListExport").val(result.data.lstFailedMsg.join('\n'));
-                $("#msgPanel").show();
             } else {
-                $("#msgField").html("操作失败：" + result.msg);
-                $("#failedList").empty();
-                $("#msgPanel").show();
-                hot.tip.error(result.msg);
             }
         }, function (result) {
             hot.tip.error(result.msg);
@@ -627,17 +478,16 @@
         },
         showConsignFlow: function (obj, sourceType) {
             var orderId = $(obj).attr("orderId");
-
             //判断是否是拼团订单,如果为成团不能发货
             hot.ajax(orderUrl + "/pintuanCheck", {
                 orderId: orderId,
                 orderSource: sourceType
-            }, function (json) {
-                if (json.code == 200) {
-                    $.jBox.tip("该订单为拼团订单并且未成团,无法发货");
+            }, function (res) {
+                if (res.code == 200) {
+                    hot.tip.error("该订单为拼团订单并且未成团,无法发货");
                 } else {
                     var title = "发货操作";
-                    var url = orderUrl + '/delivery?version=V2&orderId=' + orderId + "&pageIndex=" + pageIndex;
+                    var url = orderUrl + '/deliveryView?orderId=' + orderId + "&pageIndex=" + pageIndex;
                     hot.iframeModal(url, '900px', '730px', title);
                 }
             }, function () {
@@ -647,7 +497,7 @@
     var exportHelper = {
         checkPage: function (txtBeginPage, txtEndPage) {
             var numberBug = totalPage;//总页数
-            if (txtBeginPage == '' || txtEndPage == '') {
+            if (txtBeginPage == '' || txtEndPage == '' || !isInteger.test(txtBeginPage) || !isInteger.test(txtEndPage)) {
                 return {flag: false, msg: '请输入正确的起止页码'};
             }
             var beginPage = parseInt(txtBeginPage);
@@ -664,12 +514,6 @@
                 return {flag: false, msg: '最多导出' + _maxPage + '页'};
             }
             return {flag: true};
-        },
-        exportDeliverExport: function () {
-            var copyText = document.getElementById("failedListExport");
-            copyText.select();//选择对象
-            document.execCommand("Copy"); // 执行浏览器复制命令
-            hot.tip.success("复制成功！");
         }
     }
     //批量发货
@@ -681,25 +525,10 @@
     $("#btnBatchExport").click(function () {
         batchExportModal.show();
     });
-    //备注
-    function showRemark(obj) {
-        remarkModal.show();
-        var orderId = $(obj).attr('orderId');
-        var markType = $(obj).attr('markType');
-        var markText = $(obj).attr('markText');
-        $("#remark_form input[name=orderId]").val(orderId);
-        if (markType.length > 0) {
-            $("#remark_form input[name=supplierMarkType][value=" + markType + "]").attr("checked", "checked");
-        }
-        if (markText.length > 0) {
-            $("#remark_form textarea[name=supplierMarkText]").text(markText);
-        }
-    }
     //查看详细
     function showDetail(obj) {
         var orderId = $(obj).attr("orderId");
-        window.location.href = orderUrl + "/showOrderDetail?version=V2&orderId=" + orderId;
-//        J.PopupIFrame(url, "订单详情", 1100, 680, "ifrm", "", "auto", "");
+        window.location.href = orderUrl + "/showOrderDetail?orderId=" + orderId;
     }
     /*]]>*/
 </script>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>发货单弹窗页面</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+
+<form method="post" id="deliveryForm"  th:object="${order}">
+    <div class="panel-body">
+
+        <input type="hidden" name="orderId" id="orderId" th:value="*{orderId}" value="5"/>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox-title">
+                    <h5 th:text = "'订单-' + *{orderId}">订单-1234</h5>&nbsp;
+                    <div class="ibox-tools">
+                        <span class="glyphicon glyphicon-time" data-placement="top" data-toggle="tooltip" data-original-title="下单时间"></span>：
+                        <th:block th:text="*{#dates.format(createTime,'yyyy-MM-dd HH:mm:ss')}">2016-04-19 17:20:12</th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins m-b-none">
+                    <div class="ibox-content p-xxs no-borders">
+                        <table class="table table-bordered table-hover table-center">
+                            <tbody>
+                            <tr>
+                                <th>物流公司：</th>
+                                <td class="form-inline">
+                                    <div class="form-group m-b-none">
+                                        <input name="logisticsName" type="text" id="logisticsName" class="form-control input-sm"/>
+                                        <select name="selLogiName" id="selLogiName" class="form-control input-sm valid"
+                                                onchange="quickSetLogiName();">
+                                            <option value="0">请输入或选择</option>
+                                            <option value="youzhengguonei">中国邮政</option>
+                                            <option value="shentong">申通快递</option>
+                                            <option value="yuantong">圆通速递</option>
+                                            <option value="shunfeng">顺丰速运</option>
+                                            <option value="tiantian">天天快递</option>
+                                            <option value="huitongkuaidi">百世汇通</option>
+                                            <option value="yunda">韵达快递</option>
+                                            <option value="zhongtong">中通速递</option>
+                                            <option value="longbanwuliu">龙邦物流</option>
+                                            <option value="zhaijisong">宅急送</option>
+                                            <option value="quanyikuaidi">全一快递</option>
+                                            <option value="huitongkuaidi">汇通速递</option>
+                                            <option value="minghangkuaidi">民航快递</option>
+                                            <option value="yafengsudi">亚风速递</option>
+                                            <option value="kuaijiesudi">快捷速递</option>
+                                            <option value="tiandihuayu">华宇物流</option>
+                                            <option value="zhongtiewuliu">中铁快运</option>
+                                            <option value="fedexuk">FedEx</option>
+                                            <option value="ups">UPS</option>
+                                            <option value="dhl">DHL</option>
+                                            <option value="pinjun">品骏快递</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <th>物流单号：</th>
+                                <td>
+                                    <input name="logisticsNo" type="text" id="logisticsNo" class="form-control input-sm"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>物流费用</th>
+                                <td>
+                                    <div class="form-group m-b-none">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">¥</span>
+                                            <input name="freight" type="text" id="freight" class="form-control input-sm only-float valid" placeholder="物流费用"/>
+                                        </div>
+                                    </div>
+                                </td>
+                                <th>邮政编码：</th>
+                                <td>
+                                    <input readonly="readonly" name="shipZip" type="text" id="shipZip" class="form-control input-sm" th:value="*{shipZip}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>收货人姓名：</th>
+                                <td>
+                                    <input readonly="readonly" name="shipName" th:value="*{shipName}" type="text" id="shipName" class="form-control input-sm"/>
+                                </td>
+                                <th>电话：</th>
+                                <td>
+                                    <input readonly="readonly" name="shipTel" type="text" th:value="*{shipTel}" id="shipTel" class="form-control input-sm"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>手机：</th>
+                                <td>
+                                    <input readonly="readonly" name="shipMobile" type="text" th:value="*{shipMobile}" id="shipMobile" class="form-control input-sm"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>地址：</th>
+                                <td colspan="3">
+                                    <input readonly="readonly" name="shipAddr" type="text" id="shipAddr" class="form-control input-sm" th:value="*{shipAddr}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>用户附言：</th>
+                                <td colspan="3" th:text="*{memo}"></td>
+                            </tr>
+                            <tr>
+                                <th>平台备注：</th>
+                                <td colspan="3" th:text="*{remark}"></td>
+                            </tr>
+                            <tr>
+                                <th>发货单备注：</th>
+                                <td colspan="3">
+                                    <textarea name="remark" id="remark" class="form-control"></textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--<div class="tabs-container">
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <div class="panel-body">
+                                </div>
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content p-xxs no-borders">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>货号</th>
+                                <th>商品名称</th>
+                                <th>购买数量</th>
+                                <th>已发货</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="orderItem:${order.orderItems}">
+                                <td><input th:if="${orderItem.deliverable()}" type="checkbox" name="choice" th:value="${orderItem.itemId}" checked="checked"/></td>
+                                <td th:text="${orderItem.bn}">G49B884C0349DE7</td>
+                                <td>
+                                    <span th:text="${orderItem.name}">休闲男鞋(蓝色,37)(1)</span>
+                                    <span style="color: red;" th:if="${orderItem.afterSales!=null}" th:text="${orderItem.afterSales.afterSaleStatus.value}"></span>
+                                </td>
+                                <td th:text="${orderItem.nums}">0</td>
+                                <td th:text="${orderItem.sendNum}">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins m-b-none">
+                    <div class="ibox-tools">
+                        <button type="button" class="btn btn-success btn-sm" id="deliver" onclick="submitForm();">发货</button>
+                        <button type="button" class="btn btn-white btn-sm" id="closeFrame">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--valid-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+<!--valid-->
+<script src="../../resources/js/hot/bootstrap.hot.extra-utils.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/js/hot/bootstrap.hot.extra-init.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}" ></script>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/order/}]]*/ "/order/";
+    var pageIndex = /*[[${pageIndex}]]*/ 1;
+    /*<![CDATA[*/
+    var index = parent.layer.getFrameIndex(window.name);
+    $(function(){
+        $("#deliveryForm").validate({
+            rules:{
+                logisticsName:"required",
+                logisticsNo:"required",
+                freight:{
+                    required:true,
+                    number:true
+                }
+            },
+            messages:{
+                logisticsName:"请选择物流公司",
+                logisticsNo:"请输入物流单号",
+                freight:{
+                    required:"请输入物流费用",
+                    number:"物流费用必须为数字"
+                }
+            }
+        });
+        $("#closeFrame").click(function(){
+            parent.layer.close(index);
+        })
+    })
+    function quickSetLogiName(){
+        var _cur = $("#selLogiName  option:selected");
+        var lname = _cur.val() == '0' ? '' : _cur.text();
+        $('#logisticsName').val(lname);
+    }
+
+    function submitForm() {
+        var orderId = $("#orderId").val();
+        var logisticsName = $("#logisticsName").val();
+        var logisticsNo = $("#logisticsNo").val();
+        var logisticsCode = $("#selLogiName").val();
+        var freight = $.trim($("#freight").val());
+        var remark = $("#remark").val();
+        var shipAddr = $("#shipAddr").val();
+        var shipName = $("#shipName").val();
+        var shipZip = $("#shipZip").val();
+        var shipMobile = $("#shipMobile").val();
+        var shipTel = $("#shipTel").val();
+        var reason = $("#reason").val();
+        var sendItems = getCheckedSendBn("choice");
+        if(!$("#deliveryForm").valid()){
+            return;
+        }
+        if (sendItems.length == 1) {
+            $.jBox.tip("请选择要发货的货品");
+            return;
+        }
+        var requestData = {
+            orderId: orderId,
+            logiName: logisticsName,
+            logiNo: logisticsNo,
+            logiCode: logisticsCode,
+            freight: freight,
+            remark: remark,
+            shipAddr: shipAddr,
+            shipName: shipName,
+            shipZip: shipZip,
+            shipMobile: shipMobile,
+            shipTel: shipTel,
+            reason: reason,
+            sendItems: sendItems
+        };
+        hot.loading.show();
+        hot.ajax(baseUrl + "delivery", requestData, function (result) {
+            if (result.code != 200) {
+                hot.tip.error("发货失败--" + result.msg);
+            } else {
+                hot.tip.success("发货成功");
+                setTimeout(function () {
+                    top.$('#loading').show();
+                    top.$('#content').hide().attr('src', baseUrl + "getOrdersPage?pageIndex=" + pageIndex);
+                }, 400);
+            }
+        }, function () {
+            hot.tip.error("保存失败，请重试");
+        }, "post",400);
+    }
+
+    function getCheckedSendBn(checkboxName) {
+        var checkedObj = $("input[name='" + checkboxName + "']:checked");
+        var checkedMenu = "|";
+
+        checkedObj.each(function () {
+            checkedMenu += $(this).val() + "|";
+        });
+        return checkedMenu;
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

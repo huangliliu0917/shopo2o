@@ -16,7 +16,8 @@ package com.huotu.shopo2o.common.utils;
 public enum ResultCodeEnum {
     SUCCESS(200, "请求成功"),
     SAVE_DATA_ERROR(400, "数据保存出错"),
-    SYSTEM_BAD_REQUEST(500, "系统请求失败");
+    SYSTEM_BAD_REQUEST(500, "系统请求失败"),
+    LOGINNAME_NOT_AVAILABLE(100, "用户名已存在");
 
     private int resultCode;
     private String resultMsg;

@@ -22,11 +22,13 @@
                 <li>
                     <p style="margin-left: 15px">
                             <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
-                                <a href="javascript:;" style="color: #8f939e" >用户名：<span th:text="${mallCustomer.username}">10000005</span></a>
+                                <a href="javascript:;" style="color: #8f939e">用户名：<span
+                                        th:text="${mallCustomer.username}">10000005</span></a>
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
-                                <a href="javascript:;" style="color: #8f939e" >商户编号：<span th:text="${mallCustomer.customerId}">10000005</span></a>
+                                <a href="javascript:;" style="color: #8f939e">商户编号：<span
+                                        th:text="${mallCustomer.customerId}">10000005</span></a>
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
@@ -40,21 +42,21 @@
     </div>
 </section>
 <button type="button" class="btn btn-default" onclick="homeHandle.order()">订单管理</button>
-<button type="button" class="btn btn-default" onclick="homeHandle.manager()">操作员管理</button>
-<button type="button" class="btn btn-default" onclick="homeHandle.shop()">店铺管理</button>
+<button type="button" class="btn btn-default" onclick="homeHandle.operator()">操作员管理</button>
+<button type="button" class="btn btn-default" onclick="homeHandle.store()">店铺管理</button>
 </body>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
 <script>
     var homeHandle = {
-        order:function () {
-            window.location.href= "/order/getOrderList"
+        order: function () {
+            window.location.href = "/order/getOrderList"
         },
-        manager:function () {
-
+        operator: function () {
+            window.location.href = "/operator/getOperatorList"
         },
-        shop:function () {
-
+        store: function () {
+            window.location.href = "/store/getStoreList"
         }
     }
 </script>

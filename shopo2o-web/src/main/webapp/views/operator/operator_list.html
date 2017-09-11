@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallAfterSales>"*/-->
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>操作员管理</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+    <!--checkbox-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>操作员列表</h5>
+                    <div class="ibox-tools">
+                        <button type="button" onclick="operatorListHandler.showEdit(0)" class="btn btn-success btn-sm">新增
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table table-bordered table-hover table-center">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>登录名</th>
+                            <th>角色名</th>
+                            <th>姓名</th>
+                            <th>联系手机</th>
+                            <th>注册时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="operator:${operators}">
+                            <td th:text="${operatorStat.count}">1</td>
+                            <td th:text="${operator.username}">shaoxing</td>
+                            <td th:text="${operator.roleName}">管理员</td>
+                            <td th:text="${operator.realName}">张三</td>
+                            <td th:text="${operator.mobile}">15111111111</td>
+                            <td th:text="${#dates.format(operator.createTime,'yyyy-MM-dd HH:mm:ss')}">2014-09-04 19:25:25</td>
+                            <td>
+                                            <span class="cursor-point" th:onclick="|operatorListHandler.showEdit(${operator.id})|">
+                                                <i class="fa fa-pencil fa-lg tooltips" data-placement="top" data-toggle="tooltip"
+                                                   data-original-title="编辑"></i></span>
+                                &nbsp;
+                                <span class="cursor-point" th:attr="operatorId=${operator.id}" onclick="operatorListHandler.deleteOperator(this)">
+                                                <i class="fa fa-minus fa-lg tooltips" data-placement="top" data-toggle="tooltip"
+                                                   data-original-title="删除"></i></span>
+                                &nbsp;
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+</div>
+<!--修改操作员-->
+<div id="editOperatorModal" class="modal-content-tag">
+    <form id="editOperator_form" novalidate="novalidate">
+        <input type="hidden" name="operatorId" value="0"/>
+        <div class="form-horizontal" style="width: 479px;">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">登录名：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="username" required="true" placeholder="登录名"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="realName" required="true" placeholder="姓名"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">密码：</label>
+                <div class="col-sm-8">
+                    <input id="password" type="password" class="form-control" name="password" required="true" placeholder="密码"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">确认密码：</label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control" name="confirmPass" required="true" placeholder="确认密码" equalTo="#password"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">角色名：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="roleName" required="true" placeholder="角色名"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">联系手机：</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="mobile" required="true" placeholder="联系手机" digits="true"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label">设置权限：</label>
+                <div class="col-sm-8">
+                    <div class="checkbox checkbox-primary checkbox-inline" th:each="authority,stat:${authorities}">
+                        <input type="checkbox" th:id="'authorityCheckbox' + ${stat.count}" id="inlineCheckbox" th:value="${authority.code}" name="authorities" required="true"/>
+                        <label for="inlineCheckbox" th:for="'authorityCheckbox' + ${stat.count}" th:text="${authority.value}"> 超级管理员 </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--修改操作员-->
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--validate-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+<script src="../../resources/js/hot/bootstrap.hot.extra-utils.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/js/hot/bootstrap.hot.extra-init.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}" ></script>
+<script th:inline="javascript">
+    var ajaxUrl = /*[[@{/}]]*/ "/";
+    /*<![CDATA[*/
+    var operatorModal = $("#editOperatorModal").modal("操作员",function(){
+        if(!$("#editOperator_form").valid()){
+            return;
+        }
+        var operatorId = $("input[name=operatorId]").val();
+        var username = $("input[name=username]").val();
+        var realName = $("input[name=realName]").val();
+        var password = $("input[name=password]").val();
+        var roleName = $("input[name=roleName]").val();
+        var mobile = $("input[name=mobile]").val();
+        var authorities = getCheckedItems("authorities");
+        var data = {
+            operatorId : operatorId,
+            username : username,
+            realName : realName,
+            password : password,
+            roleName : roleName,
+            mobile : mobile,
+            authorities : authorities
+        }
+        hot.ajax(ajaxUrl + "operator/save",data,function(json){
+            if (json.code == 200) {
+                hot.tip.success("保存成功");
+                window.location.reload();
+            } else if (json.code == 100) {
+                hot.tip.error("保存失败,存在相同的用户名");
+            } else {
+                hot.tip.error("保存失败");
+            }
+        },function(){},'post');
+    });
+
+    var operatorListHandler = {
+        showModal:function(){
+            operatorModal.show();
+            $("input[name=operatorId]").val('');
+            $("input[name=username]").val('');
+            $("input[name=realName]").val('');
+            $("input[name=password]").val('');
+            $("input[name=roleName]").val('');
+            $("input[name=mobile]").val('');
+            $("input[name=authorities]:checked").each(function(){
+                $(this).prop("checked", false);
+            });
+            $("#editOperator_form").validate({
+                errorPlacement:function(error,element){
+                    for(var i = 0 ; i < error.length ; i++){
+                        element.parents('div[class~=col-sm-8]')[0].append(error[i]);
+                    }
+                }
+            });
+        },
+        showEdit:function(operatorId){
+            if(operatorId > 0){
+                hot.ajax(ajaxUrl + "operator/" + operatorId,null,function(json){
+                    var operator = json.data;
+                    operatorListHandler.showModal();
+                    $("input[name=operatorId]").val(operatorId);
+                    $("input[name=username]").attr("readonly","readonly");
+                    $("input[name=username]").val(operator.username);
+                    $("input[name=realName]").val(operator.realName);
+                    $("input[name=roleName]").val(operator.roleName);
+                    $("input[name=mobile]").val(operator.mobile);
+                    $.each(operator.authorities, function () {
+                        $("input[name=authorities][value=" + this.authority + "]").attr("checked", "checked");
+                    });
+                },function(){},'get');
+            }else{
+                operatorListHandler.showModal();
+                $("input[name=operatorId]").val(0);
+                $("input[name=username]").removeAttr('readonly');
+            }
+        },
+        deleteOperator:function(obj){
+            var operatorId = $(obj).attr('operatorId');
+            hot.confirm("确定要删除该操作员吗?",function(){
+                hot.loading.show();
+                hot.ajax(ajaxUrl + "operator/delete",{operatorId: operatorId},function(json){
+                    if (json.code == 200) {
+                        hot.tip.success("删除成功");
+                        window.location.reload();
+                    } else {
+                        hot.tip.error("删除失败");
+                    }
+                },function(){},'post');
+            });
+        }
+    }
+
+    function getCheckedItems(checkboxName) {
+        var checkedObj = $("input[name='" + checkboxName + "']:checked");
+        var checkedMenu = "";
+
+        checkedObj.each(function () {
+            checkedMenu += $(this).val() + ",";
+        });
+        return checkedMenu.substring(0, checkedMenu.lastIndexOf(","));
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

@@ -35,7 +35,7 @@ public class MallOrder {
     @Column(name = "Confirm")
     private int confirm;
     @Column(name = "Status")
-    private OrderEnum.PayStatus orderStatus;
+    private OrderEnum.OrderStatus orderStatus;
     @Column(name = "Pay_Status")
     private OrderEnum.PayStatus payStatus;
     @Column(name = "Ship_Status")
@@ -128,6 +128,9 @@ public class MallOrder {
     /**
      * 供应商id
      */
+    @Column(name = "StoreId_Id")
+    private Integer storeId;
+    // TODO: 2017-09-11 先不删（为了能显示订单）
     @Column(name = "Supplier_Id")
     private Integer supplierId;
     /**
@@ -148,32 +151,17 @@ public class MallOrder {
     private int receiveStatus;
     @Column(name = "BNList")
     private String bnList;
-    /**
-     * 供应商备注等级
-     *
-     * @return
-     */
-    @Column(name = "Supplier_Mark_Type")
-    private String supplierMarkType;
 
-    /**
-     * 供应商备注
-     *
-     * @return
-     */
-    @Column(name = "Supplier_Mark_Text")
-    private String supplierMarkText;
-
-    /**
-     * 结算状态
-     */
-    @Column(name = "SettleStatus")
-    private Integer settleStatus;
-    /**
-     * 预计结算时间
-     */
-    @Column(name = "PreSettleDate")
-    private Date preSettleDate;
+//    /**
+//     * 结算状态
+//     */
+//    @Column(name = "SettleStatus")
+//    private Integer settleStatus;
+//    /**
+//     * 预计结算时间
+//     */
+//    @Column(name = "PreSettleDate")
+//    private Date preSettleDate;
 
     @Column(name = "SourceType")
     private OrderEnum.OrderSourceType orderSourceType;
@@ -192,12 +180,6 @@ public class MallOrder {
 
     @Column(name = "IdentityCard")
     private String identityCard;
-    /**
-     * 结算方式：0|Null->成本价；1->提点
-     */
-    @Column(name = "SupplierSettleMode")
-    private Integer supplierSettleMode;
-
 
     //发货状态为 未发货，部分发货，部分退货
     //支付状态为 已支付，部分退款

@@ -1,4 +1,4 @@
-package com.huotu.shopo2o.service.repository;
+package com.huotu.shopo2o.service.repository.order;
 
 import com.huotu.shopo2o.service.entity.order.MallOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
