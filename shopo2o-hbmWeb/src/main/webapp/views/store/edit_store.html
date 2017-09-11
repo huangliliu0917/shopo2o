@@ -17,8 +17,7 @@
     <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="http://resali.huobanplus.com/cdn/pickadate/3.5.6/themes/classic.css">
-    <link rel="stylesheet" href="http://resali.huobanplus.com/cdn/pickadate/3.5.6/themes/classic.time.css">
+    <link href="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet"/>
 
     <!--高德地图-->
@@ -133,7 +132,7 @@
                                             <input name="openTime" type="text" required="true" th:value="${currentData.openTime}"
                                                    class="form-control" placeholder="起始时间"/>
                                             -
-                                            <input name="closeTime" type="text" required="true" th:value="${currentData.closeTime}"
+                                            <input name="closeTime" type="text" required="true" largeThan="openTime" th:value="${currentData.closeTime}"
                                                    class="form-control" placeholder="结束时间"/>
                                         </div>
                                     </div>
@@ -141,7 +140,7 @@
                                         <label class="col-sm-2 control-label">截单时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="deadlineTime" type="text" required="true" th:value="${currentData.deadlineTime}"
+                                            <input name="deadlineTime" type="text" required="true" lessThan="closeTime" th:value="${currentData.deadlineTime}"
                                                    class="form-control" placeholder="截单时间"/>
                                         </div>
                                     </div>
@@ -296,8 +295,8 @@
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/pickadate/3.5.6/picker.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/pickadate/3.5.6/picker.time.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/l10n/zh.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
