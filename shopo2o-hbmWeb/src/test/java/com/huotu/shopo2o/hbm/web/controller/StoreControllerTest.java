@@ -71,7 +71,7 @@ public class StoreControllerTest extends CommonTestBase {
                 .param("cityCode", store.getCityCode())
                 .param("districtCode", store.getDistrictCode())
                 .param("address", store.getAddress())
-                .param("lan", String.valueOf(store.getLngLat().getLng()))
+                .param("lng", String.valueOf(store.getLngLat().getLng()))
                 .param("lat", String.valueOf(store.getLngLat().getLat()))
                 .param("openTime",openTime)
                 .param("closeTime",closeTime)
