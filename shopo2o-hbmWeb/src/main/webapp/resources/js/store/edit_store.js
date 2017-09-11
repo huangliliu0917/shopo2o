@@ -732,6 +732,10 @@ var Region = {
                 valueInput = parent.find('input').eq(1),
                 colorInput = parent.find('input').eq(2);
             var id = parent.attr('data-id');
+            if(nameInput.val().length == 0 || valueInput.val().length == 0){
+                layer.msg('请输入区域名称和区域范围');
+                return;
+            }
             RegionListObj[id] = {};
             RegionListObj[id]['name'] = nameInput.val();
             RegionListObj[id]['markerNum'] = valueInput.val();
