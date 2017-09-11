@@ -87,7 +87,7 @@ public class StoreController extends MallBaseController {
     @ResponseBody
     @Transactional
     public ApiResult save(@ModelAttribute("customerId") Long customerId
-            , @RequestParam(required = false, defaultValue = "0") Long storeId, @RequestParam String loginName, @RequestParam String name
+            , @RequestParam(required = false, defaultValue = "0") Long storeId, @RequestParam(required = false) String loginName, @RequestParam String name
             , @RequestParam String areaCode, @RequestParam String telephone
             , @RequestParam String provinceCode, @RequestParam String cityCode, @RequestParam String districtCode
             , @RequestParam String address, @RequestParam Double lan, @RequestParam Double lat
@@ -108,6 +108,7 @@ public class StoreController extends MallBaseController {
             if(isExist){
                 return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR,"登录用户名已存在");
             }
+            store.setCreateTime(new Date());
         }
         store.setName(name);
         store.setAreaCode(areaCode);

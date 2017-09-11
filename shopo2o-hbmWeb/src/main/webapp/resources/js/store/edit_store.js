@@ -58,6 +58,7 @@ $(function () {
         format: 'HH:i',
         interval: 30,
         clear: '清除',
+        editable: true,
         onSet: function(context) {
             var time = context.select+30
             var hour = parseInt(time/60);
@@ -72,7 +73,8 @@ $(function () {
     var $end = $('input[name="closeTime"]').pickatime({
         format: 'HH:i',
         interval: 30,
-        clear: '清除'
+        clear: '清除',
+        editable: true
     });
     var picker = $end.pickatime('picker');
 
@@ -80,7 +82,8 @@ $(function () {
     $('input[name="deadlineTime"]').pickatime({
         format: 'HH:i',
         interval: 30,
-        clear: '清除'
+        clear: '清除',
+        editable: true
     });
     $("#shopBasicInfo").validate({
         ignore: ''
@@ -569,6 +572,15 @@ var editShopHandler = {
         }
     },
     saveShopMoreInfo: function () {
+        //判断一下配送范围和划分区域是否已经保存了
+        if(!$("#J_RegionDistribution").hasClass("displayNone")){
+            layer.msg('请保存配送范围');
+            return;
+        }
+        if(!$("#J_RegionDivision").hasClass("displayNone")){
+            layer.msg('请保存划分区域');
+            return;
+        }
         if ($("#shopMoreInfo").valid()) {
             //判断是否有区域
             if (Object.keys(RegionListObj).length == 0) {
