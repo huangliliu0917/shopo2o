@@ -55,8 +55,8 @@ public class StoreServiceImpl implements StoreService {
                 return apiResult;
             }
         }
-        storeRepository.save(store);
-        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+        storeRepository.saveAndFlush(store);
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS,store.getId());
     }
 
     @Override

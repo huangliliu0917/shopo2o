@@ -17,8 +17,7 @@
     <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="http://resali.huobanplus.com/cdn/pickadate/3.5.6/themes/classic.css">
-    <link rel="stylesheet" href="http://resali.huobanplus.com/cdn/pickadate/3.5.6/themes/classic.time.css">
+    <link href="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.css" rel="stylesheet"/>
     <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/colorpicker/css/bootstrap-colorpicker.min.css" rel="stylesheet"/>
 
     <!--高德地图-->
@@ -43,7 +42,10 @@
     <div class="ibox">
         <div class="ibox-content">
             <ol class="breadcrumb">
-                <li><strong th:text="${currentData.id==null}?'新增门店':'编辑门店'">新增门店</strong></li>
+                <h3>
+                    <strong th:text="${currentData.id==null}?'新增门店':'编辑门店'">新增门店</strong>
+                    <button type="button" class="btn btn-sm btn-success" onclick="editShopHandler.returnToList()">返回门店列表</button>
+                </h3>
             </ol>
         </div>
     </div>
@@ -60,7 +62,7 @@
                         </li>
                     </ul>
                     <div class="tab-content">
-                        <div id="tab-1" class="tab-pane">
+                        <div id="tab-1" class="tab-pane active">
                             <form id="shopBasicInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group form-inline">
@@ -118,9 +120,9 @@
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
-                                        <label for="lan"></label>
-                                        <input type="hidden" name="lan" id="lan" th:value="${currentData.lngLat.lng}" required="true"/>
-                                        <input type="hidden" name="lat" id="lat" th:value="${currentData.lngLat.lat}"/>
+                                        <label for="lng"></label>
+                                        <input type="hidden" name="lng" id="lng" th:value="${currentData.lngLat != null ? currentData.lngLat.lng : ''}" required="true"/>
+                                        <input type="hidden" name="lat" id="lat" th:value="${currentData.lngLat != null ? currentData.lngLat.lat : ''}"/>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="addressMap" style="height: 400px;">
@@ -130,10 +132,10 @@
                                         <label class="col-sm-2 control-label">营业时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="openTime" type="text" required="true"
+                                            <input name="openTime" type="text" required="true" th:value="${currentData.openTime}"
                                                    class="form-control" placeholder="起始时间"/>
                                             -
-                                            <input name="closeTime" type="text" required="true" th:value="${currentData.closeTime}"
+                                            <input name="closeTime" type="text" required="true" largeThan="openTime" th:value="${currentData.closeTime}"
                                                    class="form-control" placeholder="结束时间"/>
                                         </div>
                                     </div>
@@ -141,7 +143,7 @@
                                         <label class="col-sm-2 control-label">截单时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="deadlineTime" type="text" required="true" th:value="${currentData.deadlineTime}"
+                                            <input name="deadlineTime" type="text" required="true" lessThan="closeTime" th:value="${currentData.deadlineTime}"
                                                    class="form-control" placeholder="截单时间"/>
                                         </div>
                                     </div>
@@ -149,7 +151,7 @@
                                         <label class="col-sm-2 control-label">店招图
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <img id="logo_uri" style="width:80px;height: 80px;" th:src="${currentData.mallLogoUri} != null ? ${currentData.mallLogoUri} : ''"/>
+                                            <img id="logo_uri" style="width:80px;height: 80px;" th:src="${currentData.mallLogoUri} != null ? ${currentData.mallLogoUri} : @{/resources/img/none.png}"/>
                                             <button class="btn btn-sm" id="uploadImage" type="button"
                                                     onclick="javascript:$('#uploadFile').click();">上传图片</button>
                                             <input onchange="uploadHandler.uploadImg('uploadFile','logo_uri','logo')"
@@ -178,11 +180,10 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="tab-2" class="tab-pane active"  th:if="${currentData.id!=null}">
+                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group">
-                                        <label for="lan"></label>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="sendArea" style="height: 400px;">
@@ -296,8 +297,8 @@
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/pickadate/3.5.6/picker.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/pickadate/3.5.6/picker.time.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.js"></script>
+<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/l10n/zh.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
@@ -318,7 +319,7 @@
     var distributionRegions = /*[[${currentData.distributionRegions}]]*/"" ;
     var distributionMarkers = /*[[${currentData.distributionMarkers}]]*/ "";
     var distributionDivisionRegions = /*[[${currentData.distributionDivisionRegions}]]*/ "";
-    var lng = /*[[${currentData.lngLat.lng}]]*/ "120.223807",lat = /*[[${currentData.lngLat.lat}]]*/ "30.208392";
+    var lng = /*[[${currentData.lngLat != null ? currentData.lngLat.lng :''}]]*/ "120.223807",lat = /*[[${currentData.lngLat != null ? currentData.lngLat.lat : ''}]]*/ "30.208392";
 </script>
 <script  type="text/javascript" src="../../resources/js/store/edit_store.js"
          th:src="@{/resources/js/store/edit_store.js}"></script>

@@ -14,12 +14,23 @@ var contextMenu = {}; //右键菜单
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 var areaSelect = document.getElementById('street');
+var openTime, closeTime, deadlineTime;
 $(function () {
     // 最多两位小数
     $.validator.addMethod("isFloat2", function (value, element) {
         var score = /^[0-9]+\.?[0-9]{0,2}$/;
         return this.optional(element) || (score.test(value));
     }, "最多可输入两位小数");
+    $.validator.addMethod("largeThan",function(value, element, param){
+        var target = $('input[name='+param+']');
+        // console.log(target.val());
+        return value >= target.val();
+    },$.validator.format("区间错误"));
+    $.validator.addMethod("lessThan",function(value, element, param){
+        var target = $('input[name='+param+']');
+        // console.log(target.val());
+        return value <= target.val();
+    },$.validator.format("区间错误"));
 
     if (storeId != undefined && storeId != 0) {
         //如果是编辑，需要初始化地图定位等信息
@@ -54,38 +65,40 @@ $(function () {
         }
     });
 
-    $('input[name="openTime"]').pickatime({
-        format: 'HH:i',
-        interval: 30,
-        clear: '清除',
-        onSet: function(context) {
-            var time = context.select+30
-            var hour = parseInt(time/60);
-            var minute = time%60;
-            picker.set({
-                'select':time,
-                'min':[hour,minute]
-            });
-        }
+    //初始化时间空间
+    openTime = $('input[name=openTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        allowInput:true,
+        defaultMinute: 0
     });
-
-    var $end = $('input[name="closeTime"]').pickatime({
-        format: 'HH:i',
-        interval: 30,
-        clear: '清除'
+    closeTime = $('input[name=closeTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        allowInput:true,
+        defaultMinute: 0
     });
-    var picker = $end.pickatime('picker');
-
-
-    $('input[name="deadlineTime"]').pickatime({
-        format: 'HH:i',
-        interval: 30,
-        clear: '清除'
+    deadlineTime = $('input[name=deadlineTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        allowInput:true,
+        defaultMinute: 0
     });
-    $("#shopBasicInfo").validate({
-        ignore: ''
-    });
-
 });
 var mapHandler = {
     init: function () {
@@ -555,8 +568,9 @@ var editShopHandler = {
                         layer.msg(data.data);
                     } else {
                         layer.msg('保存成功');
+                        var storeId = data.data;
                         setTimeout(function () {
-                            window.location.reload()
+                            window.location.href = baseUrl + "mall/store/edit?storeId=" + storeId;
                         }, 300);
                     }
                 },
@@ -569,6 +583,15 @@ var editShopHandler = {
         }
     },
     saveShopMoreInfo: function () {
+        //判断一下配送范围和划分区域是否已经保存了
+        if(!$("#J_RegionDistribution").hasClass("displayNone")){
+            layer.msg('请保存配送范围');
+            return;
+        }
+        if(!$("#J_RegionDivision").hasClass("displayNone")){
+            layer.msg('请保存划分区域');
+            return;
+        }
         if ($("#shopMoreInfo").valid()) {
             //判断是否有区域
             if (Object.keys(RegionListObj).length == 0) {
@@ -599,6 +622,9 @@ var editShopHandler = {
                 }
             })
         }
+    },
+    returnToList: function(){
+        window.location.href = baseUrl + "mall/store/list";
     }
 };
 
@@ -720,6 +746,10 @@ var Region = {
                 valueInput = parent.find('input').eq(1),
                 colorInput = parent.find('input').eq(2);
             var id = parent.attr('data-id');
+            if(nameInput.val().length == 0 || valueInput.val().length == 0){
+                layer.msg('请输入区域名称和区域范围');
+                return;
+            }
             RegionListObj[id] = {};
             RegionListObj[id]['name'] = nameInput.val();
             RegionListObj[id]['markerNum'] = valueInput.val();

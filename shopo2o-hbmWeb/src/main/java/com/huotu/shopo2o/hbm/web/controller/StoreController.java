@@ -87,10 +87,10 @@ public class StoreController extends MallBaseController {
     @ResponseBody
     @Transactional
     public ApiResult save(@ModelAttribute("customerId") Long customerId
-            , @RequestParam(required = false, defaultValue = "0") Long storeId, @RequestParam String loginName, @RequestParam String name
+            , @RequestParam(required = false, defaultValue = "0") Long storeId, @RequestParam(required = false) String loginName, @RequestParam String name
             , @RequestParam String areaCode, @RequestParam String telephone
             , @RequestParam String provinceCode, @RequestParam String cityCode, @RequestParam String districtCode
-            , @RequestParam String address, @RequestParam Double lan, @RequestParam Double lat
+            , @RequestParam String address, @RequestParam Double lng, @RequestParam Double lat
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime openTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime closeTime
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime, @RequestParam String logo
             , @RequestParam String erpId) {
@@ -108,6 +108,7 @@ public class StoreController extends MallBaseController {
             if(isExist){
                 return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR,"登录用户名已存在");
             }
+            store.setCreateTime(new Date());
         }
         store.setName(name);
         store.setAreaCode(areaCode);
@@ -116,7 +117,7 @@ public class StoreController extends MallBaseController {
         store.setCityCode(cityCode);
         store.setDistrictCode(districtCode);
         store.setAddress(address);
-        store.setLngLat(new LngLat(lan,lat));
+        store.setLngLat(new LngLat(lng,lat));
         store.setOpenTime(openTime);
         store.setCloseTime(closeTime);
         store.setDeadlineTime(deadlineTime);
@@ -165,8 +166,7 @@ public class StoreController extends MallBaseController {
         store.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
         store.setMinCost(new BigDecimal(minCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
         store.setFreeCost(new BigDecimal(freeCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        storeService.saveStore(customerId, store,null);
-        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+        return storeService.saveStore(customerId, store,null);
     }
 
     @PostMapping("/changeOption")

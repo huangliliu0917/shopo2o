@@ -71,7 +71,7 @@ public class StoreControllerTest extends CommonTestBase {
                 .param("cityCode", store.getCityCode())
                 .param("districtCode", store.getDistrictCode())
                 .param("address", store.getAddress())
-                .param("lan", String.valueOf(store.getLngLat().getLng()))
+                .param("lng", String.valueOf(store.getLngLat().getLng()))
                 .param("lat", String.valueOf(store.getLngLat().getLat()))
                 .param("openTime",openTime)
                 .param("closeTime",closeTime)
@@ -115,21 +115,6 @@ public class StoreControllerTest extends CommonTestBase {
             assertEquals(regionList.get(i).getLng(), realStore.getDistributionRegions().get(i).getLng());
             assertEquals(regionList.get(i).getLat(), realStore.getDistributionRegions().get(i).getLat());
         }
-    }
-
-    @Test
-    public void testJsonToObject() throws IOException {
-        String distributionMarkers = "{\"1\":{\"lngLat\":{\"O\":30.208392,\"M\":120.22380699999997,\"lng\":120.223807,\"lat\":30.208392},\"number\":1,\"isUsed\":true},\"2\":{\"lngLat\":{\"O\":30.211989420618668,\"M\":120.21789205856987,\"lng\":120.217892,\"lat\":30.211989},\"number\":2,},\"3\":{\"number\":3,\"lngLat\":{\"O\":30.211655644859277,\"M\":120.23351324387261,\"lng\":120.233513,\"lat\":30.211656},\"number\":3,},\"4\":{\"number\":4,\"lngLat\":{\"O\":30.20268036105437,\"M\":120.23394239731499,\"lng\":120.233942,\"lat\":30.20268},\"isUsed\":true},\"5\":{\"number\":5,\"lngLat\":{\"O\":30.20438646974161,\"M\":120.21214140244194,\"lng\":120.212141,\"lat\":30.204386},\"isUsed\":true}";
-        String distributionDivisionRegions = "{\"-1\":{\"name\":\"区域名称1\",\"markerNum\":\"1,5,4\",\"color\":\"#3480b8\",\"distributionRegions\":[{\"lng\":120.223807,\"lat\":30.208392},{\"lng\":120.212141,\"lat\":30.204386},{\"lng\":120.233942,\"lat\":30.20268}]}}";
-
-        Map<Long,DistributionMarker> distributionMarkerMap = objectMapper.readValue(distributionMarkers, new TypeReference<Map<Long,DistributionMarker>>() {});
-        assertNotNull(distributionMarkerMap);
-        distributionMarkerMap.keySet().forEach(key->{
-            System.out.println("key:" + key + ",value:" + distributionMarkerMap.get(key).toString());
-        });
-
-        Map<Long,DistributionRegion> distributionDivisionRegionsMap = objectMapper.readValue(distributionDivisionRegions, new TypeReference<Map<Long,DistributionRegion>>() {});
-        assertNotNull(distributionDivisionRegionsMap);
     }
 
     private Store mockShopWithoutSave(){
