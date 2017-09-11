@@ -42,7 +42,10 @@
     <div class="ibox">
         <div class="ibox-content">
             <ol class="breadcrumb">
-                <li><strong th:text="${currentData.id==null}?'新增门店':'编辑门店'">新增门店</strong></li>
+                <h3>
+                    <strong th:text="${currentData.id==null}?'新增门店':'编辑门店'">新增门店</strong>
+                    <button type="button" class="btn btn-sm btn-success" onclick="editShopHandler.returnToList()">返回门店列表</button>
+                </h3>
             </ol>
         </div>
     </div>
@@ -117,8 +120,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group form-inline">
-                                        <label for="lan"></label>
-                                        <input type="hidden" name="lan" id="lan" th:value="${currentData.lngLat != null ? currentData.lngLat.lng : ''}" required="true"/>
+                                        <label for="lng"></label>
+                                        <input type="hidden" name="lng" id="lng" th:value="${currentData.lngLat != null ? currentData.lngLat.lng : ''}" required="true"/>
                                         <input type="hidden" name="lat" id="lat" th:value="${currentData.lngLat != null ? currentData.lngLat.lat : ''}"/>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
@@ -181,7 +184,6 @@
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group">
-                                        <label for="lan"></label>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-6" id="sendArea" style="height: 400px;">

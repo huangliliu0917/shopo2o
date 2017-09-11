@@ -568,8 +568,9 @@ var editShopHandler = {
                         layer.msg(data.data);
                     } else {
                         layer.msg('保存成功');
+                        var storeId = data.data;
                         setTimeout(function () {
-                            window.location.reload()
+                            window.location.href = baseUrl + "mall/store/edit?storeId=" + storeId;
                         }, 300);
                     }
                 },
@@ -621,6 +622,9 @@ var editShopHandler = {
                 }
             })
         }
+    },
+    returnToList: function(){
+        window.location.href = baseUrl + "mall/store/list";
     }
 };
 
