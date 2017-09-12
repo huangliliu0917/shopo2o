@@ -22,7 +22,7 @@ public enum CustomerTypeEnum implements ICommonEnum {
     SUPPLIER(1, "供应商"),
     AGENT(2, "代理商"),
     AGENT_SHOP(3, "代理商门店"),
-    SHOP(4,"门店");
+    STORE(4,"门店");
     private Integer code;
     private String value;
 

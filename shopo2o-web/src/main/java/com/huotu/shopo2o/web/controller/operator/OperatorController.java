@@ -4,18 +4,16 @@ import com.huotu.shopo2o.common.ienum.EnumHelper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
-import com.huotu.shopo2o.service.entity.author.SupOperator;
+import com.huotu.shopo2o.service.entity.author.Operator;
 import com.huotu.shopo2o.service.enums.Authority;
-import com.huotu.shopo2o.service.service.author.SupOperatorService;
+import com.huotu.shopo2o.service.service.author.OperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -29,7 +27,7 @@ import java.util.Set;
 @RequestMapping("/operator")
 public class OperatorController {
     @Autowired
-    private SupOperatorService supOperatorService;
+    private OperatorService operatorService;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -39,7 +37,7 @@ public class OperatorController {
             Model model) {
         Authority[] authorities = Authority.values();
 
-        List<SupOperator> operators = supOperatorService.findByCustomerId(mallCustomer.getCustomerId());
+        List<Operator> operators = operatorService.findByCustomerId(mallCustomer.getCustomerId());
 
         model.addAttribute("authorities", authorities);
         model.addAttribute("operators", operators);
@@ -49,17 +47,30 @@ public class OperatorController {
     @RequestMapping(value = "/{operatorId}")
     @ResponseBody
     public ApiResult showOperators(@PathVariable Long operatorId) {
-        SupOperator supOperator = supOperatorService.findById(operatorId);
-        if (supOperator == null) {
+        Operator operator = operatorService.findById(operatorId);
+        if (operator == null) {
             return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
         }
-        return ApiResult.resultWith(ResultCodeEnum.SUCCESS, supOperator);
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS, operator);
     }
 
     @RequestMapping("/delete")
     @ResponseBody
-    public ApiResult deleteOperator(Long operatorId) {
-        supOperatorService.delete(operatorId);
+    public ApiResult deleteOperator(@RequestParam Long operatorId) {
+        operatorService.delete(operatorId);
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+    }
+
+    @RequestMapping("/disabled")
+    @ResponseBody
+    @Transactional
+    public ApiResult disabledOperator(@RequestParam Long operatorId) {
+        Operator operator = operatorService.findById(operatorId);
+        if (operator == null) {
+            return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
+        }
+        operator.setDisabled(!operator.isDisabled());
+        operatorService.save(operator);
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 
@@ -74,19 +85,20 @@ public class OperatorController {
     @ResponseBody
     public ApiResult addAndSaveUser(
             @AuthenticationPrincipal MallCustomer customer,
-            Long operatorId,
-            SupOperator requestOperator, String... authorities) {
-        if (operatorId == 0 && supOperatorService.countByUsername(requestOperator.getUsername()) > 0) {
+            @RequestParam(required = false, defaultValue = "0") Long operatorId,
+            Operator requestOperator, String... authorities) {
+        if (operatorId == 0 && operatorService.countByUsername(requestOperator.getUsername()) > 0) {
             return ApiResult.resultWith(ResultCodeEnum.LOGINNAME_NOT_AVAILABLE);
         }
-        SupOperator operator;
+        Operator operator;
         if (operatorId > 0) {
-            operator = supOperatorService.findById(operatorId);
+            operator = operatorService.findById(operatorId);
         } else {
-            operator = new SupOperator();
+            operator = new Operator();
             operator.setPassword(passwordEncoder.encode(requestOperator.getPassword()));
             operator.setCreateTime(new Date());
             operator.setCustomer(customer);
+            operator.setCustomerType(customer.getCustomerType());
         }
         operator.setUsername(requestOperator.getUsername());
         operator.setRealName(requestOperator.getRealName());
@@ -97,7 +109,7 @@ public class OperatorController {
             authoritySet.add(EnumHelper.getEnumType(Authority.class, authority));
         }
         operator.setAuthoritySet(authoritySet);
-        supOperatorService.save(operator);
+        operatorService.save(operator);
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 }

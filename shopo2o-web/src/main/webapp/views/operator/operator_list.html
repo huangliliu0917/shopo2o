@@ -10,7 +10,6 @@
   -->
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
-<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallAfterSales>"*/-->
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>操作员管理</title>
@@ -34,7 +33,7 @@
                 <div class="ibox-title">
                     <h5>操作员列表</h5>
                     <div class="ibox-tools">
-                        <button type="button" onclick="operatorListHandler.showEdit(0)" class="btn btn-success btn-sm">新增
+                        <button type="button" onclick="operatorListHandler.showEdit(this)" operatorId="0" class="btn btn-success btn-sm">新增
                         </button>
                     </div>
                 </div>
@@ -48,6 +47,7 @@
                             <th>姓名</th>
                             <th>联系手机</th>
                             <th>注册时间</th>
+                            <th>状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -59,10 +59,15 @@
                             <td th:text="${operator.realName}">张三</td>
                             <td th:text="${operator.mobile}">15111111111</td>
                             <td th:text="${#dates.format(operator.createTime,'yyyy-MM-dd HH:mm:ss')}">2014-09-04 19:25:25</td>
+                            <td th:text="${operator.disabled ? '冻结' : '正常'}" th:style="|color:${operator.disabled ? 'red' : 'green'}|"></td>
                             <td>
-                                            <span class="cursor-point" th:onclick="|operatorListHandler.showEdit(${operator.id})|">
+                                <span class="cursor-point" th:attr="operatorId=${operator.id}" onclick="operatorListHandler.showEdit(this)">
                                                 <i class="fa fa-pencil fa-lg tooltips" data-placement="top" data-toggle="tooltip"
                                                    data-original-title="编辑"></i></span>
+                                &nbsp;
+                                <span class="cursor-point" th:attr="operatorId=${operator.id}" onclick="operatorListHandler.disableOperator(this)">
+                                                <i class="fa fa-stop fa-lg tooltips" th:attr="data-original-title=${operator.disabled?'恢复':'冻结'}" data-placement="top" data-toggle="tooltip"
+                                                   data-original-title="冻结/恢复"></i></span>
                                 &nbsp;
                                 <span class="cursor-point" th:attr="operatorId=${operator.id}" onclick="operatorListHandler.deleteOperator(this)">
                                                 <i class="fa fa-minus fa-lg tooltips" data-placement="top" data-toggle="tooltip"
@@ -197,7 +202,8 @@
                 }
             });
         },
-        showEdit:function(operatorId){
+        showEdit:function(obj){
+            var operatorId = $(obj).attr('operatorId');
             if(operatorId > 0){
                 hot.ajax(ajaxUrl + "operator/" + operatorId,null,function(json){
                     var operator = json.data;
@@ -217,6 +223,18 @@
                 $("input[name=operatorId]").val(0);
                 $("input[name=username]").removeAttr('readonly');
             }
+        },
+        disableOperator: function(obj){
+            var operatorId = $(obj).attr('operatorId');
+            hot.loading.show();
+            hot.ajax(ajaxUrl + "operator/disabled",{operatorId: operatorId},function(json){
+                if (json.code == 200) {
+                    hot.tip.success("处理成功");
+                    window.location.reload();
+                } else {
+                    hot.tip.error("处理失败");
+                }
+            },function(){},'post');
         },
         deleteOperator:function(obj){
             var operatorId = $(obj).attr('operatorId');

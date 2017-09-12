@@ -45,7 +45,7 @@ public class StoreServiceImpl implements StoreService {
     public ApiResult saveStore(Long customerId, Store store, String loginName) {
         if (store.getId() == null || store.getId() == 0) {
             //调用商城接口，判断该登录名是否是有效的
-            ApiResult apiResult = customerService.newCustomer(loginName, null, CustomerTypeEnum.SHOP);
+            ApiResult apiResult = customerService.newCustomer(loginName, null, CustomerTypeEnum.STORE);
             if (apiResult.getCode() == 200 && apiResult.getData() instanceof MallCustomer) {
                 MallCustomer shopCustomer = (MallCustomer) apiResult.getData();
                 MallCustomer customer = customerService.findOne(customerId);
