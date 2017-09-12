@@ -92,6 +92,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
         private Environment env;
 
         @Bean
+        @SuppressWarnings("Duplicates")
         public SpringResourceTemplateResolver templateResolver() {
             // SpringResourceTemplateResolver automatically integrates with Spring's own
             // resource resolution infrastructure, which is highly recommended.
@@ -124,6 +125,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
         }
 
         @Bean(name = "thymeleafViewResolver")
+        @SuppressWarnings("Duplicates")
         public ThymeleafViewResolver viewResolver() {
             ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
             viewResolver.setTemplateEngine(templateEngine());

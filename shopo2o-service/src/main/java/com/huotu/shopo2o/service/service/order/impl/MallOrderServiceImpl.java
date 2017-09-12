@@ -7,9 +7,7 @@ import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.DoubleUtil;
 import com.huotu.shopo2o.common.utils.ExcelHelper;
 import com.huotu.shopo2o.common.utils.StringUtil;
-import com.huotu.shopo2o.service.entity.order.MallDelivery;
-import com.huotu.shopo2o.service.entity.order.MallOrder;
-import com.huotu.shopo2o.service.entity.order.MallOrderItem;
+import com.huotu.shopo2o.service.entity.order.*;
 import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.jsonformat.GoodCustomField;
 import com.huotu.shopo2o.service.model.OrderDetailModel;
@@ -28,6 +26,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,57 +54,60 @@ public class MallOrderServiceImpl implements MallOrderService {
         Specification<MallOrder> specification = (root, query, cb) -> {
             query.distinct(true);
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(root.get("supplierId").as(Long.class), searchCondition.getSupplierId()));
-            predicates.add(cb.or(cb.isNull(root.get("shipDisabled").as(Boolean.class)),
-                    cb.equal(root.get("shipDisabled").as(Boolean.class), false)));
+            predicates.add(cb.equal(root.get(MallOrder_.storeId), searchCondition.getStoreId()));
+            //去除不可发货的订单（如拼团未成功的订单）
+            predicates.add(cb.or(cb.isNull(root.get(MallOrder_.shipDisabled))
+                    , cb.isFalse(root.get(MallOrder_.shipDisabled))));
             if (!StringUtils.isEmpty(searchCondition.getOrderId())) {
-                predicates.add(cb.like(root.get("orderId").as(String.class), "%" + searchCondition.getOrderId() + "%"));
+                predicates.add(cb.like(root.get(MallOrder_.orderId), "%" + searchCondition.getOrderId() + "%"));
             }
             if (!StringUtils.isEmpty(searchCondition.getOrderItemName())) {
-                predicates.add(cb.like(root.get("orderItems").get("name").as(String.class), "%" + searchCondition.getOrderItemName() + "%"));
+                Join<MallOrder, MallOrderItem> orderItemJoin = root.join(MallOrder_.orderItems, JoinType.LEFT);
+                predicates.add(cb.like(orderItemJoin.get(MallOrderItem_.name), "%" + searchCondition.getOrderItemName() + "%"));
             }
             if (!StringUtils.isEmpty(searchCondition.getShipName())) {
-                predicates.add(cb.like(root.get("shipName").as(String.class), "%" + searchCondition.getShipName() + "%"));
+                predicates.add(cb.like(root.get(MallOrder_.shipName), "%" + searchCondition.getShipName() + "%"));
             }
             if (!StringUtils.isEmpty(searchCondition.getShipMobile())) {
-                predicates.add(cb.equal(root.get("shipMobile").as(String.class), searchCondition.getShipMobile()));
+                predicates.add(cb.equal(root.get(MallOrder_.shipMobile), searchCondition.getShipMobile()));
             }
             if (searchCondition.getOrderStatus() != -2) {
-                predicates.add(cb.equal(root.get("orderStatus").as(OrderEnum.OrderStatus.class),
-                        EnumHelper.getEnumType(OrderEnum.OrderStatus.class, searchCondition.getOrderStatus())));
+                predicates.add(cb.equal(root.get(MallOrder_.orderStatus)
+                        , EnumHelper.getEnumType(OrderEnum.OrderStatus.class, searchCondition.getOrderStatus())));
             }
             if (searchCondition.getPayStatus() != -1) {
-                predicates.add(cb.equal(root.get("payStatus").as(OrderEnum.PayStatus.class),
-                        EnumHelper.getEnumType(OrderEnum.PayStatus.class, searchCondition.getPayStatus())));
+                predicates.add(cb.equal(root.get(MallOrder_.payStatus)
+                        , EnumHelper.getEnumType(OrderEnum.PayStatus.class, searchCondition.getPayStatus())));
             }
             if (searchCondition.getShipStatus() != -1) {
-                predicates.add(cb.equal(root.get("shipStatus").as(OrderEnum.ShipStatus.class),
-                        EnumHelper.getEnumType(OrderEnum.ShipStatus.class, searchCondition.getShipStatus())));
+                predicates.add(cb.equal(root.get(MallOrder_.shipStatus)
+                        , EnumHelper.getEnumType(OrderEnum.ShipStatus.class, searchCondition.getShipStatus())));
             }
             if (searchCondition.getPaymentTypeStatus() != -1) {
-                predicates.add(cb.equal(root.get("paymentType").as(OrderEnum.PaymentOptions.class),
-                        EnumHelper.getEnumType(OrderEnum.PaymentOptions.class, searchCondition.getPaymentTypeStatus())));
+                predicates.add(cb.equal(root.get(MallOrder_.paymentType)
+                        , EnumHelper.getEnumType(OrderEnum.PaymentOptions.class, searchCondition.getPaymentTypeStatus())));
             }
-            if (searchCondition.getSettleStatus() != -1) {
-                predicates.add(cb.equal(root.get("settleStatus").as(Integer.class), searchCondition.getSettleStatus()));
-            }
+            /*if (searchCondition.getSettleStatus() != -1) {
+                predicates.add(cb.equal(root.get("settleStatus"), searchCondition.getSettleStatus()));
+            }*/
             if (searchCondition.getSourceTypeStatus() != -1) {
-                predicates.add(cb.equal(root.get("orderSourceType").as(OrderEnum.OrderSourceType.class),
-                        EnumHelper.getEnumType(OrderEnum.OrderSourceType.class, searchCondition.getSourceTypeStatus())));
+                predicates.add(cb.equal(root.get(MallOrder_.orderSourceType)
+                        , EnumHelper.getEnumType(OrderEnum.OrderSourceType.class, searchCondition.getSourceTypeStatus())));
             }
             if (!StringUtils.isEmpty(searchCondition.getBeginTime())) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("createTime").as(Date.class),
-                        StringUtil.DateFormat(searchCondition.getBeginTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
+                predicates.add(cb.greaterThanOrEqualTo(root.get(MallOrder_.createTime)
+                        , StringUtil.DateFormat(searchCondition.getBeginTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
             }
             if (!StringUtils.isEmpty(searchCondition.getEndTime())) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("createTime").as(Date.class),
-                        StringUtil.DateFormat(searchCondition.getEndTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
+                predicates.add(cb.lessThanOrEqualTo(root.get(MallOrder_.createTime)
+                        , StringUtil.DateFormat(searchCondition.getEndTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
             }
             if (!StringUtils.isEmpty(searchCondition.getBeginPayTime())) {
-                predicates.add(cb.greaterThanOrEqualTo(root.get("payTime").as(Date.class), StringUtil.DateFormat(searchCondition.getBeginPayTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
+                predicates.add(cb.greaterThanOrEqualTo(root.get(MallOrder_.payTime)
+                        , StringUtil.DateFormat(searchCondition.getBeginPayTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
             }
             if (!StringUtils.isEmpty(searchCondition.getEndPayTime())) {
-                predicates.add(cb.lessThanOrEqualTo(root.get("payTime").as(Date.class),
+                predicates.add(cb.lessThanOrEqualTo(root.get(MallOrder_.payTime),
                         StringUtil.DateFormat(searchCondition.getEndPayTime(), Constant.TIME_WITHOUT_SECOND_PATTERN)));
             }
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -194,9 +198,9 @@ public class MallOrderServiceImpl implements MallOrderService {
         orderDetailModel.setRemark(orders.getRemark());
         orderDetailModel.setMemo(orders.getMemo());
         orderDetailModel.setIdentityCard(orders.getIdentityCard());
-        double costPrice = mallOrderItem.stream().mapToDouble(p->p.getCost() * p.getNums()).sum();
-        double disRebatePrice = mallOrderItem.stream().filter(p->p.getDisRebateAssigned() != null ).mapToDouble(MallOrderItem::getDisRebateAssigned).sum();
-        double commissionPrice = mallOrderItem.stream().filter(p->p.getCommissionAssigned() != null).mapToDouble(MallOrderItem::getCommissionAssigned).sum();
+        double costPrice = mallOrderItem.stream().mapToDouble(p -> p.getCost() * p.getNums()).sum();
+        double disRebatePrice = mallOrderItem.stream().filter(p -> p.getDisRebateAssigned() != null).mapToDouble(MallOrderItem::getDisRebateAssigned).sum();
+        double commissionPrice = mallOrderItem.stream().filter(p -> p.getCommissionAssigned() != null).mapToDouble(MallOrderItem::getCommissionAssigned).sum();
         orderDetailModel.setCostPrice(DoubleUtil.format(costPrice));
         orderDetailModel.setDisRebate(DoubleUtil.format(disRebatePrice));
         orderDetailModel.setCommission(DoubleUtil.format(commissionPrice));

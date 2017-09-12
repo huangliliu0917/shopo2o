@@ -13,8 +13,12 @@ import java.util.List;
  * Created by hxh on 2017-09-07.
  */
 public interface MallOrderService {
+
     MallOrder findByOrderId(String orderId);
+
     Page<MallOrder> findAll(Pageable pageable, OrderSearchCondition searchCondition);
+
     HSSFWorkbook createWorkBook(List<MallOrder> orders);
+
     OrderDetailModel findOrderDetail(String orderId);
 }

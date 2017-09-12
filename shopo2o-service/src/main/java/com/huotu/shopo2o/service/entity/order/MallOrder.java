@@ -128,11 +128,8 @@ public class MallOrder {
     /**
      * 供应商id
      */
-    @Column(name = "StoreId_Id")
+    @Column(name = "Store_Id")
     private Integer storeId;
-    // TODO: 2017-09-11 先不删（为了能显示订单）
-    @Column(name = "Supplier_Id")
-    private Integer supplierId;
     /**
      * 支付时间
      */

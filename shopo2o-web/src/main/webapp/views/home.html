@@ -47,16 +47,17 @@
 </body>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
-<script>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/}]]*/ "/";
     var homeHandle = {
         order: function () {
-            window.location.href = "/order/getOrderList"
+            window.location.href = baseUrl + "order/getOrderList"
         },
         operator: function () {
-            window.location.href = "/operator/getOperatorList"
+            window.location.href = baseUrl + "operator/getOperatorList"
         },
         store: function () {
-            window.location.href = "/store/getStoreList"
+            window.location.href = baseUrl + "store/getStoreList"
         }
     }
 </script>
