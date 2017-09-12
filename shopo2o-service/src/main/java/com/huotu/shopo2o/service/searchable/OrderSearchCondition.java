@@ -33,7 +33,7 @@ public class OrderSearchCondition {
     /**
      * 供应商id
      */
-    private long supplierId;
+    private long storeId;
     /**
      * 订单商品名称
      */
@@ -45,5 +45,5 @@ public class OrderSearchCondition {
     /**
      * 供应商名称
      */
-    private String supplierName;
+    private String storeName;
 }

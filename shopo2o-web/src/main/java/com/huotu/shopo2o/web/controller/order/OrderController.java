@@ -60,9 +60,10 @@ public class OrderController {
     private MallDeliveryService mallDeliveryService;
 
     @RequestMapping("/getOrderList")
-    public String getOrderList(@AuthenticationPrincipal MallCustomer customer, @ModelAttribute("orderSearchCondition") OrderSearchCondition searchCondition, @RequestParam(required = false, defaultValue = "1") int pageIndex, Model model) {
-        // TODO: 2017-09-11 没有supplier（传入storeId么） 
-        searchCondition.setSupplierId(customer.getCustomerId());
+    public String getOrderList(@AuthenticationPrincipal MallCustomer customer
+            , @ModelAttribute("orderSearchCondition") OrderSearchCondition searchCondition
+            , @RequestParam(required = false, defaultValue = "1") int pageIndex, Model model) {
+        searchCondition.setStoreId(customer.getCustomerId());
         Pageable pageable = new PageRequest(pageIndex - 1, Constant.PAGE_SIZE);
         Page<MallOrder> orderPageList = orderService.findAll(pageable, searchCondition);
         if (orderPageList != null) {
@@ -100,17 +101,13 @@ public class OrderController {
      * @param searchCondition
      * @param txtBeginPage
      * @param txtEndPage
-     * @param customerId
      * @param response
      */
     @RequestMapping("/exportExcel")
     @SuppressWarnings("Duplicates")
-    public void exportExcel(OrderSearchCondition searchCondition,
-                            int txtBeginPage,
-                            int txtEndPage,
-                            long customerId,
-                            HttpServletResponse response) {
-        searchCondition.setSupplierId(customerId);
+    public void exportExcel(@AuthenticationPrincipal MallCustomer customer
+            ,OrderSearchCondition searchCondition, int txtBeginPage, int txtEndPage, HttpServletResponse response) {
+        searchCondition.setStoreId(customer.getCustomerId());
         int pageSize = Constant.PAGE_SIZE * (txtEndPage - txtBeginPage + 1);
         int offset = (txtBeginPage - 1) * Constant.PAGE_SIZE;
         Pageable pageable = new PageRequest(offset, pageSize);
