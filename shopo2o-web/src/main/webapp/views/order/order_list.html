@@ -122,14 +122,14 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="form-group m-r-sm">
-                                <label class="control-label">结算状态：</label>
-                                <select class="form-control input-sm" name="settleStatus" id="settleStatus">
-                                    <option selected="selected" value="-1">请选择</option>
-                                    <option value="1" th:selected="*{settleStatus == 1}">待结算</option>
-                                    <option value="2" th:selected="*{settleStatus == 2}">已结算</option>
-                                </select>
-                            </div>
+                            <!--<div class="form-group m-r-sm">-->
+                                <!--<label class="control-label">结算状态：</label>-->
+                                <!--<select class="form-control input-sm" name="settleStatus" id="settleStatus">-->
+                                    <!--<option selected="selected" value="-1">请选择</option>-->
+                                    <!--<option value="1" th:selected="*{settleStatus == 1}">待结算</option>-->
+                                    <!--<option value="2" th:selected="*{settleStatus == 2}">已结算</option>-->
+                                <!--</select>-->
+                            <!--</div>-->
                         </div>
                         <p class="divider-vertical"></p>
                         <div id="extraSearch_panel">
@@ -274,7 +274,7 @@
                                                 <!--商品-->
                                                 <img style="width: 50px; height: 50px; float: left; margin-left: 5px;"
                                                      src=""
-                                                     th:src="${item.picUri != null ? item.picUri.toString() : '../resource/3rdParty/images/none.png'}"/>
+                                                     th:src="${item.picUri != null ? item.picUri.toString() : '../resources/images/none.png'}"/>
                                                 <span style="overflow: hidden; text-align: left; margin-left: 10px; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1;
                                                  -webkit-box-orient: vertical; width: 54%; float: left;"
                                                       th:text="${item.name}">商品名称</span>

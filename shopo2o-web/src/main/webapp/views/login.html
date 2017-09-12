@@ -539,6 +539,12 @@
             background-color: transparent;
         }
     </style>
+
+    <style th:inline="text">
+        .main{
+        background:url([[@{/resources/images/moban.jpg}]]);
+        }
+    </style>
     <!--<script src="resource/lib/jquery-1.8.3.min.js"></script>-->
     <script>
         var logintype = '';
@@ -560,10 +566,10 @@
     <header class="header">
     </header>
 </div>
-<section class="main" style="background: url(../resources/images/muban.jpg) center center;">
+<section class="main" >
     <!--登录框-->
     <div>
-        <img src="../resources/images/huobanpluslogo.png" width="15%"/>
+        <img th:src="@{/resources/images/huobanpluslogo.png}" src="../resources/images/huobanpluslogo.png" width="15%"/>
 
         <form action="login" id="loginPage" th:action="@{/login}" method="post" style="display:block;height:335px;">
             <div class="loginFormIpt" style="text-align: center; margin: 0 auto;">
