@@ -23,9 +23,23 @@ public class TestSecurityController {
         return "redirect:login";
     }
 
+//    @RequestMapping("/loginSuccess")
+//    public String loginSuccess(@AuthenticationPrincipal MallCustomer mallCustomer, Model model) {
+//        model.addAttribute("mallCustomer", mallCustomer);
+//        return "homeV2";
+//    }
+    /**
+     * 登录验证通过后更新登录时间并跳转供应商后台首页
+     *
+     * @param mallCustomer
+     * @return
+     */
     @RequestMapping("/loginSuccess")
-    public String loginSuccess(@AuthenticationPrincipal MallCustomer mallCustomer, Model model) {
-        model.addAttribute("mallCustomer", mallCustomer);
-        return "home";
+    public String loginSuccess(
+            @AuthenticationPrincipal MallCustomer mallCustomer,
+            Model model
+    ) {
+        return "homeV2";
     }
+
 }
