@@ -1,12 +1,8 @@
 package com.huotu.shopo2o.service.service.api.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.huotu.shopo2o.common.SysConstant;
-import com.huotu.shopo2o.common.httputil.HttpClientUtil;
-import com.huotu.shopo2o.common.httputil.HttpResult;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
-import com.huotu.shopo2o.common.utils.SignBuilder;
 import com.huotu.shopo2o.service.config.MallPasswordEncoder;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
@@ -14,14 +10,10 @@ import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.service.api.ApiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.UUID;
 
 /**
@@ -79,7 +71,7 @@ public class ApiServiceImpl implements ApiService {
         mallCustomer.setScType(1);
         mallCustomer.setScore(0.0);
         mallCustomer.setCityID(0);
-        mallCustomer.setCustomerType(CustomerTypeEnum.SHOP);
+        mallCustomer.setCustomerType(CustomerTypeEnum.STORE);
         customerRepository.saveAndFlush(mallCustomer);
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }

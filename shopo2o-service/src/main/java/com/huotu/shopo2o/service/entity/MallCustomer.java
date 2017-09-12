@@ -58,7 +58,7 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(customerType == CustomerTypeEnum.SHOP){
+        if(customerType == CustomerTypeEnum.STORE){
             return Arrays.asList(
                     new SimpleGrantedAuthority(AuthorityEnum.MANAGER_ROOT.getCode())
             );
@@ -73,7 +73,7 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @Override
     public boolean isAccountNonLocked() {
-        if(this.customerType == CustomerTypeEnum.SHOP){
+        if(this.customerType == CustomerTypeEnum.STORE){
             return store != null && !store.isDisabled();
         }
         return false;
@@ -86,7 +86,7 @@ public class MallCustomer implements UserDetails , Serializable {
 
     @Override
     public boolean isEnabled() {
-        if(this.customerType == CustomerTypeEnum.SHOP){
+        if(this.customerType == CustomerTypeEnum.STORE){
             return store != null && !store.isDeleted();
         }
         return false;
