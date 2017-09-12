@@ -57,7 +57,7 @@
                         <li class="active">
                             <a id="baseInfoBtn" data-toggle="tab" href="#tab-1">基本信息</a>
                         </li>
-                        <li th:if="${currentData.id!=null}">
+                        <li th:if="${currentData.id !=null  and currentData.lngLat != null}">
                             <a id="sendRuleBtn" data-toggle="tab" href="#tab-2">配送规则</a>
                         </li>
                     </ul>
@@ -77,7 +77,7 @@
                                         <label class="col-sm-2 control-label">门店名称
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="name" type="text" id="name" th:value="${currentData.name}" required="true" maxlength="20"
+                                            <input name="name" type="text" id="name" th:value="${currentData.name}" required="true" maxlength="20" chinese="true"
                                                    class="form-control" placeholder="门店名称"/>
                                         </div>
                                     </div>
@@ -98,10 +98,9 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
                                             <div id="citys">
-                                                <select class="form-control" id="province" required="true"
-                                                        onchange="mapHandler.changeCity(this)"></select>
-                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)" required="true"></select>
-                                                <select class="form-control" id="district" required="true" onchange="mapHandler.changeCity(this)"></select>
+                                                <select class="form-control" id="province" onchange="mapHandler.changeCity(this)"></select>
+                                                <select class="form-control" id="city" onchange="mapHandler.changeCity(this)"></select>
+                                                <select class="form-control" id="district" onchange="mapHandler.changeCity(this)"></select>
                                                 <select class="form-control" id="street" onchange="mapHandler.setCenter(this)"></select>
                                             </div>
                                         </div>
@@ -121,7 +120,7 @@
                                     </div>
                                     <div class="form-group form-inline">
                                         <label for="lng"></label>
-                                        <input type="hidden" name="lng" id="lng" th:value="${currentData.lngLat != null ? currentData.lngLat.lng : ''}" required="true"/>
+                                        <input type="hidden" name="lng" id="lng" th:value="${currentData.lngLat != null ? currentData.lngLat.lng : ''}" required="true" number="true"/>
                                         <input type="hidden" name="lat" id="lat" th:value="${currentData.lngLat != null ? currentData.lngLat.lat : ''}"/>
                                         <label class="col-sm-2 control-label">地图定位
                                             <span class="asterisk">*</span></label>
@@ -132,10 +131,10 @@
                                         <label class="col-sm-2 control-label">营业时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="openTime" type="text" required="true" th:value="${currentData.openTime}"
+                                            <input name="openTime" type="text" required="true" isTime="true" th:value="${currentData.openTime}"
                                                    class="form-control" placeholder="起始时间"/>
                                             -
-                                            <input name="closeTime" type="text" required="true" largeThan="openTime" th:value="${currentData.closeTime}"
+                                            <input name="closeTime" type="text" required="true" isTime="true" largeThan="openTime" th:value="${currentData.closeTime}"
                                                    class="form-control" placeholder="结束时间"/>
                                         </div>
                                     </div>
@@ -143,7 +142,7 @@
                                         <label class="col-sm-2 control-label">截单时间
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
-                                            <input name="deadlineTime" type="text" required="true" lessThan="closeTime" th:value="${currentData.deadlineTime}"
+                                            <input name="deadlineTime" type="text" required="true" isTime="true" lessThan="closeTime" th:value="${currentData.deadlineTime}"
                                                    class="form-control" placeholder="截单时间"/>
                                         </div>
                                     </div>
@@ -180,7 +179,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id!=null}">
+                        <div id="tab-2" class="tab-pane"  th:if="${currentData.id !=null and currentData.lngLat != null}">
                             <form id="shopMoreInfo">
                                 <div class="panel-body form-horizontal ">
                                     <div class="form-group">

@@ -21,6 +21,11 @@ $(function () {
         var score = /^[0-9]+\.?[0-9]{0,2}$/;
         return this.optional(element) || (score.test(value));
     }, "最多可输入两位小数");
+    // 时间控件相关
+    $.validator.addMethod("isTime", function (value, element) {
+        var timeReg = /^(20|21|22|23|[0-1]\d):[0-5]\d$/;
+        return this.optional(element) || (timeReg.test(value));
+    }, "请输入正确的时间，格式为HH:mm");
     $.validator.addMethod("largeThan",function(value, element, param){
         var target = $('input[name='+param+']');
         // console.log(target.val());
@@ -31,8 +36,15 @@ $(function () {
         // console.log(target.val());
         return value <= target.val();
     },$.validator.format("区间错误"));
+    $.validator.addMethod("chinese",function(value, element, param){
+        var chineseReg = /^[\u4e00-\u9fa5]$/;
+        return this.optional(element) || (chineseReg.test(value));
+    },$.validator.format("请输入中文"));
+    $.validator.setDefaults({
+        ignore: ''
+    });
 
-    if (storeId != undefined && storeId != 0) {
+    if (storeId != undefined && storeId != 0 && lng.length > 0) {
         //如果是编辑，需要初始化地图定位等信息
         mapHandler.editInit();
     } else {
@@ -134,6 +146,15 @@ var mapHandler = {
             });
 
         });
+
+        //初始化省市区
+        if(provinceCode != null && provinceCode.length > 0)
+            selectorHandler.jsSelectItemByValue($("#province")[0], provinceCode);
+        if(cityCode != null && cityCode.length > 0)
+            selectorHandler.jsSelectItemByValue($("#city")[0], cityCode);
+        if(districtCode != null && districtCode.length > 0)
+            selectorHandler.jsSelectItemByValue($("#district")[0], districtCode);
+
         //增加标记的右键菜单
         contextMenu.addMarker = new AMap.ContextMenu();  //创建右键菜单
         //右键添加Marker标记
@@ -220,10 +241,6 @@ var mapHandler = {
             }
         });
         $(".colorpicker-component").colorpicker();
-        //初始化省市区
-        selectorHandler.jsSelectItemByValue($("#province")[0], provinceCode);
-        selectorHandler.jsSelectItemByValue($("#city")[0], cityCode);
-        selectorHandler.jsSelectItemByValue($("#district")[0], districtCode);
         //初始化两张地图和门店位置
         map = new AMap.Map("addressMap", {
             resizeEnable: true,
@@ -551,6 +568,11 @@ var editShopHandler = {
             var provinceCode = $("#province option:selected").text();
             var cityCode = $("#city option:selected").text();
             var districtCode = $("#district option:selected").text();
+            if(provinceCode == null || provinceCode.length == 0
+                || cityCode == null || cityCode.length == 0
+                || districtCode == null || districtCode.length == 0){
+                layer.msg('请选择省市区');
+            }
             data['provinceCode'] = provinceCode;
             data['cityCode'] = cityCode;
             data['districtCode'] = districtCode;
