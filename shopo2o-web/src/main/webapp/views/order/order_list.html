@@ -115,7 +115,6 @@
                                     <option selected="selected" value="-1" th:selected="*{shipStatus == -1}">
                                         ==所有==
                                     </option>
-                                    <!--/*@thymesVar id="shipStatusEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.ShipStatus>"*/-->
                                     <option th:each="shipStatusEnum:${shipStatusEnums}"
                                             th:value="${shipStatusEnum.code}" th:text="${shipStatusEnum.value}"
                                             th:selected="${shipStatusEnum.code == searchCondition.shipStatus}">未发货
@@ -140,7 +139,6 @@
                                         <option selected="selected" value="-2" th:selected="*{orderStatus == -2}">
                                             ==所有==
                                         </option>
-                                        <!--/*@thymesVar id="orderStatusEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.OrderStatus>"*/-->
                                         <option th:each="orderStatusEnum:${orderStatusEnums}"
                                                 th:value="${orderStatusEnum.code}" th:text="${orderStatusEnum.value}"
                                                 th:selected="${orderStatusEnum.code == searchCondition.orderStatus}">活动
@@ -152,7 +150,6 @@
                                     <select class="form-control input-sm" name="payStatus" id="ddlPayStatus">
                                         <option selected="selected" value="-1" th:selected="*{payStatus == -1}">==所有==
                                         </option>
-                                        <!--/*@thymesVar id="payStatusEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.PayStatus>"*/-->
                                         <option th:each="payStatusEnum:${payStatusEnums}"
                                                 th:value="${payStatusEnum.code}" th:text="${payStatusEnum.value}"
                                                 th:selected="${payStatusEnum.code == searchCondition.payStatus}">未支付
@@ -166,7 +163,6 @@
                                         <option selected="selected" value="-1" th:selected="*{sourceTypeStatus == -1}">
                                             ==所有==
                                         </option>
-                                        <!--/*@thymesVar id="sourceTypeEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.OrderSourceType>"*/-->
                                         <option th:each="sourceTypeEnum:${sourceTypeEnums}"
                                                 th:value="${sourceTypeEnum.code}" th:text="${sourceTypeEnum.value}"
                                                 th:selected="${sourceTypeEnum.code == searchCondition.sourceTypeStatus}">
@@ -176,7 +172,6 @@
                                 </div>
                                 <div class="form-group m-r-sm">
                                     <label class=" control-label" for="ddlPayType">支付类型：</label>
-                                    <!--/*@thymesVar id="paymentTypeEnums" type="java.util.List<com.huotu.hotsupplier.common.ienum.OrderEnum.PaymentOptions>"*/-->
                                     <select class="form-control input-sm" id="ddlPayType" name="paymentTypeStatus">
                                         <option selected="selected" value="-1" th:selected="*{paymentTypeStatus == -1}">
                                             ==所有==
