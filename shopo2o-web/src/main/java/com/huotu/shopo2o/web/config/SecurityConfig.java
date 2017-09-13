@@ -29,16 +29,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String logoutSuccessURL = "/";
     private static String[] STATIC_RESOURCE_PATH = {
             "/resources/**",
-            "/loginFailed"
+            "/loginFailed",
+            "/code/verifyImage"
     };
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private AuthenticationProcessingFilter authenticationProcessingFilter;
+
     @Bean
     public AuthenticationManager authenticationManager() {
         return new AuthenticationProvider();
     }
+
     @Bean
     public AuthenticationProcessingFilter authenticationProcessingFilter() throws Exception {
         AuthenticationProcessingFilter authenticationProcessingFilter = new AuthenticationProcessingFilter();
@@ -47,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authenticationProcessingFilter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler(loginFailedURL));
         return authenticationProcessingFilter;
     }
+
     //设置拦截规则
     @Override
     protected void configure(HttpSecurity http) throws Exception {

@@ -1,13 +1,169 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>登录界面</title>
-    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
-    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet">
-    <style>
+    <meta charset="utf-8"/>
+    <link href="/favicon.ico" mce_href="/favicon.ico" rel="bookmark" type="image/x-icon"/>
+    <link href="/favicon.ico" mce_href="/favicon.ico" rel="icon" type="image/x-icon"/>
+    <link href="/favicon.ico" mce_href="/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link href="../resources/css/jbox.css"
+          th:href="@{/resources/css/jbox.css}" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" th:src="@{/resources/js/jquery/jquery-1.7.2.min.js}"
+            src="../resources/js/jquery/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"
+            src="../resources/js/jquery/jquery.jBox-2.3.min.js"></script>
+
+    <title>供应商平台登录</title>
+    <style type="text/css">
+        /* css reset */
+        body {
+            color: #000;
+            background: #fff;
+            font-size: 12px;
+            line-height: 166.6%;
+            text-align: center;
+        }
+
+        body.move {
+            -webkit-transition: padding 0.3s ease;
+            -moz-transition: padding 0.3s ease;
+            -o-transition: padding 0.3s ease;
+            -ms-transition: padding 0.3s ease;
+            transition: padding 0.3s ease;
+        }
+
+        body, input, select, button {
+            font-family: "微软雅黑", verdana;
+        }
+
+        h1, h2, h3, select, input, button {
+            font-size: 100%;
+        }
+
+        body, h1, h2, h3, ul, li, form, p, img {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        input, button, select, img {
+            margin: 0;
+            line-height: normal;
+        }
+
+        select {
+            padding: 1px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        select, input, button, button img, label {
+            vertical-align: middle;
+        }
+
+        header, footer, section, aside, nav, hgroup, figure, figcaption {
+            display: block;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        a {
+            text-decoration: none;
+            color: #959595;
+        }
+
+        a:hover {
+            color: #626262;
+        }
+
+        /* global */
+        /* backgroundImage */
+        .themeCtrl a, .themeText li, .btn, .btn-moblogin, .ico, #extText li, { /*background-image: url(/Content/images/dl/bg_v3.png);*/
+        }
+
+        /* yixin */
+        /* ico */
+        .ico-uid {
+            width: 14px;
+            height: 16px;
+            background-position: -154px -64px;
+        }
+
+        .loginFormConf a:hover {
+            background-position: -176px -110px;
+        }
+
+        * + html {
+            background-position: -160px -112px;
+        }
+
+        * + html .loginFormConf a:hover .ico-arr-d, * + html .loginFormConf a:hover .ico-arr-d, * + html .ico-arr-d-focus {
+            background-position: -176px -112px;
+        }
+
+        /* header */
+        .header {
+            width: 1000px;
+            height: 121px;
+            position: relative;
+            margin: 0 auto;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .headerNav a {
+            padding: 0px 6px;
+            display: inline-block;
+            color: #000;
+        }
+
+        /* main */
+        .main {
+            height: 611px;
+            background: #fff;
+            position: relative;
+            min-width: 1000px;
+        }
+
+        .themeText li {
+            line-height: 22px;
+            -line-height: 24px;
+            height: 24px;
+            color: #858686;
+            text-indent: 12px;
+            background-position: -756px -72px;
+            background-repeat: no-repeat;
+        }
+
+        .themeText li a {
+            color: #005590;
+            text-decoration: underline;
+        }
+
+        .tab-2 .loginFuncDynPw .loginIcoCurrent, .tab-1 .loginFuncNormal .loginIcoCurrent, .tab-11 #extVerSelect, .tab-1 #lfBtnReg1 {
+            display: block;
+        }
+
+        .tab-11 #extText, .tab-2 #lfBtnReg {
+            display: none;
+        }
+
+        /* form */
+        .loginFormIpt showPlaceholder {
+            position: relative;
+            width: 360px;
+            height: 42px;
+            line-height: 42px;
+            margin: 0 0 10px 25px;
+            padding: 10px;
+            clear: both;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.4);
+            border: solid 1px #D8D8D8;
+        }
+
         .loginFormIpt {
             position: relative;
             width: 360px;
@@ -18,56 +174,469 @@
             clear: both;
             z-index: 2;
         }
+
+        .loginFormIpt .ico {
+            position: absolute;
+            left: 9px;
+            top: 13px;
+            z-index: 1;
+        }
+
+        .loginFormIpt-focus .placeholder {
+            color: #C9C9C9;
+        }
+
+        .formIpt {
+            position: relative;
+            width: 330px;
+            height: 21px;
+            line-height: 21px;
+            padding: 10px;
+            clear: both;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.4);
+            border: solid 1px #D8D8D8;
+        }
+
+        .formIpt:focus {
+            outline: 0;
+        }
+
+        .showPlaceholder {
+            visibility: visible;
+            cursor: text;
+        }
+
+        .loginFormVerList li a {
+            height: 22px;
+            line-height: 22px;
+            width: 140px;
+            overflow: hidden;
+            color: #848585;
+            display: block;
+            text-indent: 22px;
+        }
+
+        .loginFormVerList li a:hover {
+            background-color: #eef3f8;
+        }
+
+        .loginFormVerList li a.verSelected {
+            color: #5B8CCA;
+            background-position: -250px -58px;
+            background-repeat: no-repeat;
+        }
+
+        #extText li {
+            padding-left: 7px;
+            background-position: -240px -118px;
+            background-repeat: no-repeat;
+        }
+
+        #extText li a {
+            color: #9bacc6;
+        }
+
+        #extText li a:hover {
+            color: #5B8CCA;
+        }
+
+        #extVerSelect a {
+            color: #005590;
+            text-decoration: underline;
+        }
+
+        /* tab-2 */
+        /* footer */
+        .footer {
+            height: 65px;
+            margin: 0 auto;
+        }
+
+        .footer-inner {
+            width: 1200px;
+            height: 63px;
+            overflow: visible;
+            margin: 0 auto;
+            color: #848585;
+            position: relative;
+        }
+
+        .footerNav {
+            top: 25px;
+            right: 0px;
+            left: 0px;
+        }
+
+        .footerNav a {
+        }
+
+        .copyright {
+        }
+
+        #mobtips em {
+            font-style: normal;
+            color: #328721;
+        }
+
+        #mobtips a {
+            text-decoration: underline;
+            color: #005590;
+        }
+
+        /* mask */
+        .mask {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            filter: alpha(opacity=70);
+            -moz-opacity: 0.7;
+            opacity: 0.7;
+            z-index: 998;
+        }
+
+        /* 加密http登录弹窗 */
+        .enhttp .topborder, .enhttp .bottomborder, .enhttp .ct, .enhttp .cldenhttp, .enhttp .ct .inner .httplogin {
+            background-image: url(resource/lib/images/bg_httplogin.gif);
+            background-color: transparent;
+            background-repeat: no-repeat;
+            text-decoration: none;
+        }
+
+        .enhttp {
+            width: 420px;
+            height: 270px;
+            position: absolute;
+            z-index: 999;
+            overflow: hidden;
+            top: 0;
+            left: 50%;
+            margin-left: -210px;
+            top: 50%;
+            margin-top: -135px;
+        }
+
+        .enhttp .topborder {
+            width: 418px;
+            height: 2px;
+            font-size: 1px;
+            overflow: hidden;
+            margin: 0 auto;
+            background-position: 0 -108px;
+        }
+
+        .enhttp .bottomborder {
+            width: 418px;
+            height: 2px;
+            font-size: 1px;
+            overflow: hidden;
+            margin: 0 auto;
+            background-position: 0 -110px;
+        }
+
+        .enhttp .ct {
+            width: 418px;
+            height: 266px;
+            background-position: 0 -134px;
+            background-color: #fff;
+            border-left: 1px solid #82aecd;
+            border-right: 1px solid #82aecd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enhttp .ct .inner {
+            padding-top: 40px;
+            margin: 0 auto;
+        }
+
+        .enhttp .ct .inner p {
+            font-size: 14px;
+        }
+
+        .enhttp .ct .inner .txt-tips {
+            color: #737373;
+            line-height: 30px;
+            width: 325px;
+            display: inline;
+        }
+
+        .enhttp .ct .inner .txt-normal {
+            line-height: 30px;
+            width: 325px;
+            margin: 10px 0 0 46px;
+        }
+
+        .enhttp .ct .inner .httplogin {
+            font-size: 14px;
+            height: 34px;
+            width: 120px;
+            display: block;
+            background-position: -432px -108px;
+            line-height: 34px;
+            text-align: center;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .enhttp .ct .inner .txt-line {
+            width: 325px;
+            margin-left: 46px;
+            background: #b6cad9;
+            height: 1px;
+            overflow: hidden;
+            font-size: 1px;
+            margin-top: 24px;
+        }
+
+        .enhttp .ct .inner .txt-advice {
+            line-height: 60px;
+            width: 325px;
+            color: #8d8d8d;
+            margin-left: 46px;
+        }
+
+        .enhttp .ct .inner {
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        .enhttp {
+            height: 22px;
+            width: 22px;
+            overflow: hidden;
+            position: absolute;
+            right: 8px;
+            top: 6px;
+            background-position: 0 -112px;
+            text-indent: -9999px;
+        }
+
+        .enhttp .cldenhttp:hover {
+            background-position: -22px -112px;
+        }
+
+        .enhttp .enhttpbox {
+            position: absolute;
+            z-index: 2;
+            left: 0;
+        }
+
+        .enhttp {
+            width: 100%;
+            height: 200px;
+            position: absolute;
+            top: 2px;
+            z-index: 1;
+            left: 0;
+        }
+
+        /* 测速 */
+        .locationTestTitle h3 {
+            font-size: 12px;
+        }
+
+        .locationTestList li {
+            padding: 2px;
+            float: left;
+            display: inline-block;
+        }
+
+        .locationTestList li a {
+            height: 38px;
+            width: 80px;
+            display: block;
+            line-height: 16px;
+            padding-top: 10px;
+            overflow: hidden;
+            text-align: center;
+            color: #000;
+        }
+
+        .locationTestList li a:hover {
+            background-color: #eef3f8;
+        }
+
+        .verify-input-line .formIpt {
+            left: 7px;
+            width: 135px;
+        }
+
+        .verify-img-btn img {
+            vertical-align: top;
+        }
+
+        .loginFormIpt select {
+            border: 0px;
+            font-size: 16px;
+            text-align: center;
+            width: 98%;
+            margin: 0px 5px;
+            height: 44px;
+            color: #868686;
+            vertical-align: central;
+            background: rgba(255, 255, 255, 0.4);
+            border: solid 1px #D8D8D8;
+        }
+
+        .buttons3 {
+            background-color: rgba(255, 255, 255, 0.4);
+            text-align: center;
+            padding: 6px 5px;
+            margin: 0px 5px;
+            width: 80%;
+            color: #222;
+            font-size: 16PX;
+            border: 1px #464646 solid;
+            font-family: "微软雅黑";
+        }
+
+        .buttons3:active {
+            background-color: rgba(255, 255, 255, 0.5);
+            text-align: center;
+            padding: 6px 5px;
+            margin: 0px 5px;
+            width: 80%;
+            color: #222;
+            font-size: 16PX;
+            border: 1px #464646 solid;
+            font-family: "微软雅黑";
+        }
+        .btn-showDynPwWrapimg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            _right: -1px;
+            display: block;
+            width: 119px;
+            height: 42px;
+            font-size: 14px;
+            font-weight: normal;
+            text-align: center;
+            color: #6d798c;
+            background-position: -115px -157px;
+            margin-right: 14px;
+            margin-top: 12px;
+            z-index: 10000;
+        }
+        .btn {
+            width: 110px;
+            height: 38px;
+            float: left;
+            text-align: center;
+            cursor: pointer;
+            border: 0;
+            padding: 0;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-block;
+            vertical-align: baseline;
+            line-height: 38px;
+            outline: 0;
+            background-color: transparent;
+        }
     </style>
+
+    <style th:inline="text">
+        .main{
+        background:url([[@{/resources/images/moban.jpg}]]);
+        }
+    </style>
+    <!--<script src="resource/lib/jquery-1.8.3.min.js"></script>-->
+    <script>
+        var logintype = '';
+        var errormsg = '';
+    </script>
+
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?1b98a09ca3ef2598e7ea04a6a3d91bd2";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
 </head>
-<body class="gray-bg">
-<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
-<div class="ibox float-e-margins">
-<form method="post" class="form-horizontal" id="login" action="/login" th:action="@{/login}" style="margin: 0">
-    <div class="form-group">
-        <label class="col-sm-3 control-label" for="userName">用户名:</label>
-        <div class="col-sm-3">
-            <input type="text" placeholder="用户名" class="form-control" id="userName"
-                   maxlength="20"
-                   name="username">
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label" for="passWord">密码:</label>
-        <div class="col-sm-3">
-            <input type="passWord" placeholder="密码" class="form-control" id="passWord"
-                   maxlength="20"
-                   name="password">
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-8 col-sm-offset-5">
-            <button class="btn btn-sm btn-success" type="submit" onclick="login()">保存
-            </button>
-        </div>
-    </div>
-    <div style="text-align: center; margin: 0 auto; width: 389px; padding-top: 10px;"
-         th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}">
-        <p style="width: 50%;margin: auto">
+<body style="zoom: 1; background-color: #292929;" class=" move">
+<div style="width: 100%; padding-top: 20px; background-color: #e8ecef;">
+    <header class="header">
+    </header>
+</div>
+<section class="main" >
+    <!--登录框-->
+    <div>
+        <img th:src="@{/resources/images/huobanpluslogo.png}" src="../resources/images/huobanpluslogo.png" width="15%"/>
+
+        <form action="login" id="loginPage" th:action="@{/login}" method="post" style="display:block;height:335px;">
+            <div class="loginFormIpt" style="text-align: center; margin: 0 auto;">
+                <select class="onebox" id="roletype" name="roleType">
+                    <option value="0">商家账号</option>
+                    <option value="1">操作员</option>
+                </select>
+            </div>
+            <div class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+
+                <input class="formIpt" tabindex="1" title="请输入帐号" id="username" name="username" type="text" maxlength="50" autocomplete="off" placeholder="帐号"/>
+            </div>
+
+            <div class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+
+                <input class="formIpt" tabindex="2" title="请输入密码" id="password" name="password" type="password" placeholder="密码"/>
+            </div>
+            <div id="" class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+
+                <input class="formIpt" tabindex="2" title="请输入验证码" name="verifyCode" type="text" placeholder="验证码"/>
+                <div class="btn btn-showDynPwWrapimg">
+                        <span style="float: right; line-height: 14px; padding-right: 8px; padding-top: 3px">
+                            <label class="ftx23 hline">
+                                看不清<br/>
+                                <a onclick="LoadVerifyCode('mall');" class="flk13">换一张</a>
+                            </label>
+                        </span>
+                    <span style="float: right; padding-right: 5px;">
+                            <img id="verify_image1" th:src="@{/code/verifyImage}" alt="点击刷新" onclick="LoadVerifyCode('mall');"
+                                 style="width: 55px; vertical-align: middle; height: 32px;"/></span>
+                </div>
+                <p style="clear: both"></p>
+            </div>
+            <div style="text-align: center; margin: 0 auto; width: 389px; padding-top: 10px;">
+                <p style="width: 50%;margin: auto">
+                    <input id="mallBtn" type="submit" class="buttons3" value="登&nbsp;&nbsp;录"/>
+                </p>
+
+            </div>
+
+            <div style="text-align: center; margin: 0 auto; width: 389px; padding-top: 10px;"
+                 th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}">
+                <p style="width: 50%;margin: auto">
                     <span id="errorInfo" style="color: red"
                           th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
-        </p>
+                </p>
+            </div>
+        </form>
     </div>
-</form>
-</div>
-</div>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/flatpickr.min.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/flatpickr/3.0.6/l10n/zh.js"></script>
-<script type="text/javascript" src="http://resali.huobanplus.com/cdn/layer/3.0.3/layer.js"></script>
-<!--valid-->
-<script type="text/javascript"
-        src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
-<script type="text/javascript"
-        src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
-<script type="text/javascript">
+</section>
+<footer id="footer" class="footer">
+    <div class="footer-inner" id="footerInner">
+        <nav class="footerNav">
+            <span class="copyright">Copyright &#169; 2013-2015,浙ICP备13027761号-5</span>
+        </nav>
+    </div>
+</footer>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/code/verifyImage}]]*/ "/code/verifyImage";
+    function LoadVerifyCode(type) {
+        if (type == 'mall') {
+            $('#verify_image1').attr('src', baseUrl + "?rnd=" + Math.random());
+        }
+        else if (type == 'task') {
+            $('#verify_image2').attr('src', baseUrl + "?rnd=" + Math.random());
+        }
+    }
 </script>
 </body>
 </html>

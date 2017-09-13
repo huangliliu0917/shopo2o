@@ -22,10 +22,19 @@ public class TestSecurityController {
     public String loginFailed() {
         return "redirect:login";
     }
-
-    @RequestMapping("/loginSuccess")
-    public String loginSuccess(@AuthenticationPrincipal MallCustomer mallCustomer, Model model) {
-        model.addAttribute("mallCustomer", mallCustomer);
+    /**
+     * 登录验证通过后更新登录时间并跳转供应商后台首页
+     *
+     * @param mallCustomer
+     * @return
+     */
+    @RequestMapping(value = {"/loginSuccess","/index"})
+    public String loginSuccess(
+            @AuthenticationPrincipal MallCustomer mallCustomer,
+            Model model
+    ) {
+        model.addAttribute("mallCustomer",mallCustomer);
         return "home";
     }
+
 }

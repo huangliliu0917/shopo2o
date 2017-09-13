@@ -7,10 +7,15 @@ import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.DoubleUtil;
 import com.huotu.shopo2o.common.utils.ExcelHelper;
 import com.huotu.shopo2o.common.utils.StringUtil;
-import com.huotu.shopo2o.service.entity.order.*;
+import com.huotu.shopo2o.service.entity.order.MallDelivery;
+import com.huotu.shopo2o.service.entity.order.MallOrder;
+import com.huotu.shopo2o.service.entity.order.MallOrderItem;
+import com.huotu.shopo2o.service.entity.order.MallOrderItem_;
+import com.huotu.shopo2o.service.entity.order.MallOrder_;
 import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.jsonformat.GoodCustomField;
 import com.huotu.shopo2o.service.model.OrderDetailModel;
+import com.huotu.shopo2o.service.repository.OffsetBasedPageRequest;
 import com.huotu.shopo2o.service.repository.order.MallDeliveryRepository;
 import com.huotu.shopo2o.service.repository.order.MallOrderRepository;
 import com.huotu.shopo2o.service.searchable.OrderSearchCondition;
@@ -19,7 +24,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,10 +32,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -127,7 +129,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 sort = new Sort(direction, "createTime");
                 break;
         }
-        pageable = new PageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        pageable = new OffsetBasedPageRequest(pageable.getOffset(),pageable.getPageSize(),sort);
         return mallOrderRepository.findAll(specification, pageable);
     }
 
