@@ -68,9 +68,9 @@ $(function () {
         mapHandler.closeInfoWindow();
     });
 
-    window.oncontextmenu  = function () {
+    $(document).on('contextmenu', '.layui-layer-shade', function () {
         return false;
-    };
+    });
 
     //行政区划查询
     var opts = {
