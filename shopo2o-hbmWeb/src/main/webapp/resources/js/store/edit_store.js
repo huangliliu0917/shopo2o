@@ -68,6 +68,10 @@ $(function () {
         mapHandler.closeInfoWindow();
     });
 
+    window.oncontextmenu  = function () {
+        return false;
+    };
+
     //行政区划查询
     var opts = {
         subdistrict: 1,   //返回下一级行政区
