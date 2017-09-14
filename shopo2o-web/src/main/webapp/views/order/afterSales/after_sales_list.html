@@ -25,7 +25,7 @@
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${afterSaleSearch}">
     <!--search-->
-    <form method="get" id="searchForm" th:action="@{/afterSale/afterSaleList}">
+    <form method="post" id="searchForm" th:action="@{/afterSale/afterSaleList}">
         <input type="hidden" name="pageIndex" value="1" th:value="${pageIndex}"/>
         <input type="hidden" name="version" value="V2" />
         <div class="row">

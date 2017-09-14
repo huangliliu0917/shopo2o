@@ -65,6 +65,13 @@
         adaptFrame._getMainWidth = function () {
             return $(window).width() - $('#con_left').width();
         };
+        adaptFrame.outputLeftMenu = function () {
+            var width = $('#con_left').width();
+            var scrolling = 'auto';
+            var height = this._getLeftHeight();
+            var ifSrc = /*[[@{/leftMenu}]]*/ "ordersManage.html";
+            document.write('<iframe id="content_left" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + ifSrc + '" style="overflow-x:hidden;"></iframe>');
+        };
         adaptFrame.outputMain = function (src) {
             console.log(src)
             var width = adaptFrame._getMainWidth()-20;
@@ -141,6 +148,13 @@
             </ul>
         </div>
         <!--账号信息END-->
+        <!--菜单BEGIN-->
+        <div id="con_left">
+            <script type="text/javascript">
+                adaptFrame.outputLeftMenu();
+            </script>
+        </div>
+        <!--菜单END-->
     </div>
     <div class="mainpanel" style="min-width: 1000px; overflow: hidden;">
         <div class="headerbar">

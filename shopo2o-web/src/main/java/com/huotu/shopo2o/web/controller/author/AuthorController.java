@@ -36,6 +36,7 @@ public class AuthorController {
     public String loginFailed() {
         return "redirect:login";
     }
+
     /**
      * 登录验证通过后更新登录时间并跳转供应商后台首页
      *
@@ -47,7 +48,7 @@ public class AuthorController {
             @LoginUser MallCustomer mallCustomer,
             Model model
     ) {
-        model.addAttribute("mallCustomer",mallCustomer);
+        model.addAttribute("mallCustomer", mallCustomer);
         return "home";
     }
 
@@ -63,7 +64,7 @@ public class AuthorController {
     }
 
     @RequestMapping(value = "/index")
-    public String index(@LoginUser MallCustomer mallCustomer,Model model){
+    public String index(@LoginUser MallCustomer mallCustomer, Model model) {
         IndexStatistics indexStatistics = indexStatisticsService.orderStatistics(Integer.parseInt(String.valueOf(mallCustomer.getCustomerId())));
         model.addAttribute("indexStatistics", indexStatistics);
         return "index";
@@ -93,4 +94,15 @@ public class AuthorController {
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 
+    @RequestMapping("/leftMenu")
+    public String leftMenu(
+            String parentId,
+            String activeMenuId,
+            Model model
+    ) {
+        if (!StringUtils.isEmpty(parentId)) {
+        }
+        model.addAttribute("parentId", parentId);
+        return "left_menu";
+    }
 }

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>发货单列表</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <!--search-->
+    <form method="post" id="searchForm" th:action="@{/order/deliveries}" th:object="${deliverySearcher}">
+        <input type="hidden" name="pageIndex" value="1" th:value="${pageIndex}"/>
+        <input type="hidden" name="version" value="V2"/>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>发货单列表</h5></div>
+                    <div class="ibox-content p-m">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label" for="deliveryNo">发货单号：</label>
+                                <input type="text" class="form-control input-sm mb10" id="deliveryNo" name="deliveryNo"
+                                       th:value="*{deliveryNo}" placeholder="发货单号"
+                                       style="width: 156px;"/>
+                            </div>
+
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="orderId">订单号：</label>
+                                <input type="text" class="form-control input-sm mb10 .col-xs-3" id="orderId" name="orderId"
+                                       th:value="*{orderId}"
+                                        placeholder="订单号" style="min-width: 156px;"/>
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline"  style="max-width: 926px;">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="createTimePick">起始时间：</label>
+                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                       id="createTimePick" name="createTimePick" start-element="#beginTime"
+                                       end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;"
+                                       th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') "/>
+                                <input type="hidden" id="beginTime" name="beginTime" runat="server"
+                                       th:value="*{beginTime}"/>
+                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                            </div>
+                            <div class="form-group m-r-sm arrow">
+                                <button type="button" onclick="deliverListHandler.search(1)" class="btn btn-success btn-sm">筛选
+                                </button>
+                                <button type="button" onclick="deliverListHandler.searchAll()" class="btn btn-success btn-sm">
+                                    显示全部
+                                </button>
+                                <button type="button" onclick="deliverListHandler.export()" class="btn btn-success btn-sm">
+                                    导出
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div class="panel-body">
+                                <table class="table table-bordered table-hover table-center">
+                                    <thead>
+                                    <tr>
+                                        <td>发货单号</td>
+                                        <td>订单号</td>
+                                        <td>创建时间</td>
+                                        <td>物流费用</td>
+                                        <td>收货人</td>
+                                        <td>物流公司</td>
+                                        <td>物流单号</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="delivery:${deliveryList}">
+                                        <td th:text="${delivery.deliveryId}">123</td>
+                                        <td th:text="${delivery.order.orderId}">123</td>
+                                        <td th:text="${#dates.format(delivery.createTime, 'yyyy-MM-dd HH:mm:ss')}">2016-01-01 00:00:00</td>
+                                        <td th:text="${#numbers.formatDecimal(delivery.freight,1,2)}">6.00</td>
+                                        <td th:text="${delivery.shipName}">张三</td>
+                                        <td th:text="${delivery.logisticsName}">申通</td>
+                                        <td th:text="${delivery.logisticsNo}">123</td>
+                                        <td style="width: 10%;">
+                                            <span class="cursor-point">
+                                                <a href="javascript:deliverListHandler.editDelivery('ddd')" th:href="|javascript:deliverListHandler.editDelivery('${delivery.deliveryId}')|">
+                                                    <i class="fa fa-pencil fa-lg tooltips" data-placement="top"
+                                                       data-toggle="tooltip"
+                                                       data-original-title="修改发货单"></i>
+                                                </a>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <p style="float: left; margin: 20px 0;">共
+                                    <th:block th:text="${totalRecords}">100</th:block>
+                                    条记录，当前第
+                                    <th:block th:text="${pageIndex}">1</th:block>
+                                    /
+                                    <th:block th:text="${totalPages}">15</th:block>
+                                    ，每页
+                                    <th:block th:text="${pageSize}">10</th:block>
+                                    条记录
+                                </p>
+                                <ul style="float: right;" class="pagination pagination-split">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+</div>
+<!--批量导出-->
+<div id="batchExportModal" class="modal-content-tag">
+    <div class="form-inline">
+        <div class="form-group">
+            <label class=" control-label" for="orderId">导出订单：</label>
+            第<input type="text" class="form-control input-sm mb10" id="txtBeginPage" style="width: 80px;" value="1"/>页 至
+            第<input type="text" class="form-control input-sm mb10" id="txtEndPage" style="width: 80px;" th:value="${totalPages}" />页
+        </div>
+    </div>
+</div>
+
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--日期选择-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/moment.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/daterangepicker.js"></script>
+
+<script src="../../../resources/js/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../../resources/js/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}"></script>
+<script src="../../../resources/js/hot/hot.export-utils.js"
+        th:src="@{/resources/js/hot/hot.export-utils.js}"></script>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/order/}]]*/ "";
+    var pageIndex = /*[[${pageIndex}]]*/ 1;
+    var totalPage = /*[[${totalPages}]]*/ 20;
+    /*<![CDATA[*/
+    var deliverListHandler = {
+        search : function(pageIndex){
+            $("input[name=pageIndex]").val(pageIndex);
+            $('#searchForm').submit();
+        },
+        searchAll:function(){
+            window.location.href = baseUrl + "deliveries?version=V2";
+        },
+        editDelivery: function (deliveryId) {
+            var url = baseUrl + "deliveryInfo?deliveryId=" + deliveryId + "&pageIndex=" + pageIndex;
+            hot.iframeModal(url, '900px', '400px', "修改发货单");
+        },
+        export:function(){
+            batchExportModal.show();
+        }
+    };
+
+    var batchExportModal = $("#batchExportModal").modal("批量导出", function () {
+        var txtBeginPage = $("#txtBeginPage").val();
+        var txtEndPage = $("#txtEndPage").val();
+
+        var chkResult = exportHelper.checkPage(txtBeginPage, txtEndPage);
+        if (!chkResult.flag) {
+            jBox.tip(chkResult.msg, 'info');
+            return;
+        }
+        var username = $("#username").val();
+        var deliveryNo = $("#deliveryNo").val();
+        var orderId = $("#orderId").val();
+        var txtBeginTime = $("#beginTime").val();
+        var txtEndTime = $("#endTime").val();
+
+        var url = baseUrl + "/exportDelivery";
+        url += '?rnd='
+            + Math.random()
+            + '&username=' + username
+            + '&deliveryNo=' + deliveryNo
+            + '&orderId=' + orderId
+            + '&txtBeginTime=' + txtBeginTime
+            + '&txtEndTime=' + txtEndTime
+            + '&txtBeginPage=' + txtBeginPage
+            + '&txtEndPage=' + txtEndPage;
+        window.location.href = url;
+    });
+
+    $(function(){
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+        pageinate.init(function (p) {
+            deliverListHandler.search(p);
+        });
+    })
+    /*]]>*/
+</script>
+</body>
+</html>
