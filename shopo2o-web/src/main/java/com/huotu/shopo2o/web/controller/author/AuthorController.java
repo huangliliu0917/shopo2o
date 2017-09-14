@@ -3,6 +3,8 @@ package com.huotu.shopo2o.web.controller.author;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.model.IndexStatistics;
+import com.huotu.shopo2o.service.service.statistics.IndexStatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,9 +24,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AuthorController {
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private IndexStatisticsService indexStatisticsService;
 
     @RequestMapping(value = {"", "/", "/login"})
-    public String index() {
+    public String login() {
         return "login";
     }
 
@@ -38,7 +42,7 @@ public class AuthorController {
      * @param mallCustomer
      * @return
      */
-    @RequestMapping(value = {"/loginSuccess","/index"})
+    @RequestMapping(value = {"/loginSuccess"})
     public String loginSuccess(
             @AuthenticationPrincipal MallCustomer mallCustomer,
             Model model
@@ -56,6 +60,13 @@ public class AuthorController {
     @RequestMapping(value = "showModifyPwd")
     public String showModifyPwd() {
         return "modifyPwd";
+    }
+
+    @RequestMapping(value = "/index")
+    public String index(@AuthenticationPrincipal MallCustomer mallCustomer,Model model){
+        IndexStatistics indexStatistics = indexStatisticsService.orderStatistics(Integer.parseInt(String.valueOf(mallCustomer.getCustomerId())));
+        model.addAttribute("indexStatistics", indexStatistics);
+        return "index";
     }
 
     /**

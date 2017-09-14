@@ -67,10 +67,14 @@
         };
         adaptFrame.outputMain = function (src) {
             console.log(src)
-            var width = adaptFrame._getMainWidth();
+            var width = adaptFrame._getMainWidth()-20;
             var scrolling = $.isIE6 == true ? 'yes' : 'auto';
             var height = this._getMainHeight();
-            document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
+            $("#bodyRight").attr("src",src);
+            $("#bodyRight").attr("width",width-200);
+            $("#bodyRight").attr("height",height);
+            $("#bodyRight").attr("scrolling",scrolling);
+//            document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
             $('#con_right').height(height);
         };
         var homeHandler ={
@@ -81,13 +85,18 @@
             order:function () {
                 var url = ajaxUrl+"order/getOrderList";
                 adaptFrame.outputMain(url);
-//                window.location.href = ajaxUrl+"order/getOrderList"
             },
             operator:function () {
-                window.location.href = ajaxUrl+"operator/getOperatorList"
+                var url = ajaxUrl+"operator/getOperatorList";
+                adaptFrame.outputMain(url);
             },
             store:function () {
-                window.location.href=ajaxUrl+"store/getStoreList"
+                var url = ajaxUrl+"store/getStoreList";
+                adaptFrame.outputMain(url);
+            },
+            index:function () {
+                var url = ajaxUrl+"/index"
+                adaptFrame.outputMain(url);
             }
         }
     </script>
@@ -138,7 +147,7 @@
             <div class="header-left" style="padding-left: 5px;">
                 <div class="topnav">
                     <ul class="nav nav-horizontal">
-                        <li class="active" onclick="">
+                        <li class="active" onclick="homeHandler.index()">
                             <a style="cursor: pointer;"><i class="fa fa-home"></i>
                                 <span>首页</span></a>
                         </li>
@@ -175,8 +184,9 @@
                  style="height: auto; text-align: center; padding-top: 436px; display: none; width: 1061px;">
                 <img src="resource/3rdParty/images/loading.gif" alt="loading" border="0"/>
             </div>
+            <iframe id="bodyRight" width=""></iframe>
             <script type="text/javascript">
-                adaptFrame.outputMain('about:blank');
+                adaptFrame.outputMain('index');
             </script>
         </div>
         <!--主体END-->

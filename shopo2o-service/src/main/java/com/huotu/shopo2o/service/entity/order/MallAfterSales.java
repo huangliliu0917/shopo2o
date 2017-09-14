@@ -69,8 +69,8 @@ public class MallAfterSales {
 
     @Column(name = "Pay_Status")
     private OrderEnum.PayStatus payStatus;
-    @Column(name = "Supplier_Id")
-    private int supplierId;
+    @Column(name = "Store_Id")
+    private int storeId;
     @Column(name = "Apply_Type")
     private AfterSaleEnum.AfterSaleType afterSaleType;
     @Column(name = "Apply_Reason")
