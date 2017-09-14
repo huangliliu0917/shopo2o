@@ -7,8 +7,8 @@ import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.author.Operator;
 import com.huotu.shopo2o.service.enums.Authority;
 import com.huotu.shopo2o.service.service.author.OperatorService;
+import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class OperatorController {
 
     @RequestMapping("/getOperatorList")
     public String outputRightMenu(
-            @AuthenticationPrincipal MallCustomer mallCustomer,
+            @LoginUser MallCustomer mallCustomer,
             Model model) {
         Authority[] authorities = Authority.values();
 
@@ -84,7 +84,7 @@ public class OperatorController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
     public ApiResult addAndSaveUser(
-            @AuthenticationPrincipal MallCustomer customer,
+            @LoginUser MallCustomer customer,
             @RequestParam(required = false, defaultValue = "0") Long operatorId,
             Operator requestOperator, String... authorities) {
         if (operatorId == 0 && operatorService.countByUsername(requestOperator.getUsername()) > 0) {

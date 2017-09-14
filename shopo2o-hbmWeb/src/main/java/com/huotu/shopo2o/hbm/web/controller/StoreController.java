@@ -67,8 +67,8 @@ public class StoreController extends MallBaseController {
         if (storeId != null && storeId != 0) {
             store = storeService.findOne(storeId, customerId);
             MallCustomer shopCustomer = customerService.findOne(storeId);
-            if(shopCustomer != null){
-                model.addAttribute("loginName",shopCustomer.getUsername());
+            if (shopCustomer != null) {
+                model.addAttribute("loginName", shopCustomer.getUsername());
             }
             try {
                 URI imgUri = resourceService.getResource(StaticResourceService.huobanmallMode, store.getLogo());
@@ -105,8 +105,8 @@ public class StoreController extends MallBaseController {
             store.setCreateTime(new Date());
             //判断门店登录名是否唯一
             boolean isExist = customerService.isExist(loginName);
-            if(isExist){
-                return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR,"登录用户名已存在");
+            if (isExist) {
+                return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "登录用户名已存在");
             }
             store.setCreateTime(new Date());
         }
@@ -117,7 +117,7 @@ public class StoreController extends MallBaseController {
         store.setCityCode(cityCode);
         store.setDistrictCode(districtCode);
         store.setAddress(address);
-        store.setLngLat(new LngLat(lng,lat));
+        store.setLngLat(new LngLat(lng, lat));
         store.setOpenTime(openTime);
         store.setCloseTime(closeTime);
         store.setDeadlineTime(deadlineTime);
@@ -129,44 +129,48 @@ public class StoreController extends MallBaseController {
     @PostMapping("/saveStoreMoreInfo")
     @ResponseBody
     @Transactional
-    public ApiResult save(@ModelAttribute("customerId")Long customerId,@RequestParam Long storeId
-            ,@RequestParam String distributionRegions,@RequestParam String distributionMarkers,@RequestParam String distributionDivisionRegions
-            ,@RequestParam Double deliveryCost,@RequestParam Double minCost,@RequestParam Double freeCost){
+    public ApiResult save(@ModelAttribute("customerId") Long customerId, @RequestParam Long storeId
+            , @RequestParam String distributionRegions, @RequestParam String distributionMarkers, @RequestParam String distributionDivisionRegions
+            , @RequestParam Double deliveryCost
+            , @RequestParam(required = false, defaultValue = "0") Double minCost, @RequestParam(required = false, defaultValue = "0") Double freeCost) {
         Store store = storeService.findOne(storeId, customerId);
-        if(store == null){
+        if (store == null) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
         }
         //解析配送范围点坐标
         List<LngLat> distributionRegionList;
         try {
-            distributionRegionList = objectMapper.readValue(distributionRegions,new TypeReference<List<LngLat>>() {});
+            distributionRegionList = objectMapper.readValue(distributionRegions, new TypeReference<List<LngLat>>() {
+            });
         } catch (IOException e) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送范围解析失败");
         }
-        if(distributionRegionList == null){
+        if (distributionRegionList == null) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "请设置配送范围");
         }
         //解析配送区域点坐标
-        Map<Long,DistributionMarker> distributionMarkerMap;
+        Map<Long, DistributionMarker> distributionMarkerMap;
         try {
-            distributionMarkerMap = objectMapper.readValue(distributionMarkers, new TypeReference<Map<Long,DistributionMarker>>() {});
+            distributionMarkerMap = objectMapper.readValue(distributionMarkers, new TypeReference<Map<Long, DistributionMarker>>() {
+            });
         } catch (IOException e) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域点标记解析失败");
         }
         //解析配送区域
-        Map<Long,DistributionRegion> distributionDivisionRegionMap;
+        Map<Long, DistributionRegion> distributionDivisionRegionMap;
         try {
-            distributionDivisionRegionMap = objectMapper.readValue(distributionDivisionRegions, new TypeReference<Map<Long,DistributionRegion>>() {});
+            distributionDivisionRegionMap = objectMapper.readValue(distributionDivisionRegions, new TypeReference<Map<Long, DistributionRegion>>() {
+            });
         } catch (IOException e) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域解析失败");
         }
         store.setDistributionRegions(distributionRegionList);
-        store.setDistributionMarkers(storeService.saveMarker(store,distributionMarkerMap));
-        store.setDistributionDivisionRegions(storeService.saveRegion(store,distributionDivisionRegionMap));
-        store.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        store.setMinCost(new BigDecimal(minCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        store.setFreeCost(new BigDecimal(freeCost).setScale(2,BigDecimal.ROUND_HALF_DOWN));
-        return storeService.saveStore(customerId, store,null);
+        store.setDistributionMarkers(storeService.saveMarker(store, distributionMarkerMap));
+        store.setDistributionDivisionRegions(storeService.saveRegion(store, distributionDivisionRegionMap));
+        store.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2, BigDecimal.ROUND_HALF_DOWN));
+        store.setMinCost(new BigDecimal(minCost).setScale(2, BigDecimal.ROUND_HALF_DOWN));
+        store.setFreeCost(new BigDecimal(freeCost).setScale(2, BigDecimal.ROUND_HALF_DOWN));
+        return storeService.saveStore(customerId, store, null);
     }
 
     @PostMapping("/changeOption")

@@ -13,4 +13,6 @@ public interface OperatorRepository extends JpaRepository<Operator, Long> {
     List<Operator> findByCustomer_customerIdAndIsDeletedFalse(Long customerId);
 
     long countByUsername(String username);
+
+    Operator findByUsername(String userName);
 }

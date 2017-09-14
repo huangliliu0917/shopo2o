@@ -5,6 +5,8 @@ import com.huotu.shopo2o.service.enums.Authority;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
 import com.huotu.shopo2o.service.service.author.OperatorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,4 +51,8 @@ public class OperatorServiceImpl implements OperatorService {
         operatorRepository.delete(id);
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return operatorRepository.findByUsername(username);
+    }
 }

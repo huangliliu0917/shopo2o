@@ -2,6 +2,7 @@ package com.huotu.shopo2o.common.utils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 获取 cookie 相关方法
@@ -42,5 +43,20 @@ public class CookieUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * 设置cookie
+     *
+     * @param response
+     * @param key
+     * @param value
+     */
+    public static void setCookie(HttpServletResponse response, String key, String value, String domain) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(1209600);
+        cookie.setPath("/");
+        cookie.setDomain(domain);
+        response.addCookie(cookie);
     }
 }
