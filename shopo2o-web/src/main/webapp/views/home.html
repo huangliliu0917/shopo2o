@@ -18,10 +18,79 @@
     <meta name="author" content=""/>
     <!--<link rel="shortcut icon" href="favicon_pdmall.ico"/>-->
     <title>供应商中心</title>
+    <script type="text/javascript" src="../resources/js/jquery/jquery-1.7.2.min.js"
+            th:src="@{/resources/js/jquery/jquery-1.7.2.min.js}"></script>
+    <script type="text/javascript" src="../resources/js/jquery/jquery.utils.js"
+            th:src="@{/resources/js/jquery/jquery.utils.js}"></script>
+    <script src="../resources/js/jquery/jquery-ui-1.8.20.min.js"
+            th:src="@{/resources/js/jquery/jquery-ui-1.8.20.min.js}"></script>
+    <script type="text/javascript" src="../resources/js/jquery/jquery.jBox-2.3.min.js"
+            th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"></script>
     <link href="../resources/css/jBox/Skins/Green/jbox.css" th:href="@{/resources/css/jBox/Skins/Green/jbox.css}"
           rel="stylesheet" type="text/css"/>
     <link href="../resources/css/ResPdmall/css/houtaikk.css" th:href="@{/resources/css/ResPdmall/css/houtaikk.css}"
           rel="stylesheet"/>
+    <script type="text/javascript" th:inline="javascript">
+        var ajaxUrl = /*[[@{/}]]*/ "/";
+        $(function () {
+            adaptFrame.init();
+        });
+        var adaptFrame = {};
+        adaptFrame.init = function () {
+            // 浏览改大小
+            $(window).bind('resize', function () {
+                var heightLeft = adaptFrame._getLeftHeight();
+                var heightMain = adaptFrame._getMainHeight();
+                var widthMain = adaptFrame._getMainWidth();
+
+                $("#con_left").height(heightLeft);
+
+                $("#content").attr('height', heightMain);
+                $("#content").attr('width', widthMain);
+
+                $('#con_right').height(heightMain);
+
+                $('#loading').css('padding-top', heightMain / 2).width(widthMain);
+                //alert(Math.random());
+            });
+        };
+        adaptFrame._getLeftHeight = function () {
+            return $(window).height() - 177;
+        };
+
+        adaptFrame._getMainHeight = function () {
+            return $(window).height() - 51;
+        };
+
+        adaptFrame._getMainWidth = function () {
+            return $(window).width() - $('#con_left').width();
+        };
+        adaptFrame.outputMain = function (src) {
+            console.log(src)
+            var width = adaptFrame._getMainWidth();
+            var scrolling = $.isIE6 == true ? 'yes' : 'auto';
+            var height = this._getMainHeight();
+            document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
+            $('#con_right').height(height);
+        };
+        var homeHandler ={
+            showUpdatePwd:function () {
+                var url = "showModifyPwd";
+                J.PopupIFrame(url, "修改密码", 400, 200, "ifrm", "", "auto", "");
+            },
+            order:function () {
+                var url = ajaxUrl+"order/getOrderList";
+                adaptFrame.outputMain(url);
+//                window.location.href = ajaxUrl+"order/getOrderList"
+            },
+            operator:function () {
+                window.location.href = ajaxUrl+"operator/getOperatorList"
+            },
+            store:function () {
+                window.location.href=ajaxUrl+"store/getStoreList"
+            }
+        }
+    </script>
 </head>
 <body>
 <section>
@@ -93,35 +162,26 @@
                 </div>
             </div>
         </div>
+        <!--公告条BEGIN-->
+        <div style="clear: both"></div>
+        <div class="pageheader" style="padding-left: 12px;">
+        </div>
+        <div style="clear: both"></div>
+        <!--公告条END-->
+
+        <!--主体BEGIN-->
+        <div id="con_right">
+            <div id="loading"
+                 style="height: auto; text-align: center; padding-top: 436px; display: none; width: 1061px;">
+                <img src="resource/3rdParty/images/loading.gif" alt="loading" border="0"/>
+            </div>
+            <script type="text/javascript">
+                adaptFrame.outputMain('about:blank');
+            </script>
+        </div>
+        <!--主体END-->
     </div>
 </section>
-<!--基础框架js-->
-<script type="text/javascript" src="../resources/js/jquery/jquery-1.7.2.min.js"
-        th:src="@{/resources/js/jquery/jquery-1.7.2.min.js}"></script>
-<script type="text/javascript" src="../resources/js/jquery/jquery.utils.js"
-        th:src="@{/resources/js/jquery/jquery.utils.js}"></script>
-<script src="../resources/js/jquery/jquery-ui-1.8.20.min.js"
-        th:src="@{/resources/js/jquery/jquery-ui-1.8.20.min.js}"></script>
-<script type="text/javascript" src="../resources/js/jquery/jquery.jBox-2.3.min.js"
-        th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"></script>
-    <script type="text/javascript" th:inline="javascript">
-        var ajaxUrl = /*[[@{/}]]*/ "/";
-        var homeHandler ={
-            showUpdatePwd:function () {
-                    var url = "showModifyPwd";
-                    J.PopupIFrame(url, "修改密码", 400, 200, "ifrm", "", "auto", "");
-            },
-            order:function () {
-        window.location.href = ajaxUrl+"order/getOrderList"
-            },
-            operator:function () {
-        window.location.href = ajaxUrl+"operator/getOperatorList"
-            },
-            store:function () {
-        window.location.href=ajaxUrl+"store/getStoreList"
-            }
-        }
-    </script>
 </body>
 </html>
 
