@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallAfterSales>"*/-->
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>售后单列表</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+</head>
+<!--/*@thymesVar id="afterSaleSearch" type="com.huotu.hotsupplier.hbm.service.searchable.AfterSaleSearch"*/-->
+<!--/*@thymesVar id="afterStatus" type="com.huotu.hotsupplier.common.ienum.AfterSaleEnum.AfterSaleStatus"*/-->
+<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallAfterSales>"*/-->
+<!--/*@thymesVar id="totalRecords" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="pageIndex" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="totalPages" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="pageSize" type="java.lang.Long"*/-->
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${afterSaleSearch}">
+    <!--search-->
+    <form method="get" id="searchForm" th:action="@{/supplier/afterSale/afterSaleList}">
+        <input type="hidden" name="pageIndex" value="1" th:value="${pageIndex}"/>
+        <input type="hidden" name="version" value="V2" />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>售后单列表</h5></div>
+                    <div class="ibox-content p-m">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="createTimePick">起始时间：</label>
+                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                       id="createTimePick" name="createTimePick" start-element="#beginTime"
+                                       end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;"
+                                       th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') "/>
+                                <input type="hidden" id="beginTime" name="beginTime" runat="server"
+                                       th:value="*{beginTime}"/>
+                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="orderCreateTimePick">下单时间：</label>
+                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                       id="orderCreateTimePick" name="orderCreateTimePick" start-element="#createBeginTime"
+                                       end-element="#createEndTime" placeholder="开始时间-结束时间" style="width: 277px;"
+                                       th:value="(*{createBeginTime!= null and createBeginTime != ''}  ? *{createBeginTime} :'')  + (*{createEndTime != null and createEndTime != ''} ?  ' - ' + *{createEndTime} :'') "/>
+                                <input type="hidden" id="createBeginTime" name="createBeginTime" runat="server"
+                                       th:value="*{createBeginTime}"/>
+                                <input type="hidden" id="createEndTime" name="createEndTime" runat="server" th:value="*{createEndTime}"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="orderCreateTimePick">支付时间：</label>
+                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                       id="orderPayTimePick" name="orderCreateTimePick" start-element="#payBeginTime"
+                                       end-element="#payEndTime" placeholder="开始时间-结束时间" style="width: 277px;"
+                                       th:value="(*{payBeginTime!= null and payBeginTime != ''}  ? *{payBeginTime} :'')  + (*{payEndTime != null and payEndTime != ''} ?  ' - ' + *{payEndTime} :'') "/>
+                                <input type="hidden" id="payBeginTime" name="payBeginTime" runat="server"
+                                       th:value="*{payBeginTime}"/>
+                                <input type="hidden" id="payEndTime" name="payEndTime" runat="server" th:value="*{payEndTime}"/>
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline" style="max-width: 926px;">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label" for="afterId">售后单号：</label>
+                                <input type="text" class="form-control input-sm mb10 .col-xs-3" id="afterId" name="afterId"
+                                       th:value="*{afterId}" placeholder="售后单号" style="min-width: 156px;"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class=" control-label" for="orderId">订单号：</label>
+                                <input type="text" class="form-control input-sm mb10 .col-xs-3" id="orderId" name="orderId"
+                                       th:value="*{orderId}"
+                                       runat="server" placeholder="订单号" style="min-width: 156px;"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label" for="afterSaleStatus">售后单状态：</label>
+                                <select class="form-control input-sm" id="afterSaleStatus" name="afterSaleStatus">
+                                    <option th:value="-1" th:selected="*{afterSaleStatus==-1}">请选择</option>
+                                    <option th:each="afterStatus:${afterSaleStatusList}" th:value="${afterStatus.code}" th:text="${afterStatus.value}"
+                                            th:selected="${afterStatus.code == afterSaleSearch.afterSaleStatus}">售后申请中
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group m-r-sm arrow">
+                                <button type="button" onclick="afterSalesListHandler.search(1)" class="btn btn-success btn-sm">筛选
+                                </button>
+                                <button type="button" onclick="afterSalesListHandler.searchAll()" class="btn btn-success btn-sm">显示全部
+                                </button>
+                                <button type="button" onclick="afterSalesListHandler.batchAgreeRefund()" class="btn btn-success btn-sm">批量同意退款
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div class="panel-body">
+                                <table class="table table-bordered table-hover table-center">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" class="i-checks" id="checkall"/>
+                                        </th>
+                                        <th>售后编号</th>
+                                        <th>订单编号</th>
+                                        <th>商品名称</th>
+                                        <th>购买数量</th>
+                                        <th>申请手机</th>
+                                        <th>申请时间</th>
+                                        <th>审核状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody >
+                                    <tr th:each="afterSale:${afterSales}">
+                                        <td>
+                                            <input type="checkbox" class="i-checks" name="choice"  th:value="${afterSale.afterId}" th:disabled="${!afterSale.refundable()}"/>
+                                        </td>
+                                        <td th:text="${afterSale.afterId}"></td>
+                                        <td th:text="${afterSale.orderId}"></td>
+                                        <td style="width: 30%;">
+                                            <img style="width: 50px; height: 50px; float: left; margin-left: 5px;"
+                                                 src="" th:src="${afterSale.imgUri != null ? afterSale.imgUri.toString() : '../resource/3rdParty/images/none.png'}"/>
+                                            <span style="overflow: hidden; text-align: left; margin-left: 10px; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1;
+                                                 -webkit-box-orient: vertical; width: 54%; float: left;" th:text="${afterSale.productName}">商品名称</span>
+                                        </td>
+                                        <td th:text="${afterSale.productNum}">1</td>
+                                        <td th:text="${afterSale.applyMobile}">1234</td>
+                                        <td th:text="${#dates.format(afterSale.createTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+                                        <td th:text="${afterSale.afterSaleStatus.value}">审核通过</td>
+                                        <td style="width: 10%;">
+                                            <span class="cursor-point">
+                                                <a th:href="@{/supplier/afterSale/afterSalesDetail(afterId=${afterSale.afterId},version='V2')}">
+                                                    <i class="fa fa-pencil fa-lg tooltips" data-placement="top" data-toggle="tooltip"
+                                                       data-original-title="查看详细"></i>
+                                                </a>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <p style="float: left; margin: 20px 0;">共
+                                    <th:block th:text="${totalRecords}">100</th:block>
+                                    条记录，当前第
+                                    <th:block th:text="${pageIndex}">1</th:block>
+                                    /
+                                    <th:block th:text="${totalPages}">15</th:block>
+                                    ，每页
+                                    <th:block th:text="${pageSize}">10</th:block>
+                                    条记录
+                                </p>
+                                <ul style="float: right;" class="pagination pagination-split">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+</div>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--日期选择-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/moment.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/daterangepicker.js"></script>
+
+<script src="../../../resources/js/hot/bootstrap.hot.extra-utils.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../../resources/js/hot/bootstrap.hot.extra-init.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}" ></script>
+<script th:inline="javascript">
+    var ajaxUri = /*[[@{/supplier/afterSale/ajax/}]]*/ "/supplier/afterSale/ajax/";
+    var listUri = /*[[@{/supplier/afterSale/afterSaleList}]]*/ "/supplier/afterSale/afterSaleList";
+    var pageIndex = /*[[${pageIndex}]]*/ 1;
+    var totalPage = /*[[${totalPages}]]*/ 20;
+    var actionMethod = {
+        batchRefundAgree: "batchRefundAgree",
+    };
+    $(function(){
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+        pageinate.init(function (p) {
+            afterSalesListHandler.search(p);
+        });
+        $("input[class~=data-range-pick]").on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+            $($(this).attr("start-element")).val('');
+            $($(this).attr("end-element")).val('');
+        });
+    })
+    //批量同意退款-全选
+    $("#checkall").click(function () {
+        var option = $("#checkall").prop('checked');
+        $("input[name='choice']:checkbox:enabled").each(function () {
+            $(this).prop("checked", option);
+        })
+    })
+    function getCheckedItems(checkboxName) {
+        var checkedObj = $("input[name='" + checkboxName + "']:checked");
+        var checkedMenu = "";
+
+        checkedObj.each(function () {
+            checkedMenu += $(this).val() + ",";
+        });
+        return checkedMenu.substring(0, checkedMenu.lastIndexOf(","));
+    }
+
+    var afterSalesListHandler = {
+        search : function(pageIndex){
+            $("input[name=pageIndex]").val(pageIndex);
+            $("#searchForm").submit();
+        },
+        searchAll : function(){
+            window.location.href = listUri + "?version=V2";
+        },
+        batchAgreeRefund : function(){
+            var afterId = getCheckedItems("choice");
+            if(afterId.length == 0){
+                hot.tip.error("请选择要处理的售后单");
+                return;
+            }
+            hot.confirm("确定同意退款",function(){
+                hot.loading.show();
+                hot.ajax(ajaxUri + actionMethod.batchRefundAgree, {
+                    afterId: afterId
+                }, function (json) {
+                    if (json.code == 200) {
+                        hot.tip.success("提交成功");
+                        window.location.reload();
+                    } else {
+                        hot.tip.error(json.msg);
+                    }
+                }, function () {
+                }, "post");
+            });
+        }
+    }
+</script>
+</body>
+</html>
