@@ -11,7 +11,9 @@ import java.util.List;
 /**
  * Created by hxh on 2017-09-14.
  */
-public interface MallAfterSalesRepository extends JpaRepository<MallAfterSales,String>, JpaSpecificationExecutor {
+public interface MallAfterSalesRepository extends JpaRepository<MallAfterSales, String>, JpaSpecificationExecutor {
     @Query("select count(afterSale) from MallAfterSales afterSale where afterSale.storeId=?1 and afterSale.afterSaleStatus not in ?2")
     int countByStoreIdAndAfterSaleStatusNotIn(int storeId, List<AfterSaleEnum.AfterSaleStatus> afterSaleStatuses);
+
+    List<MallAfterSales> findByOrderId(String orderId);
 }

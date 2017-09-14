@@ -17,5 +17,13 @@ public interface MallAfterSalesService {
      * @return
      */
     Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long supplierId, AfterSaleSearch afterSaleSearch);
+
+    /**
+     * 根据id得到售后单实体
+     *
+     * @param afterId
+     * @return
+     */
+    MallAfterSales findByAfterId(String afterId);
     int UnhandledCount(int storeId);
 }

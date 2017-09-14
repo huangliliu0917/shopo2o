@@ -3,6 +3,7 @@ package com.huotu.shopo2o.service.service.order.impl;
 import com.huotu.shopo2o.common.ienum.EnumHelper;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
+import com.huotu.shopo2o.service.entity.order.MallAfterSales_;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.searchable.AfterSaleSearch;
@@ -24,7 +25,7 @@ import java.util.List;
  * Created by hxh on 2017-09-14.
  */
 @Service
-public class MallAfterSalesServiceImpl implements MallAfterSalesService{
+public class MallAfterSalesServiceImpl implements MallAfterSalesService {
     @Autowired
     private MallAfterSalesRepository mallAfterSalesRepository;
 
@@ -32,51 +33,55 @@ public class MallAfterSalesServiceImpl implements MallAfterSalesService{
     public Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long supplierId, AfterSaleSearch afterSaleSearch) {
         Specification<MallAfterSales> specification = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get("supplierId").as(Integer.class), supplierId));
+            predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.supplierId), supplierId));
             if (!StringUtils.isEmpty(afterSaleSearch.getBeginTime())) {
                 Date beginTime = StringUtil.DateFormat(afterSaleSearch.getBeginTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime").as(Date.class), beginTime));
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(MallAfterSales_.createTime), beginTime));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getEndTime())) {
                 Date endTime = StringUtil.DateFormat(afterSaleSearch.getEndTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime").as(Date.class), endTime));
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(MallAfterSales_.createTime), endTime));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getAfterId())) {
-//                predicates.add(criteriaBuilder.like(root.get("afterId").as(String.class), afterSaleSearch.getAfterId() + "%"));
-                predicates.add(criteriaBuilder.equal(root.get("afterId").as(String.class), afterSaleSearch.getAfterId()));
+                predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.afterId), afterSaleSearch.getAfterId()));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getOrderId())) {
-//                predicates.add(criteriaBuilder.like(root.get("orderId").as(String.class), afterSaleSearch.getOrderId() + "%"));
-                predicates.add(criteriaBuilder.equal(root.get("orderId").as(String.class), afterSaleSearch.getOrderId()));
+                predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.afterId), afterSaleSearch.getOrderId()));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getMobile())) {
-                predicates.add(criteriaBuilder.equal(root.get("applyMobile").as(String.class), afterSaleSearch.getMobile()));
+                predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.applyMobile), afterSaleSearch.getMobile()));
             }
             if (afterSaleSearch.getAfterSaleStatus() != null && afterSaleSearch.getAfterSaleStatus() != -1) {
-                predicates.add(criteriaBuilder.equal(root.get("afterSaleStatus").as(AfterSaleEnum.AfterSaleStatus.class),
+                predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.afterSaleStatus),
                         EnumHelper.getEnumType(AfterSaleEnum.AfterSaleStatus.class, afterSaleSearch.getAfterSaleStatus())));
             }
-            if(!StringUtils.isEmpty(afterSaleSearch.getCreateBeginTime())){
-                Date createBeginTime = StringUtil.DateFormat(afterSaleSearch.getCreateBeginTime(),StringUtil.TIME_WITHOUT_SECOND_PATTERN);
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("orderCreateTime").as(Date.class),createBeginTime));
+            if (!StringUtils.isEmpty(afterSaleSearch.getCreateBeginTime())) {
+                Date createBeginTime = StringUtil.DateFormat(afterSaleSearch.getCreateBeginTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(MallAfterSales_.orderCreateTime), createBeginTime));
             }
-            if(!StringUtils.isEmpty(afterSaleSearch.getCreateEndTime())){
-                Date createEndTime = StringUtil.DateFormat(afterSaleSearch.getCreateEndTime(),StringUtil.TIME_WITHOUT_SECOND_PATTERN);
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("orderCreateTime").as(Date.class),createEndTime));
+            if (!StringUtils.isEmpty(afterSaleSearch.getCreateEndTime())) {
+                Date createEndTime = StringUtil.DateFormat(afterSaleSearch.getCreateEndTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(MallAfterSales_.orderCreateTime), createEndTime));
             }
-            if(!StringUtils.isEmpty(afterSaleSearch.getPayBeginTime())){
-                Date payBeginTime = StringUtil.DateFormat(afterSaleSearch.getPayBeginTime(),StringUtil.TIME_WITHOUT_SECOND_PATTERN);
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("orderPayTime").as(Date.class),payBeginTime));
+            if (!StringUtils.isEmpty(afterSaleSearch.getPayBeginTime())) {
+                Date payBeginTime = StringUtil.DateFormat(afterSaleSearch.getPayBeginTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(MallAfterSales_.orderPayTime), payBeginTime));
             }
-            if(!StringUtils.isEmpty(afterSaleSearch.getPayEndTime())){
-                Date payEndTime = StringUtil.DateFormat(afterSaleSearch.getPayEndTime(),StringUtil.TIME_WITHOUT_SECOND_PATTERN);
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("orderPayTime").as(Date.class),payEndTime));
+            if (!StringUtils.isEmpty(afterSaleSearch.getPayEndTime())) {
+                Date payEndTime = StringUtil.DateFormat(afterSaleSearch.getPayEndTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(MallAfterSales_.orderPayTime), payEndTime));
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
         };
         return mallAfterSalesRepository.findAll(specification, new PageRequest(pageIndex - 1, pageSize,
                 new Sort(Sort.Direction.DESC, "createTime")));
     }
+
+    @Override
+    public MallAfterSales findByAfterId(String afterId) {
+        return mallAfterSalesRepository.findOne(afterId);
+    }
+
 
     @Override
     public int UnhandledCount(int storeId) {

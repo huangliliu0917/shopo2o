@@ -5,9 +5,9 @@ import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.model.IndexStatistics;
 import com.huotu.shopo2o.service.service.statistics.IndexStatisticsService;
+import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -44,7 +44,7 @@ public class AuthorController {
      */
     @RequestMapping(value = {"/loginSuccess"})
     public String loginSuccess(
-            @AuthenticationPrincipal MallCustomer mallCustomer,
+            @LoginUser MallCustomer mallCustomer,
             Model model
     ) {
         model.addAttribute("mallCustomer",mallCustomer);
@@ -63,7 +63,7 @@ public class AuthorController {
     }
 
     @RequestMapping(value = "/index")
-    public String index(@AuthenticationPrincipal MallCustomer mallCustomer,Model model){
+    public String index(@LoginUser MallCustomer mallCustomer,Model model){
         IndexStatistics indexStatistics = indexStatisticsService.orderStatistics(Integer.parseInt(String.valueOf(mallCustomer.getCustomerId())));
         model.addAttribute("indexStatistics", indexStatistics);
         return "index";
@@ -79,7 +79,7 @@ public class AuthorController {
      */
     @RequestMapping(value = "/modifyPwd", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     @ResponseBody
-    public ApiResult modifyPwd(@AuthenticationPrincipal UserDetails user, String oldPwd, String password) throws
+    public ApiResult modifyPwd(@LoginUser UserDetails user, String oldPwd, String password) throws
             Exception {
         if (StringUtils.isEmpty(password) || StringUtils.isEmpty(oldPwd)) {
             return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
