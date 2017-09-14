@@ -16,6 +16,7 @@ import com.huotu.shopo2o.service.searchable.OrderSearchCondition;
 import com.huotu.shopo2o.service.service.marketing.MallPintuanService;
 import com.huotu.shopo2o.service.service.order.MallDeliveryService;
 import com.huotu.shopo2o.service.service.order.MallOrderService;
+import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import com.huotu.shopo2o.web.service.StaticResourceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -60,7 +60,7 @@ public class OrderController {
     private MallDeliveryService mallDeliveryService;
 
     @RequestMapping("/getOrderList")
-    public String getOrderList(@AuthenticationPrincipal MallCustomer customer
+    public String getOrderList(@LoginUser MallCustomer customer
             , @ModelAttribute("orderSearchCondition") OrderSearchCondition searchCondition
             , @RequestParam(required = false, defaultValue = "1") int pageIndex, Model model) {
         searchCondition.setStoreId(customer.getCustomerId());
@@ -105,7 +105,7 @@ public class OrderController {
      */
     @RequestMapping("/exportExcel")
     @SuppressWarnings("Duplicates")
-    public void exportExcel(@AuthenticationPrincipal MallCustomer customer
+    public void exportExcel(@LoginUser MallCustomer customer
             ,OrderSearchCondition searchCondition, int txtBeginPage, int txtEndPage, HttpServletResponse response) {
         searchCondition.setStoreId(customer.getCustomerId());
         int pageSize = Constant.PAGE_SIZE * (txtEndPage - txtBeginPage + 1);
@@ -193,7 +193,7 @@ public class OrderController {
     @RequestMapping(value = "/delivery")
     @ResponseBody
     public ApiResult addDelivery(
-            @AuthenticationPrincipal MallCustomer mallCustomer,
+            @LoginUser MallCustomer mallCustomer,
             DeliveryInfo deliveryInfo
     ) throws Exception {
         return mallDeliveryService.pushDelivery(deliveryInfo);
@@ -210,7 +210,7 @@ public class OrderController {
     @RequestMapping(value = "/batchDeliver", method = RequestMethod.POST)
     @ResponseBody
     public ApiResult batchDeliver(
-            @AuthenticationPrincipal MallCustomer mallCustomer,
+            @LoginUser MallCustomer mallCustomer,
             HttpServletRequest request
     ) throws IOException {
         // TODO: 2017-09-11 批量发货 (不清楚怎么实现)

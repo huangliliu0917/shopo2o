@@ -223,7 +223,7 @@ var mapHandler = {
                     required: true,
                     number: true,
                     isFloat2: true
-                },
+                }/*,
                 minCost: {
                     required: true,
                     number: true,
@@ -233,7 +233,7 @@ var mapHandler = {
                     required: true,
                     number: true,
                     isFloat2: true
-                }
+                }*/
             },
             messages: {
                 distributionRegions: {
@@ -245,7 +245,7 @@ var mapHandler = {
                 deliveryCost: {
                     required: "请输入配送费用",
                     number: "请填写正确金额"
-                },
+                }/*,
                 minCost: {
                     required: "请输入配送费用",
                     number: "请填写正确金额"
@@ -253,7 +253,7 @@ var mapHandler = {
                 freeCost: {
                     required: "请输入配送费用",
                     number: "请填写正确金额"
-                }
+                }*/
             }
         });
         $(".colorpicker-component").colorpicker();
@@ -473,41 +473,36 @@ var mapHandler = {
         if ('J_RegionDistribution'.indexOf(showClass) > -1) {
             //门店配送范围
             if (Object.keys(RegionListObj).length > 0) {
-                layer.msg("已设置配送区域，无法编辑门店");
-                return;
-            }
-            if (!!editor.polylineEditor) {
-                editor.polylineEditor.open();
-            } else {
-                mouseTool = new AMap.MouseTool(sendAreaMap);
-                mouseTool.polygon();
-                mouseTool.on('draw', function (type, obj) {
-                    layer.confirm('确认添加配送区域', {
-                        btn: ['确定', '取消']
-                    }, function (index) {
-                        sendAreaMap.plugin(["AMap.PolyEditor"], function () {
-                            editor.polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
-                            editor.polylineEditor.open();
-                            mouseTool.close();
-                        })
-                        layer.close(index);
-                    }, function (index) {
-                        mouseTool.close(true);
-                        if (editor.polylineEditor != undefined) {
-                            editor.polylineEditor.close();
-                            sendAreaMap.remove(editor.polylineEditor);
-                            editor.polylineEditor = null;
+                layer.confirm('已设置配送区域，修改配送范围将清空配送区域花划分，确认修改吗？', {
+                    btn: ['确定', '取消']
+                }, function (index) {
+                    //清空配送区域
+                    var regionTrList = $("#J_regionList tr");
+                    for (var j = 0; j < regionTrList.length; j++) {
+                        var id = regionTrList.eq(j).attr('data-id');
+                        sendAreaMap.remove(regionRegionDivision[id]);
+                    }
+                    if (regionMarkers != null && regionMarkers.length > 0) {
+                        for (var i = 0; i < regionMarkers.length; i++) {
+                            sendAreaMap.remove(regionMarkers[i]);
                         }
-                        if (regionMarkers != null && regionMarkers.length > 0) {
-                            for (var i = 0; i < regionMarkers.length; i++) {
-                                sendAreaMap.remove(regionMarkers[i]);
-                            }
-                            regionMarkerIndex = 2;
-                        }
-                        layer.close(index);
-                        mouseTool.polygon();
-                    });
+                    }
+                    regionMarkers = []; //划分配配送范围点
+                    regionMarkerIndex = 2; //划分配送范围点序号
+                    regionMarkerPosition = {}; //划分配送范围点集合
+                    regionRegionDivision = {}; //配送区域集合
+                    RegionListObj = {};
+                    $("#J_regionList").html('');
+                    layer.close(index);
+                    mapHandler.editRegionDistribution();
+                    $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
+                }, function (index) {
+                    layer.close(index);
+                    return;
                 });
+            }else{
+                mapHandler.editRegionDistribution();
+                $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
             }
         } else if ('J_RegionDivision'.indexOf(showClass) > -1) {
             //配送区域划分
@@ -525,10 +520,11 @@ var mapHandler = {
             for (var i = 0; i < sendAreaMap.getAllOverlays('marker').length; i++) {
                 sendAreaMap.getAllOverlays("marker")[i].on('rightclick', mapHandler.removeMarkerListenFn);
             }
+            $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
         } else {
             editor.polylineEditor.close();
+            $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
         }
-        $('#' + showClass).removeClass('displayNone').siblings().addClass('displayNone');
     },
     saveRegionDivision: function (obj) {
         //判断是否有配送区域
@@ -545,10 +541,49 @@ var mapHandler = {
             sendAreaMap.getAllOverlays("marker")[i].off('rightclick', mapHandler.removeMarkerListenFn);
         }
         layer.msg('配送区域保存成功');
-    }
-    ,
+    },
+    //开始编辑配送区域
+    editRegionDistribution: function(){
+        if (!!editor.polylineEditor) {
+            editor.polylineEditor.open();
+        } else {
+            mouseTool = new AMap.MouseTool(sendAreaMap);
+            mouseTool.polygon();
+            mouseTool.on('draw', function (type, obj) {
+                layer.confirm('确认添加配送区域', {
+                    btn: ['确定', '取消']
+                }, function (index) {
+                    sendAreaMap.plugin(["AMap.PolyEditor"], function () {
+                        editor.polylineEditor = new AMap.PolyEditor(sendAreaMap, type.obj);
+                        editor.polylineEditor.open();
+                        mouseTool.close();
+                    })
+                    layer.close(index);
+                }, function (index) {
+                    mouseTool.close(true);
+                    if (editor.polylineEditor != undefined) {
+                        editor.polylineEditor.close();
+                        sendAreaMap.remove(editor.polylineEditor);
+                        editor.polylineEditor = null;
+                    }
+                    if (regionMarkers != null && regionMarkers.length > 0) {
+                        for (var i = 0; i < regionMarkers.length; i++) {
+                            sendAreaMap.remove(regionMarkers[i]);
+                        }
+                        regionMarkerIndex = 2;
+                    }
+                    layer.close(index);
+                    mouseTool.polygon();
+                });
+            });
+        }
+    },
     saveRegionDistribution: function (obj) {
         //保存前先判断点是否在区域内
+        if(editor.polylineEditor == undefined){
+            layer.msg('请设置配送范围');
+            return;
+        }
         regionPolygon = editor.polylineEditor.cf;
         if (!regionPolygon.contains(storeMarker.getPosition())) {
             layer.msg('门店不在该区域内');
@@ -675,6 +710,28 @@ var editShopHandler = {
             layer.msg('请保存划分区域');
             return;
         }
+        //判断配送范围是否都划分到了
+        var regionTrList = $("#J_regionList tr");
+        var divisionArea = 0;
+        var totalArea = 0;
+        if(regionPolygon != undefined){
+            totalArea = regionPolygon.getArea();
+        }
+        for (var j = 0; j < regionTrList.length; j++) {
+            var id = regionTrList.eq(j).attr('data-id');
+            if (regionRegionDivision[id] != undefined) {
+                divisionArea += regionRegionDivision[id].getArea();
+            }
+        }
+        //设置允许偏差为0.1%
+        if( 100 * (totalArea - divisionArea) / totalArea > 0.1){
+            layer.msg('部分配送范围未划分区域');
+            return;
+        }
+        if( 100 * (divisionArea - totalArea) / totalArea > 0.1){
+            layer.msg('部分配送范围重叠');
+            return;
+        }
         if ($("#shopMoreInfo").valid()) {
             //判断是否有区域
             if (Object.keys(RegionListObj).length == 0) {
@@ -732,6 +789,7 @@ var uploadHandler = {
             },
             error: function () {
                 layer.closeAll('loading');
+                layer.msg('上传失败');
             }
         });
     }
@@ -869,9 +927,9 @@ var Region = {
             RegionListObj[id]['name'] = nameInput.val();
             RegionListObj[id]['markerNum'] = valueInput.val();
             RegionListObj[id]['color'] = colorInput.val();
-            if (!checkMarker(id, RegionListObj[id]['markerNum'])) {
+            /*if (!checkMarker(id, RegionListObj[id]['markerNum'])) {
                 return;
-            }
+            }*/
             var regionItemArea = getRegionArea(RegionListObj[id]['markerNum']);
             // console.log(regionItemArea);
             // console.log(lngLat2Arr(regionItemArea));

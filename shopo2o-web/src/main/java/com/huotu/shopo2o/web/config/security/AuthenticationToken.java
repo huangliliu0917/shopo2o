@@ -13,11 +13,14 @@ import java.util.Collection;
 @Getter
 @Setter
 public class AuthenticationToken extends UsernamePasswordAuthenticationToken {
-    public AuthenticationToken(Object principal, Object credentials) {
+    private int roleType;//登录角色
+    public AuthenticationToken(Object principal, Object credentials, int roleType) {
         super(principal, credentials);
+        this.roleType = roleType;
     }
 
-    public AuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    public AuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities, int roleType) {
         super(principal, credentials, authorities);
+        this.roleType = roleType;
     }
 }

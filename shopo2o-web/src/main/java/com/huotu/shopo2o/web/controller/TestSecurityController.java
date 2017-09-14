@@ -1,7 +1,7 @@
 package com.huotu.shopo2o.web.controller;
 
 import com.huotu.shopo2o.service.entity.MallCustomer;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,7 @@ public class TestSecurityController {
      */
     @RequestMapping(value = {"/loginSuccess","/index"})
     public String loginSuccess(
-            @AuthenticationPrincipal MallCustomer mallCustomer,
+            @LoginUser MallCustomer mallCustomer,
             Model model
     ) {
         model.addAttribute("mallCustomer",mallCustomer);

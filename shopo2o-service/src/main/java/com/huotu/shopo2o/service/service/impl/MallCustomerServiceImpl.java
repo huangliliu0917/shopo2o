@@ -12,6 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,6 +28,14 @@ public class MallCustomerServiceImpl implements MallCustomerService {
     private MallCustomerRepository mallCustomerRepository;
     @Autowired
     private ApiService apiService;
+
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        MallCustomer mallCustomer = mallCustomerRepository.findByUsername(userName);
+        if (mallCustomer == null)
+            throw new UsernameNotFoundException("没有该账号");
+        return mallCustomer;
+    }
 
     @Override
     public ApiResult newCustomer(String userName, String password, CustomerTypeEnum customerTypeEnum) {
