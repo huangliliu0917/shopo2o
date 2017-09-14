@@ -3,11 +3,16 @@ package com.huotu.shopo2o.web.controller.author;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.author.Operator;
+import com.huotu.shopo2o.service.repository.MallCustomerRepository;
+import com.huotu.shopo2o.service.repository.author.OperatorRepository;
+import com.huotu.shopo2o.service.service.MallCustomerService;
 import com.huotu.shopo2o.service.model.IndexStatistics;
 import com.huotu.shopo2o.service.service.statistics.IndexStatisticsService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +29,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class AuthorController {
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private MallCustomerRepository mallCustomerRepository;
+    @Autowired
+    private OperatorRepository operatorRepository;
     @Autowired
     private IndexStatisticsService indexStatisticsService;
 
@@ -73,6 +82,7 @@ public class AuthorController {
     /**
      * 放开权限，所有用户均可以修改自己的登录密码
      *
+     * @param user 这里要根据不同的类型去修改密码，所以使用 {@link org.springframework.security.core.annotation.AuthenticationPrincipal}
      * @param oldPwd
      * @param password
      * @return
@@ -80,7 +90,7 @@ public class AuthorController {
      */
     @RequestMapping(value = "/modifyPwd", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     @ResponseBody
-    public ApiResult modifyPwd(@LoginUser UserDetails user, String oldPwd, String password) throws
+    public ApiResult modifyPwd(@AuthenticationPrincipal UserDetails user, String oldPwd, String password) throws
             Exception {
         if (StringUtils.isEmpty(password) || StringUtils.isEmpty(oldPwd)) {
             return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
@@ -90,7 +100,16 @@ public class AuthorController {
         if (!passwordEncoder.matches(oldPwd, user.getPassword())) {
             return new ApiResult("密码错误!");
         }
-        // TODO: 2017-09-13 修改密码
+        //修改密码
+        if(user instanceof MallCustomer){
+            //如果是门店管理员
+            ((MallCustomer) user).setPassword(password);
+            mallCustomerRepository.saveAndFlush(((MallCustomer) user));
+        }else if(user instanceof Operator){
+            //如果是操作员
+            ((Operator) user).setPassword(password);
+            operatorRepository.saveAndFlush(((Operator) user));
+        }
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 

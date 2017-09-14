@@ -13,7 +13,7 @@ var regionRegionDivision = {}; //配送区域集合
 var contextMenu = {}; //右键菜单
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
-var areaSelect = document.getElementById('street');
+// var areaSelect = document.getElementById('street');
 var openTime, closeTime, deadlineTime;
 $(function () {
     // 最多两位小数
@@ -413,13 +413,13 @@ var mapHandler = {
         if (level === 'province') {
             citySelect.innerHTML = '';
             districtSelect.innerHTML = '';
-            areaSelect.innerHTML = '';
+            // areaSelect.innerHTML = '';
         } else if (level === 'city') {
             districtSelect.innerHTML = '';
-            areaSelect.innerHTML = '';
-        } else if (level === 'district') {
-            areaSelect.innerHTML = '';
-        }
+            // areaSelect.innerHTML = '';
+        } //else if (level === 'district') {
+            // areaSelect.innerHTML = '';
+        //}
 
         var subList = data.districtList;
         if (subList) {
