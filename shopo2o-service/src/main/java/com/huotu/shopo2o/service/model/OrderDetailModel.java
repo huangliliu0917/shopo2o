@@ -104,8 +104,6 @@ public class OrderDetailModel {
      * 返利金额
      */
     private double disRebate;
-    // TODO: 2017-09-11  结算方式：0->成本价；1->提点  (MallCustomer中去掉了结算和预结算状态，这个计算与这两个状态有关)
-//    private int settleMode;
     /**
      * 平台提点
      */

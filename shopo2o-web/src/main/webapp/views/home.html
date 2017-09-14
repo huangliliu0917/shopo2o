@@ -18,13 +18,13 @@
     <meta name="author" content=""/>
     <!--<link rel="shortcut icon" href="favicon_pdmall.ico"/>-->
     <title>供应商中心</title>
-    <link href="../resources/css/jbox.css" th:href="@{/resources/css/jbox.css}"
+    <link href="../resources/css/jBox/Skins/Green/jbox.css" th:href="@{/resources/css/jBox/Skins/Green/jbox.css}"
           rel="stylesheet" type="text/css"/>
-    <link href="../resources/css/houtaikk.css" th:href="@{/resources/css/houtaikk.css}"
+    <link href="../resources/css/ResPdmall/css/houtaikk.css" th:href="@{/resources/css/ResPdmall/css/houtaikk.css}"
           rel="stylesheet"/>
 </head>
 <body>
-<section style="background: url(../resources/images/muban.jpg) center center;">
+<section>
     <div class="leftpanel">
         <div class="logopanel">
             <th:block th:if="${mallCustomer.nickName != null and mallCustomer.nickName != ''}">
@@ -46,12 +46,12 @@
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
-                                <a href="javascript:;" style="color: #8f939e" title="该编号用于大伙伴/操作员登录时填写">商户编号：<span
+                                <a style="color: #8f939e" title="该编号用于大伙伴/操作员登录时填写">商户编号：<span
                                         th:text="${mallCustomer.customerId}">10000005</span></a>
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
-                                <a href="javascript:showUpdatePwd()" style="color: #8f939e;">修改密码</a>
+                                <a href="javascript:homeHandler.showUpdatePwd()" style="color: #8f939e;">修改密码</a>
                             </span>
 
                         <span style="width: 160px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: inline-block;">
@@ -96,22 +96,20 @@
     </div>
 </section>
 <!--基础框架js-->
-<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
-<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
-<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
-<script src="../resources/js/hot/bootstrap.hot.extra-utils.js"
-        th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
-<script src="../resources/js/hot/bootstrap.hot.extra-init.js"
-        th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}"></script>
-<script type="text/javascript" src="../resources/js/jquery/jquery.jBox-2.3.min.js"
-        th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"></script>
+<script type="text/javascript" src="../resources/js/jquery/jquery-1.7.2.min.js"
+        th:src="@{/resources/js/jquery/jquery-1.7.2.min.js}"></script>
+<script type="text/javascript" src="../resources/js/jquery/jquery.utils.js"
+        th:src="@{/resources/js/jquery/jquery.utils.js}"></script>
 <script src="../resources/js/jquery/jquery-ui-1.8.20.min.js"
         th:src="@{/resources/js/jquery/jquery-ui-1.8.20.min.js}"></script>
+<script type="text/javascript" src="../resources/js/jquery/jquery.jBox-2.3.min.js"
+        th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"></script>
     <script type="text/javascript" th:inline="javascript">
         var ajaxUrl = /*[[@{/}]]*/ "/";
         var homeHandler ={
             showUpdatePwd:function () {
-
+                    var url = "showModifyPwd";
+                    J.PopupIFrame(url, "修改密码", 400, 200, "ifrm", "", "auto", "");
             },
             order:function () {
         window.location.href = ajaxUrl+"order/getOrderList"

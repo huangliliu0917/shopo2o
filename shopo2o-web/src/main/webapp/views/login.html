@@ -540,9 +540,21 @@
         }
     </style>
 
-    <style th:inline="text">
+    <style>
         .main{
+            height: 611px;
+            background: #fff;
+            position: relative;
+            min-width: 1000px;
         background:url([[@{/resources/images/moban.jpg}]]);
+        }
+        .background{
+            height: 611px;
+            background: #fff;
+            position: relative;
+            min-width: 1000px;
+            background: url(../resources/images/moban.jpg);
+
         }
     </style>
     <!--<script src="resource/lib/jquery-1.8.3.min.js"></script>-->
@@ -566,7 +578,7 @@
     <header class="header">
     </header>
 </div>
-<section class="main" >
+<section th:class="main" class="background">
     <!--登录框-->
     <div>
         <img th:src="@{/resources/images/huobanpluslogo.png}" src="../resources/images/huobanpluslogo.png" width="15%"/>

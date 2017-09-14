@@ -149,22 +149,8 @@ public class MallOrder {
     @Column(name = "BNList")
     private String bnList;
 
-//    /**
-//     * 结算状态
-//     */
-//    @Column(name = "SettleStatus")
-//    private Integer settleStatus;
-//    /**
-//     * 预计结算时间
-//     */
-//    @Column(name = "PreSettleDate")
-//    private Date preSettleDate;
-
     @Column(name = "SourceType")
     private OrderEnum.OrderSourceType orderSourceType;
-
-//    @OneToOne(mappedBy = "order")
-//    private MallPintuan pintuan;
 
     /**
      * 该订单是否能发货：为空或者为0时表示可发货，为1是表示不可发货
