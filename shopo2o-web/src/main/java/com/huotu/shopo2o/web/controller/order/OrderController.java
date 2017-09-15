@@ -10,11 +10,9 @@ import com.huotu.shopo2o.service.entity.marketing.MallPintuan;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
 import com.huotu.shopo2o.service.enums.ActEnum;
 import com.huotu.shopo2o.service.enums.OrderEnum;
-import com.huotu.shopo2o.service.model.DeliveryInfo;
 import com.huotu.shopo2o.service.model.OrderDetailModel;
 import com.huotu.shopo2o.service.searchable.OrderSearchCondition;
 import com.huotu.shopo2o.service.service.marketing.MallPintuanService;
-import com.huotu.shopo2o.service.service.order.MallDeliveryService;
 import com.huotu.shopo2o.service.service.order.MallOrderService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import com.huotu.shopo2o.web.service.StaticResourceService;
@@ -56,8 +54,7 @@ public class OrderController {
     private StaticResourceService staticResourceService;
     @Autowired
     private MallPintuanService mallPintuanService;
-    @Autowired
-    private MallDeliveryService mallDeliveryService;
+
 
     @RequestMapping("/getOrderList")
     public String getOrderList(@LoginUser MallCustomer customer
@@ -168,36 +165,6 @@ public class OrderController {
         return "order/order_detail";
     }
 
-    /**
-     * 加载发货单页面
-     *
-     * @param orderId
-     * @param model
-     * @param pageIndex
-     * @return
-     */
-    @RequestMapping("/deliveryView")
-    public String showConsignFlow(
-            String orderId, Model model,
-            @RequestParam(required = false, defaultValue = "1") int pageIndex
-    ) {
-        MallOrder order = orderService.findByOrderId(orderId);
-        model.addAttribute("order", order);
-        model.addAttribute("pageIndex", pageIndex);
-        return "order/order_delivery";
-    }
-
-    /**
-     * 发货单保存接口
-     */
-    @RequestMapping(value = "/delivery")
-    @ResponseBody
-    public ApiResult addDelivery(
-            @LoginUser MallCustomer mallCustomer,
-            DeliveryInfo deliveryInfo
-    ) throws Exception {
-        return mallDeliveryService.pushDelivery(deliveryInfo);
-    }
 
     /**
      * 批量发货
