@@ -1,7 +1,7 @@
 package com.huotu.shopo2o.service.entity.order;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.user.UserBaseInfo;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +38,6 @@ public class MallDelivery {
     @JoinColumn(name = "Order_Id")
     @JSONField(deserialize = false)
     private MallOrder order;
-    // TODO: 2017-09-11  是否和MallCustomer
     @ManyToOne
     @JoinColumn(name = "Member_Id", referencedColumnName = "UB_UserID")
     private UserBaseInfo userBaseInfo;
@@ -52,10 +51,9 @@ public class MallDelivery {
     private String logisticsNo;//物流单号
     @Column(name = "Money")
     private double freight;//物流费用
-    // TODO: 2017-09-11
     @ManyToOne
     @JoinColumn(name="Store_Id")
-    private MallCustomer mallCustomer;
+    private Store store;
 
     @Column(name = "T_Begin")
     private Date createTime;//单据生成时间

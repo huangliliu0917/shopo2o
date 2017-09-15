@@ -92,7 +92,6 @@ public class MallCustomer implements UserDetails , Serializable {
         return false;
     }
 
-    // TODO: 2017-08-31 delete
     @Column(name = "SC_IndustryType")
     private Integer industryType;
 
