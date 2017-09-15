@@ -38,12 +38,14 @@ public class StoreControllerTest extends CommonTestBase {
     private StoreService storeService;
 
     private MallCustomer mockCustomer;
-    private Cookie cookie;
+    private Cookie[] cookies = new Cookie[2];
 
     @Before
     public void init(){
         mockCustomer = mockCustomer();
-        cookie = new Cookie(customerCookiesName,String.valueOf(mockCustomer.getCustomerId()));
+        cookies[0] = new Cookie(customerCookiesName,String.valueOf(mockCustomer.getCustomerId()));
+        //商家总账号登录
+        cookies[1] = new Cookie(loginTypeCookiesName,"1");
     }
 
     @Test
@@ -62,7 +64,7 @@ public class StoreControllerTest extends CommonTestBase {
         String loginName = UUID.randomUUID().toString(), openTime = "09:00", closeTime = "18:00", deadlineTime = "20:00";
         Store store = mockShopWithoutSave();
         mockMvc.perform(post(saveUrl)
-                .cookie(cookie)
+                .cookie(cookies)
                 .param("loginName",loginName)
                 .param("name", store.getName())
                 .param("areaCode", store.getAreaCode())
@@ -98,7 +100,7 @@ public class StoreControllerTest extends CommonTestBase {
         String distributionMarkers = "{\"1\":{\"number\":1,\"lngLat\":{\"O\":30.208392,\"M\":120.22380699999997,\"lng\":120.223807,\"lat\":30.208392},\"isUsed\":true},\"2\":{\"number\":2,\"lngLat\":{\"O\":30.211989420618668,\"M\":120.21789205856987,\"lng\":120.217892,\"lat\":30.211989}},\"3\":{\"number\":3,\"lngLat\":{\"O\":30.211655644859277,\"M\":120.23351324387261,\"lng\":120.233513,\"lat\":30.211656}},\"4\":{\"number\":4,\"lngLat\":{\"O\":30.20268036105437,\"M\":120.23394239731499,\"lng\":120.233942,\"lat\":30.20268},\"isUsed\":true},\"5\":{\"number\":5,\"lngLat\":{\"O\":30.20438646974161,\"M\":120.21214140244194,\"lng\":120.212141,\"lat\":30.204386},\"isUsed\":true}}";
         String distributionDivisionRegions = "{\"-1\":{\"name\":\"区域名称1\",\"markerNum\":\"1,5,4\",\"color\":\"#3480b8\",\"distributionRegions\":[{\"lng\":120.223807,\"lat\":30.208392},{\"lng\":120.212141,\"lat\":30.204386},{\"lng\":120.233942,\"lat\":30.20268}]}}";
         mockMvc.perform(post(saveUrl)
-                .cookie(cookie)
+                .cookie(cookies)
                 .param("storeId", String.valueOf(mockStore.getId()))
                 .param("distributionRegions",objectMapper.writeValueAsString(regionList))
                 .param("distributionMarkers",distributionMarkers)
@@ -140,7 +142,7 @@ public class StoreControllerTest extends CommonTestBase {
 
         //禁用某个门店
         mockMvc.perform(post(changeOptionUrl)
-                .cookie(cookie)
+                .cookie(cookies)
                 .param("storeId", String.valueOf(mockStore.getId()))
                 .param("isDisabled","1"))
                 .andExpect(status().isOk())
@@ -152,7 +154,7 @@ public class StoreControllerTest extends CommonTestBase {
 
         //禁用某个不存在的门店
         mockMvc.perform(post(changeOptionUrl)
-                .cookie(cookie)
+                .cookie(cookies)
                 .param("storeId", String.valueOf("-1"))
                 .param("isDisabled","1"))
                 .andExpect(status().isOk())
@@ -167,7 +169,7 @@ public class StoreControllerTest extends CommonTestBase {
 
         //删除某个门店
         mockMvc.perform(post(removeUrl)
-                .cookie(cookie)
+                .cookie(cookies)
                 .param("storeId", String.valueOf(mockStore.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200));

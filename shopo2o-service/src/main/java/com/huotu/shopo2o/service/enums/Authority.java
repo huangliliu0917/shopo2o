@@ -8,11 +8,11 @@ import com.huotu.shopo2o.common.ienum.ICommonEnum;
  */
 public enum Authority implements ICommonEnum {
     MANAGER_ROOT("ROLE_ROOT", "超级管理员"),
-    SUPPLIER_ROOT("ROLE_SUPPLIER", "供应商"),
-    SUPPLIER_ORDER("ROLE_ORDER", "订单管理"),
-    SUPPLIER_SHOP("ROLE_SHOP", "店铺管理"),
-    SUPPLIER_SETTLEMENT("ROLE_SETTLEMENT", "结算管理"),
-    SUPPLIER_GOOD("ROLE_GOOD", "商品管理");
+//    SUPPLIER_ROOT("ROLE_SUPPLIER", "供应商"),
+    STORE_ORDER("ROLE_ORDER", "订单管理"),
+    SUPPLIER_SHOP("ROLE_SHOP", "店铺管理");
+//    SUPPLIER_SETTLEMENT("ROLE_SETTLEMENT", "结算管理"),
+//    SUPPLIER_GOOD("ROLE_GOOD", "商品管理");
     private String code;
     private String value;
 

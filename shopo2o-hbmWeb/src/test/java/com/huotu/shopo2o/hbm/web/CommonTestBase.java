@@ -36,6 +36,7 @@ public class CommonTestBase extends SpringWebTest {
 
     protected Random random = new Random();
     protected String customerCookiesName = "UserID";
+    protected String loginTypeCookiesName = "LoginType";
 
     protected MallCustomer mockCustomer(){
         MallCustomer customer = new MallCustomer();
