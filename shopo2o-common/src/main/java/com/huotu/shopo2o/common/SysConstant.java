@@ -36,6 +36,20 @@ public class SysConstant {
             "货品列表",
             "自定义字段"
     };
+    public static String[] DELIVERY_ORDER_EXPORT_HEADER = {
+            "发（退）货单号",
+            "订单号",
+            "创建时间",
+            "会员用户名",
+            "物流费用",
+            "收货人姓名",
+            "电话/手机",
+            "收货地址",
+            "邮政编码",
+            "物流公司",
+            "物流单号",
+            "发（退）货单备注"
+    };
 
     @Autowired
     public SysConstant(Environment env){

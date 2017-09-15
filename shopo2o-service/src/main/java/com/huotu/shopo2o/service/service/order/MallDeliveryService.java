@@ -3,9 +3,11 @@ package com.huotu.shopo2o.service.service.order;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.store.Store;
+import com.huotu.shopo2o.service.jsonformat.LogiModel;
 import com.huotu.shopo2o.service.jsonformat.OrderForDelivery;
 import com.huotu.shopo2o.service.model.DeliveryInfo;
 import com.huotu.shopo2o.service.searchable.DeliverySearcher;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,4 +33,8 @@ public interface MallDeliveryService {
      * @throws UnsupportedEncodingException
      */
     ApiResult pushBatchDelivery(List<OrderForDelivery> orderForDeliveries, Long customerId) throws UnsupportedEncodingException;
+
+    HSSFWorkbook createWorkBook(List<MallDelivery> deliveryList, String type);
+
+    ApiResult pushRefund(String orderId, LogiModel logiModel, int supplierId, String dicReturnItemsStr) throws UnsupportedEncodingException;
 }

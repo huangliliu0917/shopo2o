@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.service.repository.order;
 
+import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallAfterSalesItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,4 +11,6 @@ import java.util.List;
  */
 public interface MallAfterSalesItemRepository extends JpaRepository<MallAfterSalesItem, Integer> {
     List<MallAfterSalesItem> findByAfterSales_AfterIdOrderByItemIdDesc(String afterId);
+
+    MallAfterSalesItem findTopByAfterSalesAndIsLogicNotOrderByItemIdDesc(MallAfterSales afterSales, int isLogic);
 }

@@ -3,10 +3,12 @@ package com.huotu.shopo2o.service.service.order.impl;
 import com.huotu.shopo2o.common.ienum.EnumHelper;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
+import com.huotu.shopo2o.service.entity.order.MallAfterSalesItem;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales_;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.searchable.AfterSaleSearch;
+import com.huotu.shopo2o.service.service.order.MallAfterSalesItemService;
 import com.huotu.shopo2o.service.service.order.MallAfterSalesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
@@ -28,6 +31,8 @@ import java.util.List;
 public class MallAfterSalesServiceImpl implements MallAfterSalesService {
     @Autowired
     private MallAfterSalesRepository mallAfterSalesRepository;
+    @Autowired
+    private MallAfterSalesItemService mallAfterSalesItemService;
 
     @Override
     public Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long supplierId, AfterSaleSearch afterSaleSearch) {
@@ -90,5 +95,27 @@ public class MallAfterSalesServiceImpl implements MallAfterSalesService {
         afterSaleStatuses.add(AfterSaleEnum.AfterSaleStatus.REFUND_SUCCESS);
         afterSaleStatuses.add(AfterSaleEnum.AfterSaleStatus.AFTER_SALE_REFUSED);
         return mallAfterSalesRepository.countByStoreIdAndAfterSaleStatusNotIn(storeId, afterSaleStatuses);
+    }
+
+    @Override
+    @Transactional
+    public void afterSaleAgree(MallAfterSales afterSales, String message, AfterSaleEnum.AfterSaleStatus afterSaleStatus, AfterSaleEnum.AfterItemsStatus afterItemsStatus) {
+        //更改售后表状态
+        this.updateStatus(afterSaleStatus, afterSales.getAfterId());
+        //更改协商表
+        MallAfterSalesItem afterSalesItem = mallAfterSalesItemService.findTopByIsLogic(afterSales, AfterSaleEnum.AfterSalesIsLogis.MESSAGE.getCode());
+        if (afterSalesItem != null) {
+            afterSalesItem.setAfterItemsStatus(afterItemsStatus);
+            afterSalesItem.setReply(message);
+            afterSalesItem.setReplyTime(new Date());
+            mallAfterSalesItemService.save(afterSalesItem);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(AfterSaleEnum.AfterSaleStatus afterSaleStatus, String afterId) {
+        mallAfterSalesRepository.updateStatus(afterSaleStatus, afterId);
+        mallAfterSalesRepository.flush();
     }
 }

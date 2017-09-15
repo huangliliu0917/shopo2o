@@ -6,6 +6,7 @@ import com.huotu.shopo2o.common.SysConstant;
 import com.huotu.shopo2o.common.httputil.HttpClientUtil;
 import com.huotu.shopo2o.common.httputil.HttpResult;
 import com.huotu.shopo2o.common.utils.ApiResult;
+import com.huotu.shopo2o.common.utils.ExcelHelper;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.common.utils.SignBuilder;
 import com.huotu.shopo2o.common.utils.StringUtil;
@@ -16,6 +17,7 @@ import com.huotu.shopo2o.service.entity.order.MallOrderItem;
 import com.huotu.shopo2o.service.entity.order.MallOrder_;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.jsonformat.BatchDeliverResult;
+import com.huotu.shopo2o.service.jsonformat.LogiModel;
 import com.huotu.shopo2o.service.jsonformat.OrderForDelivery;
 import com.huotu.shopo2o.service.model.DeliveryInfo;
 import com.huotu.shopo2o.service.repository.OffsetBasedPageRequest;
@@ -26,6 +28,8 @@ import com.huotu.shopo2o.service.service.order.MallOrderService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -148,5 +152,54 @@ public class MallDeliveryServiceImpl implements MallDeliveryService {
             log.error("post batch delivery：" + httpResult.getHttpContent());
         }
         return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
+    }
+
+    @Override
+    public HSSFWorkbook createWorkBook(List<MallDelivery> deliveryList, String type) {
+        List<List<ExcelHelper.CellDesc>> rowAndCells = new ArrayList<>();
+        deliveryList.forEach(delivery->{
+            List<ExcelHelper.CellDesc> cellDescList = new ArrayList<>();
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getDeliveryId())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getOrder().getOrderId())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(StringUtil.DateFormat(delivery.getCreateTime(),StringUtil.TIME_PATTERN))));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getUserBaseInfo() == null ? null : delivery.getUserBaseInfo().getLoginName())));
+            cellDescList.add(ExcelHelper.asCell(delivery.getFreight(), Cell.CELL_TYPE_NUMERIC));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getShipName())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getShipTel()) + "/" + StringUtil.getNullStr(delivery.getShipMobile())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getShipAddr())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getShipZip())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getLogisticsName())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getLogisticsNo())));
+            cellDescList.add(ExcelHelper.asCell(StringUtil.getNullStr(delivery.getMemo())));
+            rowAndCells.add(cellDescList);
+        });
+        String sheetName;
+        if("delivery".equals(type)){
+            sheetName = "发货单";
+        }else{
+            sheetName = "退货单";
+        }
+        return ExcelHelper.createWorkbook(sheetName, SysConstant.DELIVERY_ORDER_EXPORT_HEADER, rowAndCells);
+    }
+
+    @Override
+    public ApiResult pushRefund(String orderId, LogiModel logiModel, int supplierId, String dicReturnItemsStr) throws UnsupportedEncodingException {
+        Map<String, Object> param = new TreeMap<>();
+        param.put("orderId", orderId);
+        param.put("supplierId", supplierId);
+        param.put("logiName", logiModel.getLogiCompanyChina());
+        param.put("logiNo", logiModel.getLogiNo());
+        param.put("logiMobile", logiModel.getLogiMobile());
+        param.put("remark", logiModel.getLogiRemark());
+        param.put("dicReturnItemsStr", dicReturnItemsStr);
+        String sign = SignBuilder.buildSignIgnoreEmpty(param, null, SysConstant.SUPPLIER_KEY);
+        param.put("sign", sign);
+
+        HttpResult httpResult = HttpClientUtil.getInstance().post(SysConstant.HUOBANMALL_PUSH_URL + "/OrderApi/ReturnProduct", param);
+        if (httpResult.getHttpStatus() == HttpStatus.SC_OK) {
+            return JSON.parseObject(httpResult.getHttpContent(), ApiResult.class);
+        } else {
+            return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.huotu.shopo2o.service.service.order.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.huotu.shopo2o.common.SysConstant;
+import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallAfterSalesItem;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
 import com.huotu.shopo2o.service.jsonformat.LogiModel;
@@ -9,6 +10,7 @@ import com.huotu.shopo2o.service.repository.order.MallAfterSalesItemRepository;
 import com.huotu.shopo2o.service.service.order.MallAfterSalesItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -57,4 +59,16 @@ public class MallAfterSalesItemServiceImpl implements MallAfterSalesItemService{
             }
         });
         return afterSalesItems;    }
+
+    @Override
+    public MallAfterSalesItem findTopByIsLogic(MallAfterSales afterSales, int isLogic) {
+        return mallAfterSalesItemRepository.findTopByAfterSalesAndIsLogicNotOrderByItemIdDesc(afterSales, isLogic);
+
+    }
+
+    @Override
+    @Transactional
+    public MallAfterSalesItem save(MallAfterSalesItem afterSalesItem) {
+        return mallAfterSalesItemRepository.save(afterSalesItem);
+    }
 }
