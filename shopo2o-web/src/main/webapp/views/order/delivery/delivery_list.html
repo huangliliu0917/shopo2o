@@ -56,9 +56,9 @@
                                        id="createTimePick" name="createTimePick" start-element="#beginTime"
                                        end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;"
                                        th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') "/>
-                                <input type="hidden" id="beginTime" name="beginTime" runat="server"
+                                <input type="hidden" id="beginTime" name="beginTime"
                                        th:value="*{beginTime}"/>
-                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                                <input type="hidden" id="endTime" name="endTime"  th:value="*{endTime}"/>
                             </div>
                             <div class="form-group m-r-sm arrow">
                                 <button type="button" onclick="deliverListHandler.search(1)" class="btn btn-success btn-sm">筛选
@@ -166,6 +166,7 @@
         th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}"></script>
 <script src="../../../resources/js/hot/hot.export-utils.js"
         th:src="@{/resources/js/hot/hot.export-utils.js}"></script>
+<script src="../../../resources/js/order/timeInit.js" th:src="@{/resources/js/order/timeInit.js}"></script>
 <script th:inline="javascript">
     var baseUrl = /*[[@{/order/}]]*/ "";
     var pageIndex = /*[[${pageIndex}]]*/ 1;

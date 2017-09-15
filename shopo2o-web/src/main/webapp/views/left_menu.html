@@ -32,8 +32,7 @@
 
 
     <ul class="nav nav-pills nav-stacked nav-bracket" id="menuList">
-        <!--/*@thymesVar id="menus" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.SupMenu>"*/-->
-        <li class="nav-parent nav-active active" style="cursor: pointer;" th:each="menu:${menus}">
+        <li class="nav-parent nav-active active" style="cursor: pointer;" th:each="menu:${storeMenus}">
             <a class="aparent1" href="javascript:checkDd(1)" th:class="${'aparent'+menuStat.count}" th:href="|javascript:checkDd(${menuStat.count})|">
                 <i class="fa fa-chevron-circle-right"></i><span th:text="${menu.menuName}">结算单管理</span>
             </a>
@@ -59,12 +58,6 @@
 <script type="text/javascript">
     /*<![CDATA[*/
     function openUrl(linkUrl, menuId) {
-        if(linkUrl.indexOf("?") > -1){
-            linkUrl += '&version=V2';
-        }else{
-            linkUrl += "?version=V2";
-        }
-//        console.log(linkUrl);
         $(".childMenus").removeClass("active");
         $("#id_" + menuId).addClass("active");
         top.$('#loading').show();

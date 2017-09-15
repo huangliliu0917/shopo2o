@@ -12,6 +12,8 @@ public class SysConstant {
     public static String COOKIE_DOMAIN;
     public static String HUOBANMALL_RESOURCE_HOST;
     public static String HUOBANMALL_PUSH_URL;
+    public static String SUPPLIER_KEY = "1232228433";
+    public static final String ORDER_BATCH_DELIVER_SHEET_NAME = "OrderToDelivery";
     public static String HUOBANMALL_PUSH_APPID = "huotuacf89c9231848c9f49";
     public static String HUOBANMALL_PUSH_APP_SECRET = "0ad8abe244331aacf89c9231848c9f49";
     public static String DAY_SORT_NUM;

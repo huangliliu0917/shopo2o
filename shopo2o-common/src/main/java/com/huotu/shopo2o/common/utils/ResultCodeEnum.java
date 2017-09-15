@@ -17,6 +17,7 @@ public enum ResultCodeEnum {
     SUCCESS(200, "请求成功"),
     SAVE_DATA_ERROR(400, "数据保存出错"),
     SYSTEM_BAD_REQUEST(500, "系统请求失败"),
+    DATA_NULL(500, "没有传输数据"),
     LOGINNAME_NOT_AVAILABLE(100, "用户名已存在");
 
     private int resultCode;

@@ -3,12 +3,13 @@ package com.huotu.shopo2o.web.controller.author;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.StoreMenu;
 import com.huotu.shopo2o.service.entity.author.Operator;
+import com.huotu.shopo2o.service.model.IndexStatistics;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
-import com.huotu.shopo2o.service.service.MallCustomerService;
-import com.huotu.shopo2o.service.model.IndexStatistics;
 import com.huotu.shopo2o.service.service.statistics.IndexStatisticsService;
+import com.huotu.shopo2o.service.service.user.StoreMenuService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 /**
  * Created by hxh on 2017-09-13.
  */
@@ -33,6 +36,8 @@ public class AuthorController {
     private MallCustomerRepository mallCustomerRepository;
     @Autowired
     private OperatorRepository operatorRepository;
+    @Autowired
+    private StoreMenuService storeMenuService;
     @Autowired
     private IndexStatisticsService indexStatisticsService;
 
@@ -57,6 +62,8 @@ public class AuthorController {
             @LoginUser MallCustomer mallCustomer,
             Model model
     ) {
+        List<StoreMenu> storeMenus = storeMenuService.findPrimary();
+        model.addAttribute("storMenus",storeMenus);
         model.addAttribute("mallCustomer", mallCustomer);
         return "home";
     }
@@ -120,6 +127,16 @@ public class AuthorController {
             Model model
     ) {
         if (!StringUtils.isEmpty(parentId)) {
+            List<StoreMenu> storeMenus = storeMenuService.findByParent(parentId, 0);
+
+            model.addAttribute("storeMenus", storeMenus);
+            StoreMenu activeMenu;
+            if (StringUtils.isEmpty(activeMenuId)) {
+                activeMenu = storeMenus.get(0).getChildren().get(0);
+            } else {
+                activeMenu = storeMenuService.findById(activeMenuId);
+            }
+            model.addAttribute("activeMenu", activeMenu);
         }
         model.addAttribute("parentId", parentId);
         return "left_menu";

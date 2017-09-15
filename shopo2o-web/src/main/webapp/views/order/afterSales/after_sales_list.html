@@ -36,33 +36,33 @@
                         <div class="form-inline">
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="createTimePick">起始时间：</label>
-                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                <input type="text" class="form-control input-sm mb10 data-range-pick"
                                        id="createTimePick" name="createTimePick" start-element="#beginTime"
                                        end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;"
                                        th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') "/>
                                 <input type="hidden" id="beginTime" name="beginTime" runat="server"
                                        th:value="*{beginTime}"/>
-                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                                <input type="hidden" id="endTime" name="endTime"  th:value="*{endTime}"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="orderCreateTimePick">下单时间：</label>
-                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                <input type="text" class="form-control input-sm mb10 data-range-pick"
                                        id="orderCreateTimePick" name="orderCreateTimePick" start-element="#createBeginTime"
                                        end-element="#createEndTime" placeholder="开始时间-结束时间" style="width: 277px;"
                                        th:value="(*{createBeginTime!= null and createBeginTime != ''}  ? *{createBeginTime} :'')  + (*{createEndTime != null and createEndTime != ''} ?  ' - ' + *{createEndTime} :'') "/>
-                                <input type="hidden" id="createBeginTime" name="createBeginTime" runat="server"
+                                <input type="hidden" id="createBeginTime" name="createBeginTime"
                                        th:value="*{createBeginTime}"/>
-                                <input type="hidden" id="createEndTime" name="createEndTime" runat="server" th:value="*{createEndTime}"/>
+                                <input type="hidden" id="createEndTime" name="createEndTime" th:value="*{createEndTime}"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="orderCreateTimePick">支付时间：</label>
-                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                <input type="text" class="form-control input-sm mb10 data-range-pick"
                                        id="orderPayTimePick" name="orderCreateTimePick" start-element="#payBeginTime"
                                        end-element="#payEndTime" placeholder="开始时间-结束时间" style="width: 277px;"
                                        th:value="(*{payBeginTime!= null and payBeginTime != ''}  ? *{payBeginTime} :'')  + (*{payEndTime != null and payEndTime != ''} ?  ' - ' + *{payEndTime} :'') "/>
                                 <input type="hidden" id="payBeginTime" name="payBeginTime" runat="server"
                                        th:value="*{payBeginTime}"/>
-                                <input type="hidden" id="payEndTime" name="payEndTime" runat="server" th:value="*{payEndTime}"/>
+                                <input type="hidden" id="payEndTime" name="payEndTime" th:value="*{payEndTime}"/>
                             </div>
                         </div>
                         <p class="divider-vertical"></p>

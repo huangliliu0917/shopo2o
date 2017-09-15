@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,55 @@ public class ExcelHelper {
             }
         }
         return workbook;
+    }
+    /**
+     * 读取excel文档
+     *
+     * @param workbook
+     * @param sheetName
+     * @param rowStartWith  起始行数
+     * @param cellStartWith 起始列数
+     * @return
+     */
+    public static List<List<CellDesc>> readWorkbook(
+            HSSFWorkbook workbook,
+            String sheetName,
+            int rowStartWith,
+            int cellNum,
+            int cellStartWith
+    ) {
+        List<List<CellDesc>> rowAndCells = new ArrayList<>();
+        HSSFSheet sheet = workbook.getSheet(sheetName);
+        int physicalRowNum = sheet.getPhysicalNumberOfRows();
+        for (int i = rowStartWith; i < physicalRowNum; i++) {
+            List<CellDesc> cellDescList = new ArrayList<>();
+            HSSFRow row = sheet.getRow(i);
+            for (int j = cellStartWith; j < cellNum; j++) {
+                HSSFCell cell = row.getCell(j);
+                String value = cell == null ? "" : getValue(cell);
+                cellDescList.add(asCell(value));
+            }
+            rowAndCells.add(cellDescList);
+        }
+        return rowAndCells;
+    }
+    /**
+     * 得到Excel表中的值
+     *
+     * @param hssfCell Excel中的每一个格子
+     * @return Excel中每一个格子中的值
+     */
+    public static String getValue(Cell hssfCell) {
+        if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
+            // 返回布尔类型的值
+            return String.valueOf(hssfCell.getBooleanCellValue());
+        } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_NUMERIC) {
+            // 返回数值类型的值
+            return String.valueOf(hssfCell.getNumericCellValue());
+        } else {
+            // 返回字符串类型的值
+            return String.valueOf(hssfCell.getStringCellValue());
+        }
     }
     public static CellDesc asCell(Object value, int cellType) {
         return new CellDesc(value, cellType);

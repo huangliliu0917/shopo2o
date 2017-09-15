@@ -83,7 +83,7 @@ public class DeliveryController {
             @LoginUser MallCustomer mallCustomer,
             DeliveryInfo deliveryInfo
     ) throws Exception {
-        return mallDeliveryService.pushDelivery(deliveryInfo);
+        return mallDeliveryService.pushDelivery(deliveryInfo,mallCustomer.getCustomerId());
     }
     @RequestMapping("/deliveryInfo")
     public String deliveryInfo(

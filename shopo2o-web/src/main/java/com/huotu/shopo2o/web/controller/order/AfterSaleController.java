@@ -5,11 +5,13 @@ import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallAfterSalesItem;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
+import com.huotu.shopo2o.service.entity.user.UserBaseInfo;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
 import com.huotu.shopo2o.service.searchable.AfterSaleSearch;
 import com.huotu.shopo2o.service.service.order.MallAfterSalesItemService;
 import com.huotu.shopo2o.service.service.order.MallAfterSalesService;
 import com.huotu.shopo2o.service.service.order.MallOrderService;
+import com.huotu.shopo2o.service.service.user.UserBaseInfoService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import com.huotu.shopo2o.web.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ public class AfterSaleController {
     private MallAfterSalesItemService mallAfterSalesItemService;
     @Autowired
     private MallOrderService mallOrderService;
+    @Autowired
+    private UserBaseInfoService userBaseInfoService;
     @Autowired
     private StaticResourceService resourceService;
     private static final int PAGE_SIZE = 40;
@@ -73,6 +77,7 @@ public class AfterSaleController {
         }
         return "order/afterSales/after_sales_list";
     }
+
     @RequestMapping("/afterSalesDetail")
     public String afterSaleDetail(
             String afterId,
@@ -81,10 +86,11 @@ public class AfterSaleController {
         MallAfterSales afterSales = mallAfterSalesService.findByAfterId(afterId);
         List<MallAfterSalesItem> afterSalesItems = mallAfterSalesItemService.findByAfterId(afterId);
         MallOrder order = mallOrderService.findByOrderId(afterSales.getOrderId());
-
+        UserBaseInfo userBaseInfo = userBaseInfoService.findById(afterSales.getMemberId());
         model.addAttribute("afterSales", afterSales);
         model.addAttribute("afterSalesItems", afterSalesItems);
         model.addAttribute("hbResourceHost", SysConstant.HUOBANMALL_RESOURCE_HOST);
+        model.addAttribute("userInfo", userBaseInfo);
         model.addAttribute("order", order);
 
         return "order/afterSales/after_sales_detail";

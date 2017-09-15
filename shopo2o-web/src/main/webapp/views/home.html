@@ -36,6 +36,20 @@
             adaptFrame.init();
         });
         var adaptFrame = {};
+        var mallMenuManager = {};
+        mallMenuManager.init = function () {
+            $('.dropdown-toggle').click(function () {
+                $('.dropdown-menu').toggle();
+            });
+        };
+        mallMenuManager.active = function (menuId, childMenuId) {
+            $(".active").removeClass("active");
+            $("#menu_" + menuId).addClass("active");
+            var leftMenu = /*[[@{/leftMenu}]]*/ "";
+            leftMenu = leftMenu + "?parentId=" + menuId + "&activeMenuId=" + childMenuId;
+            _loadLeftMenu(leftMenu);
+            _loadMain(leftMenu);
+        };
         adaptFrame.init = function () {
             // 浏览改大小
             $(window).bind('resize', function () {
@@ -77,11 +91,11 @@
             var width = adaptFrame._getMainWidth()-20;
             var scrolling = $.isIE6 == true ? 'yes' : 'auto';
             var height = this._getMainHeight();
-            $("#bodyRight").attr("src",src);
-            $("#bodyRight").attr("width",width-200);
-            $("#bodyRight").attr("height",height);
-            $("#bodyRight").attr("scrolling",scrolling);
-//            document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
+//            $("#content").attr("src",src);
+//            $("#content").attr("width",width-200);
+//            $("#content").attr("height",height);
+//            $("#content").attr("scrolling",scrolling);
+            document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
             $('#con_right').height(height);
         };
         var homeHandler ={
@@ -89,22 +103,17 @@
                 var url = "showModifyPwd";
                 J.PopupIFrame(url, "修改密码", 400, 200, "ifrm", "", "auto", "");
             },
-            order:function () {
-                var url = ajaxUrl+"order/getOrderList";
-                adaptFrame.outputMain(url);
-            },
-            operator:function () {
-                var url = ajaxUrl+"operator/getOperatorList";
-                adaptFrame.outputMain(url);
-            },
-            store:function () {
-                var url = ajaxUrl+"store/getStoreList";
-                adaptFrame.outputMain(url);
-            },
             index:function () {
                 var url = ajaxUrl+"/index"
                 adaptFrame.outputMain(url);
             }
+        }
+        function _loadLeftMenu(leftUrl) {
+            document.getElementById("content_left").src = leftUrl;
+        }
+        function _loadMain(url) {
+            $('#loading').show();
+            $('#content').hide().attr('src', url);
         }
     </script>
 </head>
@@ -165,21 +174,10 @@
                             <a style="cursor: pointer;"><i class="fa fa-home"></i>
                                 <span>首页</span></a>
                         </li>
-                        <li onclick="homeHandler.order()">
+                        <li th:onclick="|mallMenuManager.active('${menu.menuId}','')|" th:id="${'menu_'+menu.menuId}"
+                             th:each="menu:${storMenus}">
                             <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>订单管理</span></a>
-                        </li>
-                        <li onclick="homeHandler.operator()">
-                            <a style="cursor: pointer;">
-                                <i class="fa fa-folder-o"></i>
-                                <span>操作员管理</span>
-                            </a>
-                        </li>
-                        <li onclick="homeHandler.store()">
-                            <a style="cursor: pointer;">
-                                <i class="fa fa-folder-o"></i>
-                                <span>店铺管理</span>
-                            </a>
+                                <span th:text="${menu.menuName}">订单管理</span></a>
                         </li>
                     </ul>
                 </div>
@@ -198,7 +196,7 @@
                  style="height: auto; text-align: center; padding-top: 436px; display: none; width: 1061px;">
                 <img src="resource/3rdParty/images/loading.gif" alt="loading" border="0"/>
             </div>
-            <iframe id="bodyRight" width=""></iframe>
+            <!--<iframe id="content" width=""></iframe>-->
             <script type="text/javascript">
                 adaptFrame.outputMain('index');
             </script>

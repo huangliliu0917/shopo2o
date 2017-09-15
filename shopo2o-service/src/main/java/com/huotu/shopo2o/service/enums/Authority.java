@@ -6,7 +6,6 @@ import com.huotu.shopo2o.common.ienum.ICommonEnum;
  * 权限
  * Created by hxh on 2017-09-11.
  */
-// TODO: 2017-09-11 不清楚哪些权限需要
 public enum Authority implements ICommonEnum {
     MANAGER_ROOT("ROLE_ROOT", "超级管理员"),
     SUPPLIER_ROOT("ROLE_SUPPLIER", "供应商"),

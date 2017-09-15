@@ -1,8 +1,10 @@
 package com.huotu.shopo2o.web.controller.order;
 
+import com.huotu.shopo2o.common.SysConstant;
 import com.huotu.shopo2o.common.ienum.EnumHelper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
+import com.huotu.shopo2o.common.utils.ExcelHelper;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.MallCustomer;
@@ -10,9 +12,11 @@ import com.huotu.shopo2o.service.entity.marketing.MallPintuan;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
 import com.huotu.shopo2o.service.enums.ActEnum;
 import com.huotu.shopo2o.service.enums.OrderEnum;
+import com.huotu.shopo2o.service.jsonformat.OrderForDelivery;
 import com.huotu.shopo2o.service.model.OrderDetailModel;
 import com.huotu.shopo2o.service.searchable.OrderSearchCondition;
 import com.huotu.shopo2o.service.service.marketing.MallPintuanService;
+import com.huotu.shopo2o.service.service.order.MallDeliveryService;
 import com.huotu.shopo2o.service.service.order.MallOrderService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import com.huotu.shopo2o.web.service.StaticResourceService;
@@ -31,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +44,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +59,8 @@ public class OrderController {
     private MallOrderService orderService;
     @Autowired
     private StaticResourceService staticResourceService;
+    @Autowired
+    private MallDeliveryService mallDeliveryService;
     @Autowired
     private MallPintuanService mallPintuanService;
 
@@ -180,8 +189,32 @@ public class OrderController {
             @LoginUser MallCustomer mallCustomer,
             HttpServletRequest request
     ) throws IOException {
-        // TODO: 2017-09-11 批量发货 (不清楚怎么实现)
-        return null;
+        MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+        MultipartFile file = multipartHttpServletRequest.getFile("FileData");
+        ApiResult apiResult;
+        if (file == null) {
+            apiResult = ApiResult.resultWith(ResultCodeEnum.DATA_NULL);
+        } else {
+            HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
+            List<List<ExcelHelper.CellDesc>> deliveryInfo = ExcelHelper.readWorkbook(workbook, SysConstant.ORDER_BATCH_DELIVER_SHEET_NAME, 1, 6, 0);
+            List<OrderForDelivery> orderForDeliveries = new ArrayList<>();
+            deliveryInfo.forEach(itemInfo -> {
+                OrderForDelivery orderForDelivery = new OrderForDelivery();
+                orderForDelivery.setOrderNo((String) itemInfo.get(0).getValue());
+                orderForDelivery.setLogiName((String) itemInfo.get(1).getValue());
+                orderForDelivery.setLogiNo((String) itemInfo.get(2).getValue());
+                orderForDelivery.setLogiCode((String) itemInfo.get(3).getValue());
+                String logiMoneyStr = (String) itemInfo.get(4).getValue();
+                double logiMoney = 0;
+                if (!StringUtils.isEmpty(logiMoneyStr)) logiMoney = Double.parseDouble(logiMoneyStr);
+                orderForDelivery.setLogiMoney(logiMoney);
+                orderForDelivery.setRemark((String) itemInfo.get(5).getValue());
+                orderForDeliveries.add(orderForDelivery);
+            });
+            apiResult = mallDeliveryService.pushBatchDelivery(orderForDeliveries, mallCustomer.getCustomerId());
+        }
+        log.info("code:" + apiResult.getCode() + ";msg:" + apiResult.getMsg());
+        return apiResult;
     }
 
 }

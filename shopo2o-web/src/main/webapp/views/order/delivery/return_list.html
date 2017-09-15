@@ -37,12 +37,12 @@
                             <div class="form-group m-r-sm">
                                 <label class="control-label" for="username">用户名：</label>
                                 <input type="text" class="form-control input-sm mb10" id="username" name="username"
-                                       th:value="*{username}" runat="server" placeholder="用户名" style="width: 156px;"/>
+                                       th:value="*{username}" placeholder="用户名" style="width: 156px;"/>
                             </div>
                             <div class="form-group m-r-sm">
                                 <label class="control-label" for="deliveryNo">退货单号：</label>
                                 <input type="text" class="form-control input-sm mb10" id="deliveryNo" name="deliveryNo"
-                                       th:value="*{deliveryNo}" runat="server" placeholder="退货单号"
+                                       th:value="*{deliveryNo}" placeholder="退货单号"
                                        style="width: 156px;"/>
                             </div>
 
@@ -57,13 +57,13 @@
                         <div class="form-inline" style="max-width: 926px;">
                             <div class="form-group m-r-sm">
                                 <label class=" control-label" for="createTimePick">起始时间：</label>
-                                <input type="text" class="form-control input-sm mb10 data-range-pick" runat="server"
+                                <input type="text" class="form-control input-sm mb10 data-range-pick"
                                        id="createTimePick" name="createTimePick" start-element="#beginTime"
                                        end-element="#endTime" placeholder="开始时间-结束时间" style="width: 277px;"
                                        th:value="(*{beginTime!= null and beginTime != ''}  ? *{beginTime} :'')  + (*{endTime != null and endTime != ''} ?  ' - ' + *{endTime} :'') "/>
-                                <input type="hidden" id="beginTime" name="beginTime" runat="server"
+                                <input type="hidden" id="beginTime" name="beginTime"
                                        th:value="*{beginTime}"/>
-                                <input type="hidden" id="endTime" name="endTime" runat="server" th:value="*{endTime}"/>
+                                <input type="hidden" id="endTime" name="endTime"  th:value="*{endTime}"/>
                             </div>
                             <div class="form-group m-r-sm arrow">
                                 <button type="button" onclick="returnListHandler.search(1)" class="btn btn-success btn-sm">筛选
@@ -163,6 +163,7 @@
         th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}"></script>
 <script src="../../../resources/js/hot/hot.export-utils.js"
         th:src="@{/resources/js/hot/hot.export-utils.js}"></script>
+<script src="../../../resources/js/order/timeInit.js" th:src="@{/resources/js/order/timeInit.js}"></script>
 <script th:inline="javascript">
     var baseUrl = /*[[@{/order/}]]*/ "";
     var pageIndex = /*[[${pageIndex}]]*/ 1;
