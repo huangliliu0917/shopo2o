@@ -22,11 +22,19 @@ public class CustomerInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private Environment environment;
     private static final String CUSTOMER_ID = "customerId";
+    private static final String ST_CUSTOMER_ID = "ST_CustomerId";
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Integer customerId, loginType;
+        Integer customerId = 0, loginType;
         String funcAuthorize, requestCustomerId = null;
+        //先看看当前登录用户是什么类型
+        //如果是超级管理员类型，获取请求参数中customer_Id，并设置Store_Id 到 cookies 中，如果没有参数看看 cookies 中有没有 ST_CUSTOMER_ID
+        //如果是商家总账号，直接从 cookies 中读取 UserID
+
+        // 用户登录类型：0:超级管理员;1:商家总账号;3:操作员
+        loginType = CookieUtils.getCookieValInteger(request, "LoginType");
         //遍历 parameter keySet,找到 customerId
         Enumeration<String> paramKeys = request.getParameterNames();
         while (paramKeys.hasMoreElements()) {
@@ -36,22 +44,32 @@ public class CustomerInterceptor extends HandlerInterceptorAdapter {
                 break;
             }
         }
-        if (StringUtils.isEmpty(requestCustomerId)) {
-            customerId = CookieUtils.getCookieValInteger(request, "UserID");
-            if (customerId <= 1 && environment.acceptsProfiles("development")) {
-                customerId = 4421;
+        switch (loginType){
+            case 0:{
+                customerId = CookieUtils.getCookieValInteger(request, ST_CUSTOMER_ID);
+                if (StringUtils.isEmpty(requestCustomerId) && customerId == 0) {
+                    response.sendRedirect("http://login." + SysConstant.COOKIE_DOMAIN);
+                    return false;
+                } else if(!StringUtils.isEmpty(requestCustomerId)){
+                    customerId = Integer.valueOf(requestCustomerId);
+                    CookieUtils.setCookie(response,ST_CUSTOMER_ID,requestCustomerId,SysConstant.COOKIE_DOMAIN);
+                }
+                break;
             }
-            if (customerId == 0) {
-                response.sendRedirect("http://login." + SysConstant.COOKIE_DOMAIN);
-                return false;
+            case 1:
+            case 3:{
+                customerId = CookieUtils.getCookieValInteger(request, "UserID");
+                CookieUtils.setCookie(response,ST_CUSTOMER_ID,requestCustomerId,SysConstant.COOKIE_DOMAIN);
+                break;
             }
-        } else {
-            customerId = Integer.valueOf(requestCustomerId);
-        }
-        //用户登录类型：0:超级管理员;1:商家总账号;3:操作员
-        loginType = CookieUtils.getCookieValInteger(request, "LoginType");
-        if (environment.acceptsProfiles("development")) {
-            loginType = 1;
+            default:{
+                if(!StringUtils.isEmpty(requestCustomerId)){
+                    customerId = Integer.valueOf(requestCustomerId);
+                    if (customerId <= 1 && environment.acceptsProfiles("development")) {
+                        customerId = 4421;
+                    }
+                }
+            }
         }
         funcAuthorize = CookieUtils.getCookieVal(request, "MM_FuncAuthorize");
         request.setAttribute("customerId", customerId);

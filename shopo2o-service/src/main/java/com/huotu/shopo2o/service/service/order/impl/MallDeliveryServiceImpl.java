@@ -50,7 +50,7 @@ public class MallDeliveryServiceImpl implements MallDeliveryService {
     public Page<MallDelivery> getPage(Pageable pageable, Store store, DeliverySearcher deliverySearcher, String type) {
         Specification<MallDelivery> specification = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(cb.equal(root.get(MallDelivery_.storeId), store));
+            predicates.add(cb.equal(root.get(MallDelivery_.store), store));
             predicates.add(cb.equal(cb.lower(root.get(MallDelivery_.type).as(String.class)), type.toLowerCase()));
             if (!StringUtils.isEmpty(deliverySearcher.getOrderId())) {
                 predicates.add(cb.equal(root.get(MallDelivery_.order).get(MallOrder_.orderId).as(String.class), deliverySearcher.getOrderId()));
