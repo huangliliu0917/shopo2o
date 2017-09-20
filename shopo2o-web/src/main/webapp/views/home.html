@@ -42,6 +42,9 @@
                 $('.dropdown-menu').toggle();
             });
         };
+        mallMenuManager.index = function (url) {
+            window.location.href = ajaxUrl+ url;
+        };
         mallMenuManager.active = function (menuId, childMenuId) {
             $(".active").removeClass("active");
             $("#menu_" + menuId).addClass("active");
@@ -165,7 +168,7 @@
             <div class="header-left" style="padding-left: 5px;">
                 <div class="topnav">
                     <ul class="nav nav-horizontal">
-                        <li class="active" onclick="homeHandler.index()">
+                        <li class="active" onclick="mallMenuManager.index('home')">
                             <a style="cursor: pointer;"><i class="fa fa-home"></i>
                                 <span>首页</span></a>
                         </li>

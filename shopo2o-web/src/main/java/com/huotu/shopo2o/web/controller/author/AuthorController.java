@@ -61,7 +61,7 @@ public class AuthorController {
      * @param mallCustomer
      * @return
      */
-    @RequestMapping(value = {"/loginSuccess"})
+    @RequestMapping(value = {"/home"})
     public String loginSuccess(
             @LoginUser MallCustomer mallCustomer,
             Model model
