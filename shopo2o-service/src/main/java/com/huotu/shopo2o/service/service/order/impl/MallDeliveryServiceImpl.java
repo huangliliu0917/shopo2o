@@ -58,6 +58,11 @@ public class MallDeliveryServiceImpl implements MallDeliveryService {
 
 
     @Override
+    public MallDelivery save(MallDelivery delivery) {
+        return mallDeliveryRepository.save(delivery);
+    }
+
+    @Override
     public ApiResult pushDelivery(DeliveryInfo deliveryInfo, Long customerId) throws UnsupportedEncodingException {
         MallOrder order = mallOrderService.findByOrderId(deliveryInfo.getOrderId());
         //判断订单是否发货

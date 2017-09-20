@@ -2,6 +2,7 @@ package com.huotu.shopo2o.web.controller.order;
 
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
+import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
@@ -142,5 +143,15 @@ public class DeliveryController {
             }
             session.setAttribute("state", "open");
         }
+    }
+    @RequestMapping( "/editDelivery")
+    @ResponseBody
+    public ApiResult editDelivery(String deliveryId, DeliveryInfo deliveryInfo) {
+        MallDelivery delivery = mallDeliveryService.findById(deliveryId);
+        delivery.setLogisticsNo(deliveryInfo.getLogiNo());
+        delivery.setMemo(deliveryInfo.getRemark());
+        delivery.setFreight(deliveryInfo.getFreight());
+        mallDeliveryService.save(delivery);
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 }

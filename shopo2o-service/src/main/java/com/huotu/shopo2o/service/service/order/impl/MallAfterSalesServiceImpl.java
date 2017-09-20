@@ -48,10 +48,10 @@ public class MallAfterSalesServiceImpl implements MallAfterSalesService {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(MallAfterSales_.createTime), endTime));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getAfterId())) {
-                predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.afterId), afterSaleSearch.getAfterId()));
+                predicates.add(criteriaBuilder.like(root.get(MallAfterSales_.afterId), "%"+afterSaleSearch.getAfterId()+"%"));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getOrderId())) {
-                predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.afterId), afterSaleSearch.getOrderId()));
+                predicates.add(criteriaBuilder.like(root.get(MallAfterSales_.orderId), "%"+afterSaleSearch.getOrderId()+"%"));
             }
             if (!StringUtils.isEmpty(afterSaleSearch.getMobile())) {
                 predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.applyMobile), afterSaleSearch.getMobile()));

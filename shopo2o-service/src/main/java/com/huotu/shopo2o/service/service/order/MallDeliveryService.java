@@ -18,7 +18,9 @@ import java.util.List;
  * Created by hxh on 2017-09-11.
  */
 public interface MallDeliveryService {
-    ApiResult pushDelivery(DeliveryInfo deliveryInfo,Long customerId) throws UnsupportedEncodingException;
+    MallDelivery save(MallDelivery delivery);
+
+    ApiResult pushDelivery(DeliveryInfo deliveryInfo, Long customerId) throws UnsupportedEncodingException;
 
     Page<MallDelivery> getPage(Pageable pageable, Store store, DeliverySearcher deliverySearcher, String type);
 

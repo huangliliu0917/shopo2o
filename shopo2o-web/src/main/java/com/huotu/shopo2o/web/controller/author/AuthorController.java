@@ -5,9 +5,11 @@ import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.StoreMenu;
 import com.huotu.shopo2o.service.entity.author.Operator;
+import com.huotu.shopo2o.service.entity.config.SupBasicConfig;
 import com.huotu.shopo2o.service.model.IndexStatistics;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
+import com.huotu.shopo2o.service.service.config.SupBasicConfigService;
 import com.huotu.shopo2o.service.service.statistics.IndexStatisticsService;
 import com.huotu.shopo2o.service.service.user.StoreMenuService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
@@ -40,6 +42,8 @@ public class AuthorController {
     private StoreMenuService storeMenuService;
     @Autowired
     private IndexStatisticsService indexStatisticsService;
+    @Autowired
+    private SupBasicConfigService supBasicConfigService;
 
     @RequestMapping(value = {"", "/", "/login"})
     public String login() {
@@ -65,6 +69,12 @@ public class AuthorController {
         List<StoreMenu> storeMenus = storeMenuService.findPrimary();
         model.addAttribute("storMenus",storeMenus);
         model.addAttribute("mallCustomer", mallCustomer);
+        SupBasicConfig config = supBasicConfigService.findByStoreId(mallCustomer.getCustomerId());
+        if(config != null && !StringUtils.isEmpty(config.getLogoName())){
+            model.addAttribute("logoName",config.getLogoName());
+        }else{
+            model.addAttribute("logoName","");
+        }
         return "home";
     }
 
