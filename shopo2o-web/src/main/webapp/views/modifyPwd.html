@@ -14,6 +14,7 @@
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>修改密码</title>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet">
     <link href="../resources/css/admin.global.css" rel="stylesheet" type="text/css"
           th:href="@{/resources/css/admin.global.css}"/>
     <link href="../resources/css/admin.content.css" rel="stylesheet" type="text/css"
@@ -31,6 +32,8 @@
     <script type="text/javascript" src="../resources/js/hot/admin.js" th:src="@{/resources/js/hot/admin.js}"></script>
     <script type="text/javascript" src="../resources/js/My97DatePicker/WdatePicker.js"
             th:src="@{/resources/js/My97DatePicker/WdatePicker.js}"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+    <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
     <style type="text/css">
         .over {
             background-color: #00ff21;
@@ -51,14 +54,14 @@
                     <tr>
                         <th style="vertical-align: middle;">原始密码：</th>
                         <td>
-                            <input name="oldPassword" type="password" id="oldPwd"/>
+                            <input name="oldPassword" type="password" id="oldPwd" required/>
                         </td>
                     </tr>
                     <tr>
                         <th style="vertical-align: middle;">新密码：</th>
                         <td>
                             <label>
-                                <input type="password" name="password" id="pwd"/>
+                                <input type="password" name="password" id="pwd" required/>
                             </label>
                         </td>
                     </tr>
@@ -66,7 +69,7 @@
                         <th style="vertical-align: middle;">确认密码：</th>
                         <td>
                             <label>
-                                <input type="password" name="confirmPassword" id="confirmPwd"/>
+                                <input type="password" name="confirmPassword" id="confirmPwd" required/>
                             </label>
                         </td>
                     </tr>
@@ -83,36 +86,39 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     function updatePwd() {
-        var old = $.trim($("#oldPwd").val());
-        var pwd = $.trim($("#pwd").val());
-        var confirm = $.trim($("#confirmPwd").val());
-        if (!(pwd.indexOf(confirm) > -1 && confirm.indexOf(pwd) > -1)) {
-            $.jBox.tip("密码输入不一致");
-            return;
-        }
-//        $.jBox.tip("正在保存...", "loading");
-        $.ajax({
-            type: "POST",
-            url: "modifyPwd",
-            data: {
-                oldPwd: old,
-                password: pwd
-            },
-            dataType: "json",
-            success: function (result) {
-                if (result.code == 200) {
-                    $.jBox.tip(result.msg + ",请重新登录", "success");
-                    setTimeout(function () {
-                        top.document.getElementById("logout").click();
-                    }, 400);
-                } else {
-                    $.jBox.tip(result.msg, "error");
-                }
-            },
-            error: function () {
-                $.jBox.tip("发生错误", "error");
+        var flag = $("#form1").valid();
+        if(flag){
+            var old = $.trim($("#oldPwd").val());
+            var pwd = $.trim($("#pwd").val());
+            var confirm = $.trim($("#confirmPwd").val());
+            if (!(pwd.indexOf(confirm) > -1 && confirm.indexOf(pwd) > -1)) {
+                $.jBox.tip("密码输入不一致");
+                return;
             }
-        });
+//        $.jBox.tip("正在保存...", "loading");
+            $.ajax({
+                type: "POST",
+                url: "modifyPwd",
+                data: {
+                    oldPwd: old,
+                    password: pwd
+                },
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == 200) {
+                        $.jBox.tip(result.msg + ",请重新登录", "success");
+                        setTimeout(function () {
+                            top.document.getElementById("logout").click();
+                        }, 400);
+                    } else {
+                        $.jBox.tip(result.msg, "error");
+                    }
+                },
+                error: function () {
+                    $.jBox.tip("发生错误", "error");
+                }
+            });
+        }
     }
     /*]]>*/
 </script>

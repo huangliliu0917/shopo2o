@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns="http://www.w3.org/1999/xhtml"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>保存店铺分类</title>
+    <link href="../../resources/css/admin.global.css" rel="stylesheet" type="text/css" th:href="@{/resources/css/admin.global.css}"/>
+    <link href="../../resources/css/admin.content.css" rel="stylesheet" type="text/css" th:href="@{/resources/css/admin.content.css}"/>
+    <link href="../../resources/css/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css" th:href="@{/resources/css/jBox/Skins/Green/jbox.css}"/>
+    <link href="../../resources/css/jquery-ui-1.10.3.custom.min.css" th:href="@{/resources/css/jquery-ui-1.10.3.custom.min.css}" rel="stylesheet"/>
+    <link href="../../resources/css/settlements.css" rel="stylesheet" th:href="@{/resources/css/settlements.css}" type="text/css"/>
+    <script type="text/javascript" src="../../resources/js/jquery/jquery-1.7.2.min.js" th:src="@{/resources/js/jquery/jquery-1.7.2.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/jquery/jquery.utils.js" th:src="@{/resources/js/jquery/jquery.utils.js}"></script>
+    <script type="text/javascript" src="../../resources/js/jquery/jquery.jBox-2.3.min.js" th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/hot/admin.js" th:src="@{/resources/js/hot/admin.js}"></script>
+    <script src="../../resources/js/jquery/jquery-ui-1.8.20.min.js" th:src="@{/resources/js/jquery/jquery-ui-1.8.20.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/My97DatePicker/WdatePicker.js" th:src="@{/resources/js/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" src="../../resources/js/hot/ajaxfileupload.js" th:src="@{/resources/js/hot/ajaxfileupload.js}"></script>
+</head>
+<body>
+<form method="post" action="/shop/saveCat" id="form1" th:action="@{/shop/saveCat}">
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="block">
+            <div class="h">
+                <span class="icon-sprite icon-list"></span>
+                <h3>店铺分类</h3>
+                <div class="bar">
+                    <a class="btn-lit"
+                       href='javascript:returnCatList();'>
+                        <span>返回店铺分类列表</span></a>
+                </div>
+            </div>
+            <div class="cnt-wp">
+                <div class="cnt form">
+
+                    <div class="division">
+                        <!--/*@thymesVar id="updateCat" type="com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat"*/-->
+                        <input type="hidden" name="catId" id="catId" value="0" th:value="${updateCat!=null} ? ${updateCat.catId}"/>
+
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <th>分类名称：</th>
+                                <td>
+                                    <input name="catName" type="text" id="catName" class="input-normal" th:value="${updateCat!=null} ? ${updateCat.catName}"
+                                           placeholder=""/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>上级分类：</th>
+                                <td>
+                                    <select name="parentId" id="parentId">
+                                        <option value="0" selected="true">根目录</option>
+                                        <!--/*@thymesVar id="catList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat>"*/-->
+                                        <th:block th:each="cat:${catList}">
+                                            <!--/*一级目录无法修改上级分类*/-->
+                                            <option th:value="${cat.catId}" th:text="${cat.catName}" th:if="!${updateCat != null and updateCat.getParentId() == 0}" th:selected="${updateCat}!=null and ${cat.catId} == ${updateCat.parentId}"></option>
+                                            <!--/*最多显示2级*/-->
+                                            <!--/*<option th:if="${cat.subShopCat!=null}" th:each="subCat:${cat.subShopCat}" th:value="${subCat.catId}" th:text="${cat.catName} + '-' + ${subCat.catName}" />*/-->
+
+                                        </th:block>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>排序：</th>
+                                <td>
+                                    <input name="pOrder" type="text" id="pOrder" th:value="${updateCat!=null} ? ${updateCat.order}:0"
+                                           class="input-small OnlyNum" placeholder=""/>
+                                    <span style="color:#ccc;">数字越大排越下面</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>图片：</th>
+                                <td>
+                                    <div id="uploadpicCover"
+                                         style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
+                                        <div class="col-xs-6 col-md-3">
+                                            <img src="" id="catImgUrl" style="width: 80px;height: 80px;" th:src="${updateCat !=null and updateCat.uri != null}  ? @{${updateCat.uri}}"/>
+                                        </div>
+                                    </div>
+
+                                    <div style="margin-left: 10px; float: left; line-height: 80px;">
+                                        <a id="uploadpic" class="btn-lit jUploader-button" href="javascript:void(0)"
+                                           style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
+                                            <span style="color: #c1b3a9">上传</span>
+                                            <input type="file" onchange="configHandler.uploadImg('jUploaderFile')" id="jUploaderFile"
+                                                   name="btnFile"
+                                                   style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
+                                        </a>
+                                        <span style="color: #f00">*</span>必填
+                                        <span style="color: #ccc;">建议大小：300*300</span>
+                                    </div>
+                                    <input name="catImg" type="hidden" id="catImg" th:value="${updateCat!=null} ? ${updateCat.catImg}"/>
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <a id="saveCat" class="btn-lit" href="javascript:saveCat();"><span>保存</span></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript" th:inline="javascript">
+    var url = /*[[@{/}]]*/ "/";
+    var isSave = false;
+    var configHandler = {
+        uploadImg: function (btnFile) {
+            $.jBox.tip("正在上传...", "loading");
+            $.ajaxFileUpload({
+                url: url + "supplier/upload",
+                secureuri: false,//安全协议
+                fileElementId: btnFile,//id
+                dataType: 'json',
+                type: "post",
+                data:null,
+                error: function (data, status, e) {
+                },
+                success: function (json) {
+                    if (json.result == 1) {
+                        $("#catImgUrl").attr('src',json.fileUrl);
+                        $("#catImg").val(json.fileUri);
+                        $.jBox.tip("上传成功", "success");
+                    } else {
+                        $.jBox.tip(json.msg, "error");
+                    }
+                }
+            });
+        },
+    }
+    function saveCat(){
+        var catId = $.trim($("#catId").val());
+        var catName = $.trim($("#catName").val());
+        var catImg = $.trim($("#catImg").val());
+        var parentId = $("#parentId").val();
+        var pOrder = $("#pOrder").val();
+        if(catName.length == 0) {
+            $.jBox.tip('请输入分类名称');
+            return;
+        }
+        $.jBox.tip("正在保存...", "loading");
+        $.ajax({
+            type: 'POST',
+            url: url + "shop/addCat",
+            data: JSON.stringify({
+                catId:catId,
+                catName: catName,
+                catImg: catImg,
+                parentId: parentId,
+                order: pOrder
+            }),
+            contentType: 'application/json',
+            success: function (result) {
+                if (result.code == 200) {
+                    isSave = true;
+                    $.jBox.tip(result.msg,"success");
+                    setTimeout(function () {
+                        top.document.getElementById("content_left").contentDocument.getElementById("id_060101").getElementsByTagName("a")[0].click();
+                    }, 500);
+                }else{
+                    $.jBox.tip(result.msg, 'error');
+                }
+            }
+
+        })
+    }
+    function returnCatList(){
+        top.document.getElementById("content_left").contentDocument.getElementById("id_060101").getElementsByTagName("a")[0].click();
+    }
+</script>
+</body>
+</html>

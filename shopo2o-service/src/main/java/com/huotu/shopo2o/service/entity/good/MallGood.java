@@ -61,8 +61,8 @@ public class MallGood {
     private int store;
     @Column(name = "Customer_Id")
     private Integer customerId;
-    @Column(name = "Supplier_Id")
-    private Integer supplierId;
+    @Column(name = "StoreId")
+    private Long storeId;
     @Column(name = "Name")
     private String name;
     @Column(name = "Disabled")
@@ -70,16 +70,13 @@ public class MallGood {
     @Column(name = "Marketable")
     private boolean marketable;
     /**
-     * 供应商店铺分类
+     * 店铺分类
      */
-    @Column(name = "Supplier_Cat_Id")
-    private Integer supplierCatId;
+    @Column(name = "Store_Cat_Id")
+    private Integer storeCatId;
 
     @Column(name = "Bn")
     private String bn;
-
-    @Column(name = "Supplier_Goods_Id")
-    private Integer supplierGoodsId;
 
     @Column(name = "CreateTime")
     private Date createTime;

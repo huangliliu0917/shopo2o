@@ -87,14 +87,9 @@
             document.write('<iframe id="content_left" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + ifSrc + '" style="overflow-x:hidden;"></iframe>');
         };
         adaptFrame.outputMain = function (src) {
-            console.log(src)
             var width = adaptFrame._getMainWidth()-20;
             var scrolling = $.isIE6 == true ? 'yes' : 'auto';
             var height = this._getMainHeight();
-//            $("#content").attr("src",src);
-//            $("#content").attr("width",width-200);
-//            $("#content").attr("height",height);
-//            $("#content").attr("scrolling",scrolling);
             document.write('<iframe id="content" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + src + '"></iframe>');
             $('#con_right').height(height);
         };
@@ -121,10 +116,10 @@
 <section>
     <div class="leftpanel">
         <div class="logopanel">
-            <th:block th:if="${mallCustomer.nickName != null and mallCustomer.nickName != ''}">
-                <h1 style="color: white;padding: 10px;" th:text="${mallCustomer.nickName}"></h1>
+            <th:block th:if="${logoName != null and logoName != ''}">
+                <h1 style="color: white;padding: 10px;" th:text="${logoName}"></h1>
             </th:block>
-            <th:block th:if="${mallCustomer.nickName == null || mallCustomer.nickName == ''}">
+            <th:block th:if="${logoName == null || logoName == ''}">
                 <img src="../resources/images/bglogo_Ultimate.png" height="48px" style="margin-left: 15px"/>
             </th:block>
         </div>

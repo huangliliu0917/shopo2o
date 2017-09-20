@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.order.MallAfterSales>"*/-->
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>基本配置</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--checkbox-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${config}">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>基本配置</h5>
+                    <span class="text-danger" th:if="*{shopConfig.disabled}">（店铺已被冻结，请联系平台方）</span>
+                </div>
+                <div class="ibox-content p-m">
+                    <form id="basicConfigForm" th:action="@{/supConfig/saveBasicConfig}">
+                        <div class="panel-body form-horizontal ">
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">供应商名称:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s" readonly="readonly" th:value="${supplierName}"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">供应商系统名称:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s" placeholder="供应商系统名称" name="logoName" th:value="*{logoName}" required="true"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">供应商联系人:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s" placeholder="供应商联系人"
+                                           name="contact" th:value="*{contact}" required="true"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group ">
+                                <label class="col-sm-2 control-label">联系人电话:</label>
+                                <div class="col-sm-10">
+                                    <input  type="text" class="form-control input-s" placeholder="联系人电话"
+                                            name="mobile" th:value="*{mobile}" required="true"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group ">
+                                <label class="col-sm-2 control-label">客服电话:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s" placeholder="客服电话"
+                                           name="serviceTel" th:value="*{serviceTel}" required="true"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">邮箱地址:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s" placeholder="邮箱地址"
+                                           name="email" th:value="*{email}" required="true" email="true"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">详细地址:</label>
+                                <div class="col-sm-10">
+                                    <div class="list-group-item-text">
+                                        <div id="citys" class="clients-list">
+                                            <select class="form-control input-s prov" id="provinceCode"></select>
+                                            <select class="form-control input-s city" id="cityCode"></select>
+                                            <select class="form-control input-s dist" id="districtCode"></select>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item-text">
+                                        <input type="text" class="form-control" placeholder="详细地址" style="width: 600px;"
+                                               id="supAddr" name="addr" th:value="*{addr}" required="true"/>
+                                    </div>
+                                    <div class="list-group-item-text">
+                                        <label for="lan">经度</label>
+                                        <input type="text" class="form-control input-s only-num" readonly="readonly"
+                                               id="lan" th:field="*{lan}" th:value="*{lan}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <label for="lat">纬度</label>
+                                        <input type="text" class="form-control input-s only-num" readonly="readonly"
+                                               id="lat" th:field="*{lat}" th:value="*{lat}"/>
+                                    </div>
+                                    <div class="list-group-item-text">
+                                        <div id="addrMap"
+                                             style="width: 300px;height: 300px;border: 1px solid gray;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="panel-body form-horizontal">
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">是否开启店铺:</label>
+                                <div class="col-sm-10">
+                                    <div class="form-group m-r-sm">
+                                        <div class="radio radio-primary">
+                                            <input type="radio"  name="shopIsOpen" id="shopOpen" value="1"  th:checked="*{shopConfig.shopIsOpen}"/>
+                                            <label for="shopOpen">开启</label>
+                                        </div>
+                                        <div class="radio radio-primary">
+                                            <input type="radio"  name="shopIsOpen" id="shopClose" value="0" checked="checked" th:checked="*{!shopConfig.shopIsOpen}"/>
+                                            <label for="shopClose">关闭</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="showShopInfo" th:style="*{shopConfig.shopIsOpen == false}  ? 'display: none;'">
+                                <div class="hr-line-dashed "></div>
+                                <div class="form-group form-inline">
+                                    <label class="col-sm-2 control-label">店铺名称:</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control input-s" placeholder="店铺名称"
+                                               name="shopName" th:value="*{shopConfig.shopName}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label class="col-sm-2 control-label">店铺Logo</label>
+                                    <div class="col-sm-10">
+                                        <img name="shopLogoImg" src="../resource/3rdParty/images/none.png" width="80" height="80"
+                                             th:src="${logoUrl != null } ? ${logoUrl} : '../resource/3rdParty/images/none.png'"/>
+                                        <button type="button" class="btn btn-success btn-sm" onclick="$('#jUploaderFile').click();">上传</button>
+                                        <span  class="help-block m-b-none">建议大小：300*300</span>
+                                        <input onchange="basicConfigHandler.uploadImg('jUploaderFile')"
+                                               id="jUploaderFile" name="btnFile"
+                                               style="display:none;" type="file"/>
+                                        <input type="hidden" name="shopLogo" th:value="*{shopConfig.shopLogo}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="panel-body form-horizontal">
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">售后电话:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s only-num" placeholder="售后电话"
+                                           name="afterSalTel" th:value="*{afterSalTel}" required="true"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed "></div>
+                            <div class="form-group form-inline">
+                                <label class="col-sm-2 control-label">售后QQ号:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control input-s only-num" placeholder="售后QQ号"
+                                           name="afterSalQQ" th:value="*{afterSalQQ}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-success" type="button" onclick="basicConfigHandler.submitForm();">保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--file-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/ajaxfileupload/ajaxfileupload.js"></script>
+<!--validate-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/additional-methods.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+
+<script src="../../resources/js/hot/bootstrap.hot.extra-utils.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/js/hot/bootstrap.hot.extra-init.js" th:src="@{/resources/js/hot/bootstrap.hot.extra-init.js}" ></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+<script type="text/javascript" src="../../resources/js/hot/regionNode.js"
+        th:src="@{/resources/js/hot/regionNode.js}"></script>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/}]]*/ "/";
+    var pro = /*[[${config.provinceCode}]]*/"";
+    var city = /*[[${config.cityCode}]]*/"";
+    var dist = /*[[${config.districtCode}]]*/"";
+    /*<![CDATA[*/
+
+    $(function(){
+        //电话校验
+        $.validator.addMethod('mobile',function(value,element){
+            var mobile = /^1[1-9][0-9]{9}$/;
+            var tel = /^((\d{11})|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)$/;
+            return this.optional(element) || (mobile.test(value)) || (tel.test(value));
+        },$.validator.format("电话格式错误"));
+        $("#basicConfigForm").validate({
+            rules:{
+                mobile:"mobile",
+                serviceTel:"mobile",
+                afterSalTel:"mobile"
+            }
+        });
+    })
+
+    var basicConfigHandler = {
+        uploadImg:function(btnFile){
+            hot.loading.show();
+            hot.uploadFile(baseUrl + "supplier/uploadImage",btnFile,function(json){
+                if (json.result == 1) {
+                    $("#basicConfigForm img[name=shopLogoImg]").attr("src", json.fileUrl);
+                    $("#basicConfigForm input[name=shopLogo]").val(json.fileUri);
+                    hot.tip.success("上传成功");
+                } else {
+                    hot.tip.success("上传失败");
+                }
+            },function(){});
+        },
+        submitForm:function(){
+            if(!$("#basicConfigForm").valid()){
+                return;
+            }
+            var shopIsOpen = $("#basicConfigForm input[name=shopIsOpen]:checked").val() == 1 ? true : false;
+            var shopLogo = $.trim($("#basicConfigForm input[name=shopLogo]").val());
+            var shopName = $.trim($("#basicConfigForm input[name=shopName]").val());
+            console.log(shopIsOpen);
+            if(shopIsOpen && (shopLogo.length == 0)){
+                hot.tip.error('请上传店铺图片');
+                return;
+            }
+            if(shopIsOpen && (shopName.length == 0)){
+                hot.tip.error('请设置店铺名称');
+                return;
+            }
+            var logoName = $.trim($("#basicConfigForm input[name=logoName]").val());
+            var contact = $.trim($("#basicConfigForm input[name=contact]").val());
+            var mobile = $.trim($("#basicConfigForm input[name=mobile]").val());
+            var serviceTel = $.trim($("#basicConfigForm input[name=serviceTel]").val());
+            var email = $.trim($("#basicConfigForm input[name=email]").val());
+            var provinceCode = $.trim($("#provinceCode").val());
+            var provinceText = $("#provinceCode").find("option:selected").text();
+            var cityCode = $.trim($("#cityCode").val());
+            var cityText = $("#cityCode").find("option:selected").text();
+            var districtCode = $.trim($("#districtCode").val());
+            var districtText = $("#districtCode").find("option:selected").text();
+            var addr = $.trim($("#supAddr").val());
+            var afterSalTel = $.trim($("#basicConfigForm input[name=afterSalTel]").val());
+            var afterSalQQ = $.trim($("#basicConfigForm input[name=afterSalQQ]").val());
+            var addressArea = provinceText + "/" + cityText + "/" + districtText;
+            var lan = $.trim($("#lan").val());
+            var lat = $.trim($("#lat").val());
+            hot.loading.show();
+            var data = {
+                logoName : logoName,
+                contact : contact,
+                mobile : mobile,
+                serviceTel : serviceTel,
+                email : email,
+                addr : addr,
+                provinceCode : provinceCode,
+                cityCode : cityCode,
+                districtCode : districtCode,
+                addressArea : addressArea,
+                lan : lan,
+                lat: lat,
+                shopConfig:{
+                    shopIsOpen : shopIsOpen,
+                    shopName : shopName,
+                    shopLogo : shopLogo
+                },
+                afterSalTel:afterSalTel,
+                afterSalQQ : afterSalQQ
+            }
+            $.ajax({
+                type: 'POST',
+                url: baseUrl + "supConfig/saveBasicConfig",
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (result) {
+                    if (result.code == 200) {
+                        hot.tip.success(result.msg);
+                        window.location.reload();
+                    } else {
+                        hot.tip.error(result.msg);
+                    }
+                }
+            });
+        }
+    }
+
+    $("input[name=shopIsOpen]").change(function(){
+        var shopIsOpen = $("input[name=shopIsOpen]:checked").val();
+        if(shopIsOpen == 1){
+            $("#showShopInfo").show();
+        }else{
+            $("#showShopInfo").hide();
+        }
+    })
+
+
+
+
+    /*省市区下拉菜单*/
+    var selectProvince = "杭州市";
+    var zoomSize = 12;
+    $("#citys").citySelect(pro, city, dist);
+    $("#citys select").change(function(){
+        selectProvince = "";
+        var province = $.trim($("#provinceCode").val());
+        if(province != null && province.length > 0){
+            selectProvince += $("#provinceCode option[value=" + province+ "]").text();
+            map.centerAndZoom(selectProvince, 10);
+        }
+        var city = $.trim($("#cityCode").val());
+        if(city != null && city.length > 0){
+            selectProvince += $("#cityCode option[value=" + city+ "]").text();
+            map.centerAndZoom(selectProvince, 12);
+        }
+        var district = $.trim($("#districtCode").val());
+        if(district != null && district.length > 0){
+            selectProvince += $("#districtCode option[value=" + district+ "]").text();
+            map.centerAndZoom(selectProvince, 14);
+        }
+    })
+    /*省市区下拉菜单*/
+
+    /*百度地图API相关*/
+    var map = new BMap.Map("addrMap");
+    var provinceText = $("#provinceCode").find("option:selected").text();
+    var cityText = $("#cityCode").find("option:selected").text();
+    var districtText = $("#districtCode").find("option:selected").text();
+    if(provinceText.length >0){
+        selectProvince = provinceText;
+        zoomSize = 10;
+    }
+    if(cityText.length > 0){
+        selectProvince += cityText;
+        zoomSize = 12;
+    }
+    if(districtText.length > 0){
+        selectProvince += districtText;
+        zoomSize = 14;
+    }
+    map.centerAndZoom(selectProvince, zoomSize);
+    map.enableScrollWheelZoom(true);    //启用滚轮放大缩小，默认禁用
+    map.enableContinuousZoom(true);    //启用地图惯性拖拽，默认禁用
+    map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+    map.addControl(new BMap.OverviewMapControl()); //添加默认缩略地图控件
+    //    map.addControl(new BMap.OverviewMapControl({ isOpen: true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT }));   //右下角，打开
+    var geoc = new BMap.Geocoder();
+    var localSearch = new BMap.LocalSearch(map);
+    localSearch.enableAutoViewport(); //允许自动调节窗体大小
+    $("#supAddr").change(function(){
+        map.clearOverlays();//清空原来的标注
+        var keyword = $(this).val();
+        // 将地址解析结果显示在地图上,并调整地图视野
+        geoc.getPoint(keyword, function (point) {
+            if (point) {
+                lngandlat(point.lng, point.lat);
+                setmarker(point.lng, point.lat);
+                map.centerAndZoom(point, 16);
+            } else {
+                lngandlat('', '');
+                $.jBox.tip("地址没有解析到结果,请点击地图进行选择");
+            }
+        },selectProvince);
+    });
+    map.addEventListener("click", function (e) {
+        var pt = e.point;
+        lngandlat(pt.lng, pt.lat);
+        setmarker(pt.lng, pt.lat);
+        geoc.getLocation(pt, function (rs) {
+            var addComp = rs.addressComponents;
+            $("#supAddr").val(addComp.province + addComp.city + addComp.district + addComp.street + addComp.streetNumber);
+        });
+
+    });
+
+    function lngandlat(lng, lat) {
+        $("#lan").val(lng);
+        $("#lat").val(lat);
+    }
+
+    function setmarker(lng, lat) {
+        var marker = new BMap.Marker(new BMap.Point(lng, lat));  // 创建标注，为要查询的地方对应的经纬度
+        map.clearOverlays(); //清空原来的标注
+        map.addOverlay(marker);
+    }
+
+    //添加标注
+    if ($.trim($("#lan").val()).length != 0 && $.trim($("#lat").val()).length) {
+        setmarker($("#lan").val(), $("#lat").val());
+    }
+    /*百度地图API相关*/
+
+    /*]]>*/
+</script>
+</body>
+</html>
