@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String loginPage = "/login";
-    private static final String loginSuccessURL = "/loginSuccess";
+    private static final String loginSuccessURL = "/home";
     private static final String loginFailedURL = "/loginFailed";
     private static final String logoutSuccessURL = "/";
     private static String[] STATIC_RESOURCE_PATH = {

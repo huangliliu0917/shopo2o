@@ -32,7 +32,7 @@ public class OperatorController {
     private PasswordEncoder passwordEncoder;
 
     @RequestMapping("/getOperatorList")
-    public String outputRightMenu(
+    public String getOperatorList(
             @LoginUser MallCustomer mallCustomer,
             Model model) {
         Authority[] authorities = Authority.values();

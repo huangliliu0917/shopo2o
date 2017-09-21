@@ -45,7 +45,6 @@
                 <div class="cnt form">
 
                     <div class="division">
-                        <!--/*@thymesVar id="updateCat" type="com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat"*/-->
                         <input type="hidden" name="catId" id="catId" value="0" th:value="${updateCat!=null} ? ${updateCat.catId}"/>
 
                         <table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -62,13 +61,10 @@
                                 <td>
                                     <select name="parentId" id="parentId">
                                         <option value="0" selected="true">根目录</option>
-                                        <!--/*@thymesVar id="catList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat>"*/-->
                                         <th:block th:each="cat:${catList}">
                                             <!--/*一级目录无法修改上级分类*/-->
                                             <option th:value="${cat.catId}" th:text="${cat.catName}" th:if="!${updateCat != null and updateCat.getParentId() == 0}" th:selected="${updateCat}!=null and ${cat.catId} == ${updateCat.parentId}"></option>
                                             <!--/*最多显示2级*/-->
-                                            <!--/*<option th:if="${cat.subShopCat!=null}" th:each="subCat:${cat.subShopCat}" th:value="${subCat.catId}" th:text="${cat.catName} + '-' + ${subCat.catName}" />*/-->
-
                                         </th:block>
                                     </select>
                                 </td>

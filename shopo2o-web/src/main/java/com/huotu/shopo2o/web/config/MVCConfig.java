@@ -49,6 +49,17 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
     //只是为了初始化
     @Autowired
     private SysConstant sysConstant;
+
+    /**
+     * for upload
+     */
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setDefaultEncoding("UTF-8");
+        return resolver;
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         super.addInterceptors(registry);
@@ -64,8 +75,8 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         super.addResourceHandlers(registry);
-        registry.addResourceHandler("/resources/**/*", "/**/*.html")
-                .addResourceLocations("/resources/", "/");
+        registry.addResourceHandler("/resources/**/*","image/**/*", "/**/*.html")
+                .addResourceLocations("/resources/","/image/", "/");
     }
 
     /**
@@ -140,11 +151,6 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
             viewResolver.setCharacterEncoding("UTF-8");
             viewResolver.setContentType("text/html;charset=utf-8");
             return viewResolver;
-        }
-
-        @Bean
-        public CommonsMultipartResolver multipartResolver() {
-            return new CommonsMultipartResolver();
         }
     }
 }
