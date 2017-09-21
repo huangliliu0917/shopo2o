@@ -12,7 +12,7 @@ public class OrderSearchCondition {
     private String orderId;
     private String shipName;
     private String shipMobile;
-    private int orderStatus = -2;
+    private int orderStatus = -3;
     private int payStatus = -1;
     private int shipStatus = -1;
     private int paymentTypeStatus = -1;

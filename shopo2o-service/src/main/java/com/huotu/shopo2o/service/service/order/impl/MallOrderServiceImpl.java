@@ -73,7 +73,7 @@ public class MallOrderServiceImpl implements MallOrderService {
             if (!StringUtils.isEmpty(searchCondition.getShipMobile())) {
                 predicates.add(cb.equal(root.get(MallOrder_.shipMobile), searchCondition.getShipMobile()));
             }
-            if (searchCondition.getOrderStatus() != -2) {
+            if (searchCondition.getOrderStatus() != -3) {
                 predicates.add(cb.equal(root.get(MallOrder_.orderStatus)
                         , EnumHelper.getEnumType(OrderEnum.OrderStatus.class, searchCondition.getOrderStatus())));
             }
