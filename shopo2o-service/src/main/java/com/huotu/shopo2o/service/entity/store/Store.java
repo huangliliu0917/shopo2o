@@ -2,6 +2,7 @@ package com.huotu.shopo2o.service.entity.store;
 
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.support.LngLatConverter;
+import com.huotu.shopo2o.service.entity.support.LngLatListConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -137,6 +138,11 @@ public class Store {
      */
     @OneToMany(mappedBy = "store")
     private List<DistributionRegion> distributionDivisionRegions;
+
+    @Convert(converter = LngLatListConverter.class)
+    @Column(name = "Region_ListStr",columnDefinition = "varchar(MAX)")
+    @SuppressWarnings("JpaAttributeTypeInspection")
+    private List<LngLat[]> divisionList;
     /**
      * 配送费
      */

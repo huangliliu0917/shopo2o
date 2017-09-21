@@ -68,6 +68,8 @@ public class CustomerInterceptor extends HandlerInterceptorAdapter {
                     if (customerId <= 1 && environment.acceptsProfiles("development")) {
                         customerId = 4421;
                     }
+                }else if (environment.acceptsProfiles("development")) {
+                    customerId = 4421;
                 }
             }
         }

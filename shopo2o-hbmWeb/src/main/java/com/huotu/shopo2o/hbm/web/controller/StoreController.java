@@ -21,6 +21,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -28,10 +29,8 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by helloztt on 2017-08-22.
@@ -164,9 +163,15 @@ public class StoreController extends MallBaseController {
         } catch (IOException e) {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域解析失败");
         }
+        List<LngLat[]> divisionList = null;
+        if(!CollectionUtils.isEmpty(distributionDivisionRegionMap)){
+            divisionList = distributionDivisionRegionMap.values().stream().filter(p->!CollectionUtils.isEmpty(p.getDistributionRegions()))
+                    .map(p->p.getDistributionRegions().toArray(new LngLat[p.getDistributionRegions().size()])).collect(Collectors.toList());
+        }
         store.setDistributionRegions(distributionRegionList);
         store.setDistributionMarkers(storeService.saveMarker(store, distributionMarkerMap));
         store.setDistributionDivisionRegions(storeService.saveRegion(store, distributionDivisionRegionMap));
+        store.setDivisionList(divisionList);
         store.setDeliveryCost(new BigDecimal(deliveryCost).setScale(2, BigDecimal.ROUND_HALF_DOWN));
         store.setMinCost(new BigDecimal(minCost).setScale(2, BigDecimal.ROUND_HALF_DOWN));
         store.setFreeCost(new BigDecimal(freeCost).setScale(2, BigDecimal.ROUND_HALF_DOWN));
