@@ -13,15 +13,16 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by helloztt on 2017-08-31.
+ * Created by helloztt on 2017-09-21.
  */
 @Converter
-public class LngLatConverter implements AttributeConverter<List<LngLat>, String> {
+public class LngLatListConverter implements AttributeConverter<List<LngLat[]>,String> {
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(List<LngLat> attribute) {
-        if (CollectionUtils.isEmpty(attribute)) {
+    public String convertToDatabaseColumn(List<LngLat[]> attribute) {
+        if(CollectionUtils.isEmpty(attribute)){
             return null;
         }
         try {
@@ -32,12 +33,12 @@ public class LngLatConverter implements AttributeConverter<List<LngLat>, String>
     }
 
     @Override
-    public List<LngLat> convertToEntityAttribute(String dbData) {
+    public List<LngLat[]> convertToEntityAttribute(String dbData) {
         if (StringUtils.isEmpty(dbData)) {
             return null;
         }
         try {
-            return objectMapper.readValue(dbData, new TypeReference<List<LngLat>>() {
+            return objectMapper.readValue(dbData, new TypeReference<List<LngLat[]>>() {
             });
         } catch (IOException e) {
             throw new IllegalStateException("Broken JSON", e);
