@@ -17,7 +17,7 @@ public interface MallAfterSalesService {
      * @param afterSaleSearch
      * @return
      */
-    Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long supplierId, AfterSaleSearch afterSaleSearch);
+    Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long storeId, AfterSaleSearch afterSaleSearch);
 
     /**
      * 根据id得到售后单实体

@@ -188,10 +188,10 @@ public class MallDeliveryServiceImpl implements MallDeliveryService {
     }
 
     @Override
-    public ApiResult pushRefund(String orderId, LogiModel logiModel, int supplierId, String dicReturnItemsStr) throws UnsupportedEncodingException {
+    public ApiResult pushRefund(String orderId, LogiModel logiModel, Long storeId, String dicReturnItemsStr) throws UnsupportedEncodingException {
         Map<String, Object> param = new TreeMap<>();
         param.put("orderId", orderId);
-        param.put("supplierId", supplierId);
+        param.put("storeId", storeId);
         param.put("logiName", logiModel.getLogiCompanyChina());
         param.put("logiNo", logiModel.getLogiNo());
         param.put("logiMobile", logiModel.getLogiMobile());

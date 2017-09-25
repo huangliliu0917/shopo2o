@@ -53,7 +53,7 @@ public class AfterSaleHandler {
                 if (forReturn.size() > 0) {
                     LogiModel logiModel = JSON.parseObject(forReturn.get(0).getAfterContext(), LogiModel.class);
                     String dicReturnItemsStr = afterSales.getOrderItem().getItemId() + "," + afterSales.getOrderItem().getNums();
-                    apiResult = mallDeliveryService.pushRefund(afterSales.getOrderId(), logiModel, afterSales.getSupplierId(), dicReturnItemsStr);
+                    apiResult = mallDeliveryService.pushRefund(afterSales.getOrderId(), logiModel, afterSales.getStoreId(), dicReturnItemsStr);
                 }
             }
             if (apiResult.getCode() == ResultCodeEnum.SUCCESS.getResultCode()) {

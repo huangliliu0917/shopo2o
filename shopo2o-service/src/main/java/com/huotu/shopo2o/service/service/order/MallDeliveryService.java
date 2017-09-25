@@ -38,5 +38,5 @@ public interface MallDeliveryService {
 
     HSSFWorkbook createWorkBook(List<MallDelivery> deliveryList, String type);
 
-    ApiResult pushRefund(String orderId, LogiModel logiModel, int supplierId, String dicReturnItemsStr) throws UnsupportedEncodingException;
+    ApiResult pushRefund(String orderId, LogiModel logiModel, Long storeId, String dicReturnItemsStr) throws UnsupportedEncodingException;
 }

@@ -35,10 +35,10 @@ public class MallAfterSalesServiceImpl implements MallAfterSalesService {
     private MallAfterSalesItemService mallAfterSalesItemService;
 
     @Override
-    public Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long supplierId, AfterSaleSearch afterSaleSearch) {
+    public Page<MallAfterSales> findAll(int pageIndex, int pageSize, Long storeId, AfterSaleSearch afterSaleSearch) {
         Specification<MallAfterSales> specification = (root, criteriaQuery, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.supplierId), supplierId));
+            predicates.add(criteriaBuilder.equal(root.get(MallAfterSales_.storeId), storeId));
             if (!StringUtils.isEmpty(afterSaleSearch.getBeginTime())) {
                 Date beginTime = StringUtil.DateFormat(afterSaleSearch.getBeginTime(), StringUtil.TIME_WITHOUT_SECOND_PATTERN);
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(MallAfterSales_.createTime), beginTime));

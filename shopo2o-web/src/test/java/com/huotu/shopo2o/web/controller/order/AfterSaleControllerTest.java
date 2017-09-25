@@ -1,10 +1,10 @@
 package com.huotu.shopo2o.web.controller.order;
 
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
-import com.huotu.shopo2o.service.model.OrderDetailModel;
 import com.huotu.shopo2o.web.CommonTestBase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,14 +21,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Created by hxh on 2017-09-22.
+ * Created by hxh on 2017-09-25.
  */
-public class OrderControllerTest extends CommonTestBase {
-    private static String BASE_URL = "/order";
+public class AfterSaleControllerTest extends CommonTestBase {
+    private static String BASE_URL = "/afterSale";
     private MallCustomer user;
     private String userName;
     private String passWord;
-    List<MallOrder> mallOrders = new ArrayList<>();
+    List<MallAfterSales> afterSalesList = new ArrayList<>();
+    List<MallOrder> mallOrderList = new ArrayList<>();
 
     @Before
     public void setInfo() throws Exception {
@@ -49,40 +50,42 @@ public class OrderControllerTest extends CommonTestBase {
         user = mallCustomerRepository.saveAndFlush(storeCustomer);
         for (int i = 0; i <= random.nextInt(5); i++) {
             MallOrder mallOrder = mockMallOrder(user.getCustomerId().intValue());
-            mallOrders.add(mallOrder);
+            mallOrderList.add(mallOrder);
         }
-    }
-
-    /**
-     * 测试订单列表页面
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testShowGoodsList() throws Exception {
-        MockHttpSession mockHttpSession = loginAs(userName, passWord);
-        MvcResult agentResult = mockMvc.perform(post(BASE_URL + "/getOrderList").session(mockHttpSession))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeExists("ordersList"))
-                .andReturn();
-        List<MallOrder> ordersList = (List<MallOrder>) agentResult.getModelAndView().getModel().get("ordersList");
-        Assert.assertEquals("order/order_list", agentResult.getModelAndView().getViewName());
-        Assert.assertNotNull(ordersList);
-        Assert.assertTrue(ordersList.size() == mallOrders.size());
-        for (int i = 1; i <= mallOrders.size(); i++) {
-            Assert.assertEquals(ordersList.get(ordersList.size() - i).getOrderId(), mallOrders.get(i - 1).getOrderId());
+        for (int i = 0; i < mallOrderList.size(); i++) {
+            MallAfterSales mallAfterSales = mockMallAfterSales(user,mallOrderList.get(i));
+            afterSalesList.add(mallAfterSales);
         }
     }
 
     @Test
-    public void testShowOrderDetail() throws Exception {
+    public void testAfterSaleList() throws Exception {
         MockHttpSession mockHttpSession = loginAs(userName, passWord);
-        MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/showOrderDetail").session(mockHttpSession)
-                .param("orderId", mallOrders.get(0).getOrderId()))
+        //测试发货列表
+        MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/afterSaleList").session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("orderDetail"))
+                .andExpect(model().attributeExists("afterSales"))
                 .andReturn();
-        OrderDetailModel orderDetail = (OrderDetailModel) mvcResult.getModelAndView().getModel().get("orderDetail");
-        Assert.assertNotNull(orderDetail);
+        List<MallAfterSales> mallAfterSalesList = (List<MallAfterSales>) mvcResult.getModelAndView().getModel().get("afterSales");
+        Assert.assertNotNull(mallAfterSalesList);
+        Assert.assertTrue(mallAfterSalesList.size() == afterSalesList.size());
+        for (int i = 1; i <= afterSalesList.size(); i++) {
+            Assert.assertTrue(afterSalesList.get(i - 1).getAfterId() == mallAfterSalesList.get(mallAfterSalesList.size() - i).getAfterId());
+        }
+    }
+
+    @Test
+    public void testAfterSaleDetail() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        //测试发货列表
+        MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/afterSalesDetail")
+                .session(mockHttpSession)
+                .param("afterId", afterSalesList.get(0).getAfterId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("afterSales"))
+                .andReturn();
+        MallAfterSales afterSales = (MallAfterSales) mvcResult.getModelAndView().getModel().get("afterSales");
+        Assert.assertNotNull(afterSales);
+        Assert.assertTrue(afterSales.getAfterId() == afterSalesList.get(0).getAfterId());
     }
 }
