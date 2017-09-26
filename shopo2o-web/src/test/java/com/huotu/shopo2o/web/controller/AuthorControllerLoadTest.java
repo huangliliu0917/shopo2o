@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 /**
  * Created by hxh on 2017-09-22.
  */
-public class TestAuthorControllerLoad extends CommonTestBase{
+public class AuthorControllerLoadTest extends CommonTestBase{
     @Autowired
     private MallCustomerRepository mallCustomerRepository;
     @Test

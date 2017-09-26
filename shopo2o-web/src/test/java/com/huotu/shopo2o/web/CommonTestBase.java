@@ -2,18 +2,22 @@ package com.huotu.shopo2o.web;
 
 import com.huotu.shopo2o.service.config.MallPasswordEncoder;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.author.Operator;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
 import com.huotu.shopo2o.service.entity.store.Store;
+import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
+import com.huotu.shopo2o.service.repository.author.OperatorRepository;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.repository.order.MallDeliveryRepository;
 import com.huotu.shopo2o.service.repository.order.MallOrderRepository;
 import com.huotu.shopo2o.service.repository.store.StoreRepository;
+import com.huotu.shopo2o.service.repository.store.SupShopCatRepository;
 import com.huotu.shopo2o.web.config.MVCConfig;
 import com.huotu.shopo2o.web.config.SecurityConfig;
 import org.junit.Assert;
@@ -49,12 +53,15 @@ public class CommonTestBase extends SpringWebTest {
     @Autowired
     protected MallOrderRepository mallOrderRepository;
     @Autowired
-    private MallDeliveryRepository mallDeliveryRepository;
+    protected MallDeliveryRepository mallDeliveryRepository;
+    @Autowired
+    protected OperatorRepository operatorRepository;
+    @Autowired
+    protected SupShopCatRepository supShopCatRepository;
     @Autowired
     protected MallPasswordEncoder passwordEncoder;
 
     protected Random random = new Random();
-    protected String customerCookiesName = "UserID";
 
     protected MockHttpSession loginAs(String userName, String password) throws Exception {
         MockHttpSession session = (MockHttpSession) this.mockMvc.perform(get("/code/verifyImage"))
@@ -64,23 +71,14 @@ public class CommonTestBase extends SpringWebTest {
                 .param("username", userName)
                 .param("password", password)
                 .param("roleType", String.valueOf(CustomerTypeEnum.HUOBAN_MALL.getCode()))
-                .param("verifyCode",verifyCode)
+                .param("verifyCode", verifyCode)
         )
                 .andReturn().getRequest().getSession();
         Assert.assertNull(session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION"));
         saveAuthedSession(session);
         return session;
     }
-
-    protected MallCustomer mockCustomer(){
-        MallCustomer customer = new MallCustomer();
-        customer.setUsername(UUID.randomUUID().toString());
-        customer.setNickName(UUID.randomUUID().toString());
-        customer.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
-        customer.setCustomerType(CustomerTypeEnum.STORE);
-        return mallCustomerRepository.saveAndFlush(customer);
-    }
-    protected MallOrder mockMallOrder(int storeId){
+    protected MallOrder mockMallOrder(int storeId) {
         MallOrder mallOrder = new MallOrder();
         mallOrder.setOrderId(UUID.randomUUID().toString());
         mallOrder.setStoreId(storeId);
@@ -91,7 +89,8 @@ public class CommonTestBase extends SpringWebTest {
         mallOrder.setCreateTime(new Date());
         return mallOrderRepository.saveAndFlush(mallOrder);
     }
-    protected MallDelivery mockMallDeliveryOrder(Store store,MallOrder mallOrder,String type){
+
+    protected MallDelivery mockMallDeliveryOrder(Store store, MallOrder mallOrder, String type) {
         MallDelivery mallDelivery = new MallDelivery();
         mallDelivery.setDeliveryId(UUID.randomUUID().toString());
         mallDelivery.setStore(store);
@@ -100,7 +99,8 @@ public class CommonTestBase extends SpringWebTest {
         mallDelivery.setCreateTime(new Date());
         return mallDeliveryRepository.saveAndFlush(mallDelivery);
     }
-    protected MallAfterSales mockMallAfterSales(MallCustomer mallCustomer,MallOrder mallOrder){
+
+    protected MallAfterSales mockMallAfterSales(MallCustomer mallCustomer, MallOrder mallOrder) {
         MallAfterSales mallAfterSales = new MallAfterSales();
         mallAfterSales.setStoreId(mallCustomer.getCustomerId());
         mallAfterSales.setOrderId(mallOrder.getOrderId());
@@ -111,5 +111,20 @@ public class CommonTestBase extends SpringWebTest {
         mallAfterSales.setAfterSalesReason(AfterSaleEnum.AfterSalesReason.ONTER_REASON);
         mallAfterSales.setPayStatus(OrderEnum.PayStatus.PAYED);
         return mallAfterSalesRepository.saveAndFlush(mallAfterSales);
+    }
+
+    protected Operator mockOperator(MallCustomer mallCustomer) {
+        Operator operator = new Operator();
+        operator.setCustomer(mallCustomer);
+        operator.setCustomerType(mallCustomer.getCustomerType());
+        operator.setDeleted(false);
+        return operatorRepository.saveAndFlush(operator);
+    }
+
+    protected SupShopCat mockSupShopCat(MallCustomer mallCustomer){
+        SupShopCat shopCat = new SupShopCat();
+        shopCat.setParentId(0);
+        shopCat.setStoreId(mallCustomer.getStore().getId());
+        return supShopCatRepository.saveAndFlush(shopCat);
     }
 }

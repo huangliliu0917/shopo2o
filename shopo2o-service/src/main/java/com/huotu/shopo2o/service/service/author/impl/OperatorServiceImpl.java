@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -32,7 +33,9 @@ public class OperatorServiceImpl implements OperatorService {
         for (Authority authority : operator.getAuthoritySet()) {
             authoritiesStr += authority.getCode() + ",";
         }
-        operator.setAuthoritiesStr(authoritiesStr.substring(0, authoritiesStr.length() - 1));
+        if(!StringUtils.isEmpty(authoritiesStr)){
+            operator.setAuthoritiesStr(authoritiesStr.substring(0, authoritiesStr.length() - 1));
+        }
         return operator;
     }
 
