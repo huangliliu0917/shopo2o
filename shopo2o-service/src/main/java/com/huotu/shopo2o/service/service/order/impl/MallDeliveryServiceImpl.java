@@ -90,7 +90,7 @@ public class MallDeliveryServiceImpl implements MallDeliveryService {
             if (deliveryInfo.getRemark() != null && !"".equals(deliveryInfo.getRemark())) {
                 map.put("remark", deliveryInfo.getRemark());
             }
-            map.put("supplierId", customerId);
+            map.put("supplierId", customerId.intValue());
             map.put("dicDeliverItemsStr", dicDeliverItemsStr.substring(0, dicDeliverItemsStr.length() - 1));
             String sign = SignBuilder.buildSignIgnoreEmpty(map, null, SysConstant.SUPPLIER_KEY);
             map.put("sign", sign);
