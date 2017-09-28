@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.service.entity.author;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.enums.Authority;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
@@ -38,6 +39,7 @@ public class Operator implements UserDetails, Serializable {
 
     @ManyToOne
     @JoinColumn(name = "Customer_Id")
+    @JsonIgnore
     private MallCustomer customer;
 
     @Column(name = "CustomerType")

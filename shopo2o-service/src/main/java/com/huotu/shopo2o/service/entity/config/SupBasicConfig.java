@@ -29,11 +29,6 @@ public class SupBasicConfig implements Serializable{
     @Column(name = "Config_Id")
     private Integer id;
 
-    /**
-     * 供应商ID
-     */
-    @Column(name = "Supplier_Id")
-    private Integer supplierId;
     @Column(name = "Store_Id")
     private Long storeId;
 

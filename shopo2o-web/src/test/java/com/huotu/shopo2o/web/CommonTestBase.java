@@ -3,16 +3,20 @@ package com.huotu.shopo2o.web;
 import com.huotu.shopo2o.service.config.MallPasswordEncoder;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.author.Operator;
+import com.huotu.shopo2o.service.entity.config.SupBasicConfig;
+import com.huotu.shopo2o.service.entity.config.SupShopConfig;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.enums.AfterSaleEnum;
+import com.huotu.shopo2o.service.enums.Authority;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
+import com.huotu.shopo2o.service.repository.config.SupBasicConfigRepository;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.repository.order.MallDeliveryRepository;
 import com.huotu.shopo2o.service.repository.order.MallOrderRepository;
@@ -31,7 +35,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -58,6 +64,8 @@ public class CommonTestBase extends SpringWebTest {
     protected OperatorRepository operatorRepository;
     @Autowired
     protected SupShopCatRepository supShopCatRepository;
+    @Autowired
+    protected SupBasicConfigRepository supBasicConfigRepository;
     @Autowired
     protected MallPasswordEncoder passwordEncoder;
 
@@ -118,6 +126,10 @@ public class CommonTestBase extends SpringWebTest {
         operator.setCustomer(mallCustomer);
         operator.setCustomerType(mallCustomer.getCustomerType());
         operator.setDeleted(false);
+        Set<Authority> authorities = new HashSet<>();
+        authorities.add(Authority.STORE_ORDER);
+        authorities.add(Authority.SUPPLIER_SHOP);
+        operator.setAuthoritySet(authorities);
         return operatorRepository.saveAndFlush(operator);
     }
 
@@ -126,5 +138,18 @@ public class CommonTestBase extends SpringWebTest {
         shopCat.setParentId(0);
         shopCat.setStoreId(mallCustomer.getStore().getId());
         return supShopCatRepository.saveAndFlush(shopCat);
+    }
+    protected SupBasicConfig mockSupBasicConfig(Store store,SupShopConfig supShopConfig){
+        SupBasicConfig supBasicConfig = new SupBasicConfig();
+        supBasicConfig.setStoreId(store.getId());
+        supBasicConfig.setShopConfig(supShopConfig);
+        return supBasicConfigRepository.saveAndFlush(supBasicConfig);
+    }
+    protected SupShopConfig mockSupShopConfig(){
+        SupShopConfig supShopConfig = new SupShopConfig();
+        supShopConfig.setShopName(UUID.randomUUID().toString());
+        supShopConfig.setDisabled(false);
+        supShopConfig.setShopLogo(UUID.randomUUID().toString());
+        return supShopConfig;
     }
 }

@@ -68,10 +68,9 @@ public class OperatorControllerTest extends CommonTestBase {
     }
     @Test
     public void testShowOperators()throws Exception{
-        // TODO: 2017-09-26 请求报错有待修改
-//        MockHttpSession mockHttpSession = loginAs(userName, passWord);
-//        MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/"+operators.get(0).getId()).session(mockHttpSession))
-//                .andExpect(status().isOk())
-//                .andReturn();
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        mockMvc.perform(post(BASE_URL + "/"+operators.get(0).getId()).session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }

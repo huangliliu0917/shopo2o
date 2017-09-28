@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by hxh on 2017-09-11.
@@ -30,8 +31,13 @@ public class OperatorServiceImpl implements OperatorService {
     public Operator findById(Long id) {
         Operator operator = operatorRepository.findOne(id);
         String authoritiesStr = "";
-        for (Authority authority : operator.getAuthoritySet()) {
-            authoritiesStr += authority.getCode() + ",";
+        Set<Authority> authoritySet = operator.getAuthoritySet();
+        for (Authority authority : authoritySet) {
+            if(authority!=null){
+                authoritiesStr += authority.getCode() + ",";
+            }else {
+                authoritySet.remove(authority);
+            }
         }
         if(!StringUtils.isEmpty(authoritiesStr)){
             operator.setAuthoritiesStr(authoritiesStr.substring(0, authoritiesStr.length() - 1));

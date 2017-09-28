@@ -13,7 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -44,12 +48,12 @@ public class OperatorController {
         return "operator/operator_list";
     }
 
-    @RequestMapping(value = "/{operatorId}")
+    @RequestMapping("/{operatorId}")
     @ResponseBody
     public ApiResult showOperators(@PathVariable Long operatorId) {
         Operator operator = operatorService.findById(operatorId);
         if (operator == null) {
-            return ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST);
+            return ApiResult.resultWith(ResultCodeEnum.DATA_NULL);
         }
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS, operator);
     }
