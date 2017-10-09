@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -72,13 +71,12 @@ public class ShopController {
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
     @RequestMapping("/modifyCat/{catId}")
-    public String  modifyCat(@LoginUser MallCustomer customer, @PathVariable Integer catId) {
-        ModelAndView modelAndView = new ModelAndView();
+    public String  modifyCat(@LoginUser MallCustomer customer, @PathVariable Integer catId,Model model) {
         List<SupShopCat> catList = supShopCatService.findTopCatByStoreId(customer.getCustomerId());
         SupShopCat supShopCat = supShopCatService.findByCatId(catId);
         supShopCat = setImgUri(supShopCat);
-        modelAndView.addObject("catList", catList);
-        modelAndView.addObject("updateCat", supShopCat);
+        model.addAttribute("catList", catList);
+        model.addAttribute("updateCat", supShopCat);
         return "shop/shop_add";
     }
     @RequestMapping("/removeCat/{catId}")

@@ -94,6 +94,7 @@ public class DeliveryController {
             @LoginUser MallCustomer mallCustomer,
             DeliveryInfo deliveryInfo
     ) throws Exception {
+        // TODO: 2017-10-09 发货提示签名无效
         return mallDeliveryService.pushDelivery(deliveryInfo,mallCustomer.getCustomerId());
     }
     @RequestMapping("/deliveryInfo")

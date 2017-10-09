@@ -4,10 +4,12 @@ import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
+import com.huotu.shopo2o.service.repository.store.SupShopCatRepository;
 import com.huotu.shopo2o.web.CommonTestBase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -23,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by hxh on 2017-09-26.
  */
 public class ShopControllerTest extends CommonTestBase {
+    @Autowired
+    private SupShopCatRepository supShopCatRepository;
     private static String BASE_URL = "/shop";
     private MallCustomer user;
     private String userName;
@@ -65,5 +69,34 @@ public class ShopControllerTest extends CommonTestBase {
         for (int i = 10; i < supShopCats.size(); i++) {
             Assert.assertEquals(catList.get(i).getCatId(), supShopCats.get(i).getCatId());
         }
+    }
+
+    @Test
+    public void testCatDetail() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        mockMvc.perform(post(BASE_URL + "/catDetail/" + supShopCats.get(0).getCatId()).session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void testCatDelete() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        mockMvc.perform(post(BASE_URL + "/removeCat/" + supShopCats.get(0).getCatId()).session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        Assert.assertTrue(supShopCatRepository.findAll().size() + 1 == supShopCats.size());
+    }
+
+    @Test
+    public void testModifyCat() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/modifyCat/" + supShopCats.get(0).getCatId()).session(mockHttpSession))
+                .andExpect(model().attributeExists("catList"))
+                .andExpect(model().attributeExists("updateCat"))
+                .andExpect(status().isOk())
+                .andReturn();
+        SupShopCat catList = (SupShopCat) mvcResult.getModelAndView().getModel().get("updateCat");
+        Assert.assertTrue(catList.getCatId() == supShopCats.get(0).getCatId());
     }
 }
