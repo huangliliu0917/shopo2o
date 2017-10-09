@@ -490,6 +490,10 @@ var mapHandler = {
                     regionMarkers = []; //划分配配送范围点
                     regionMarkerIndex = 2; //划分配送范围点序号
                     regionMarkerPosition = {}; //划分配送范围点集合
+                    regionMarkerPosition[1] = {};
+                    regionMarkerPosition[1]['number'] = 1;
+                    regionMarkerPosition[1]['deletable'] = 0;
+                    regionMarkerPosition[1]['lngLat'] = storeMarker.getPosition();
                     regionRegionDivision = {}; //配送区域集合
                     RegionListObj = {};
                     $("#J_regionList").html('');
@@ -544,11 +548,8 @@ var mapHandler = {
     },
     //开始编辑配送区域
     editRegionDistribution: function(){
-        if (!!editor.polylineEditor) {
-            editor.polylineEditor.open();
-        } else {
+        if(mouseTool == undefined){
             mouseTool = new AMap.MouseTool(sendAreaMap);
-            mouseTool.polygon();
             mouseTool.on('draw', function (type, obj) {
                 layer.confirm('确认添加配送区域', {
                     btn: ['确定', '取消']
@@ -577,6 +578,11 @@ var mapHandler = {
                 });
             });
         }
+        if (!!editor.polylineEditor) {
+            editor.polylineEditor.open();
+        } else {
+            mouseTool.polygon();
+        }
     },
     saveRegionDistribution: function (obj) {
         //保存前先判断点是否在区域内
@@ -594,7 +600,8 @@ var mapHandler = {
             sendAreaMap.remove(regionMarkers[i]);
         }
         //先把画图的给关掉
-        mouseTool.close();
+        if(mouseTool != undefined)
+            mouseTool.close();
         regionMarkers = [];
         regionMarkerIndex = 2;
         var distributionRegions = [];
@@ -630,10 +637,12 @@ var mapHandler = {
         layer.confirm('确定要删除配送范围吗', {
             btn: ['确定', '取消']
         }, function (index) {
-            mouseTool.close(true);
+            if(mouseTool != undefined)
+                mouseTool.close(true);
             if (editor.polylineEditor != undefined) {
                 editor.polylineEditor.close();
-                sendAreaMap.remove(editor.polylineEditor);
+                //删除所有多边形覆盖物
+                sendAreaMap.remove(sendAreaMap.getAllOverlays("polygon"));
                 editor.polylineEditor = null;
             }
             if (regionMarkers != null && regionMarkers.length > 0) {

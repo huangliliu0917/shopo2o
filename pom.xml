@@ -38,6 +38,13 @@
             <url>http://repo.51flashmall.com:8081/nexus/content/groups/public/</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo-huotu</id>
+            <name>Hot Repository</name>
+            <url>http://repo.51flashmall.com:8081/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <dependency>
@@ -167,7 +174,11 @@
             <version>${log4j2.version}</version>
         </dependency>
         <!--LOG END-->
-
+        <dependency>
+            <groupId>com.huotu.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.2.11-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
