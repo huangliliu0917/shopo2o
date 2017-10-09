@@ -594,7 +594,8 @@ var mapHandler = {
             sendAreaMap.remove(regionMarkers[i]);
         }
         //先把画图的给关掉
-        mouseTool.close();
+        if(mouseTool != undefined)
+            mouseTool.close();
         regionMarkers = [];
         regionMarkerIndex = 2;
         var distributionRegions = [];
