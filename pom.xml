@@ -174,11 +174,6 @@
             <version>${log4j2.version}</version>
         </dependency>
         <!--LOG END-->
-        <dependency>
-            <groupId>com.huotu.hibernate</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>5.2.11-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>

@@ -4,12 +4,10 @@ import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.author.Operator;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
-import com.huotu.shopo2o.service.repository.author.OperatorRepository;
 import com.huotu.shopo2o.web.CommonTestBase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -25,8 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by hxh on 2017-09-26.
  */
 public class OperatorControllerTest extends CommonTestBase {
-    @Autowired
-    private OperatorRepository operatorRepository;
     private static String BASE_URL = "/operator";
     private MallCustomer user;
     private String userName;
@@ -86,7 +82,6 @@ public class OperatorControllerTest extends CommonTestBase {
                 .param("operatorId", String.valueOf(operators.get(0).getId())))
                 .andExpect(status().isOk())
                 .andReturn();
-        Assert.assertTrue(operatorRepository.findAll().size() + 1 == operators.size());
     }
 
     @Test
