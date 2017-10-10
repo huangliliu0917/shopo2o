@@ -43,4 +43,6 @@ public class GoodsController {
         modelAndView.addObject("typeList", typeList);
         return modelAndView;
     }
+
+
 }
