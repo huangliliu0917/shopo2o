@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>发货单列表</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--goodType-->
+    <link href="../resource/3rdParty/css/goodtype.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/goodtype.css}"/>
+</head>
+<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmGoodsType>"*/-->
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>添加商品</h5></div>
+                <div class="ibox-content p-sm no-borders">
+                    <img style="margin-top: 5px;" src="../resource/images/step1b.jpg" th:src="@{/resource/images/step1b.jpg}" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content text-center p-md no-borders">
+                    <div class="row">
+                        <div class="col-sm-12 form-inline">
+                            <p class="text-left m-b-md" style="padding: 0 24px;">
+                                <label class="control-label">您最近使用的类目:</label>
+                                <select onchange="reloadType()" class="form-control input-sm m-l" id="cateLastUsed">
+                                    <option value="-1" selected="selected">--请选择--</option>
+                                    <option th:if="${lastUsedType!=null and lastUsedType.size() > 0}"
+                                            th:each="type:${lastUsedType}" th:value="${type.standardTypeId}"
+                                            th:text="${type.pathStr}"></option>
+                                </select>
+                            </p>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="cate-cascading">
+                                <div id="parentTidDiv" class="cc-listwrap">
+                                    <div class="cc-list-item" name="first-level-type">
+                                        <div class="cc-cbox" style="border-top:0px solid #ccc;">
+                                            <ul class ="list-unstyled">
+                                                <li style="border-bottom: 1px solid #ddd">
+                                                    <input type="text" placeholder="请输入分类名称,并回车" onchange="typeSearchChange(this)"
+                                                           style="border: 0px;padding: 10px; width: 193px"/>
+                                                </li>
+                                                <!--/*@thymesVar id="typeList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmGoodsType>"*/-->
+                                                <li th:each="type:${typeList}" th:id="'tid_'+ ${type.standardTypeId}"
+                                                    class="cc-tree-item" th:classappend="${type.parent==true?'cc-hasChild-item':''}"
+                                                    th:attr="isparent=${type.parent},standardTypeId=${type.standardTypeId}" th:text="${type.name}"
+                                                    onclick="typeLiClick(this)"
+                                                ></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div style="height: 100%" data-ct-tid="" class="containerSub"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12 text-center m-t">
+                            <button type="button" class="btn btn-success btn-sm" onclick="submitGoodType()">下一步</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="tempTypeList">
+    <div class="cc-list-item" style=" border-right:1px solid #ddd" parent-id="${parentId}">
+        <div class="cc-cbox" style="border-top:0px solid #ccc;">
+            <ul class ="list-unstyled">
+                <li style="border-bottom: 1px solid #ddd">
+                    <input type="text" placeholder="请输入分类名称,并回车" onchange="typeSearchChange(this)"
+                           style="border: 0px;padding: 10px; width: 193px"/>
+                </li>
+                {$typeList$}
+            </ul>
+        </div>
+    </div>
+</script>
+<script type="text/html" id="typeItem">
+    <li id="tid_{standardTypeId}" class="cc-tree-item{hasChildClass}" isparent="{isparent}" standardTypeId="{standardTypeId}"
+        onclick="typeLiClick(this)">{typeName}</li>
+</script>
+
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+
+<script src="../resource/3rdParty/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resource/3rdParty/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../resource/3rdParty/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resource/3rdParty/hot/bootstrap.hot.extra-init.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    //选中的标准类目ID
+    var stId;
+    var goodUrl = /*[[@{/good}]]*/"/good";
+    var isParent = false;
+    //分类点击事件
+    function typeLiClick(obj){
+        //设置父路径下 选中的li 为非选中状态
+        var selectType = $(obj);
+        var oldSelectType = $(selectType).parent().find("li[class~=cc-selected]");
+        if(oldSelectType.length != 0){
+            oldSelectType.removeClass('cc-selected cc-focused');
+            var oldSelectIsParent = oldSelectType.attr('isparent');
+            if(oldSelectIsParent.indexOf('true')>-1){
+                oldSelectType.addClass('cc-hasChild-item');
+            }
+        }
+        //设置当前类型为选中状态
+        $(selectType).addClass('cc-selected cc-focused');
+        $(selectType).removeClass('cc-hasChild-item');
+        isParent = $(selectType).attr("isparent");
+        stId = $(selectType).attr('standardTypeId');
+        if(isParent.indexOf("true") <= -1){
+            $(selectType).parents('div[class~=cc-list-item]').nextAll().remove();
+        }else{
+            hot.loading.show();
+            hot.ajax(goodUrl + "/getType",{standardTypeId: stId},function (msg) {
+                if (msg.code == 200) {
+                    var typeList = eval(msg.data);
+                    if (typeList != undefined) {
+                        createTidSelect(typeList,selectType);
+                    }
+                } else {
+                    hot.tip.error(msg.msg);
+                }
+            },function(){},'post');
+        }
+    }
+    //搜索事件
+    function typeSearchChange(obj){
+        var searchKeyWord = $(obj).val();
+        var isChecked = false;
+        $(obj).parent().nextAll('li').each(function(){
+            //是否有符合条件的选中值，如果没有移除 cc-list-item 的 兄弟节点
+            if($(this).text().indexOf(searchKeyWord) <= -1){
+                $(this).hide();
+            }else if($(this).text().indexOf(searchKeyWord) > -1 || searchKeyWord == ''){
+                if($(this).hasClass('cc-selected')){
+                    isChecked = true;
+                }
+                $(this).show();
+            }
+
+        })
+        if(isChecked == false){
+            $(obj).parents('div[class~=cc-list-item]').nextAll().remove();
+        }
+    }
+
+    //根据客户选择的最近使用类目，重新加载
+    function reloadType() {
+        var standardTypeId = $("#cateLastUsed").val();
+        if(standardTypeId.length == 0){
+            hot.tip.error("请选择类目");
+            return;
+        }
+        //清除一级类目之后的类目
+        $("div[name=first-level-type]").nextAll().remove();
+        hot.loading.show();
+        hot.ajax(goodUrl + "/getPathType",{
+            standardTypeId: standardTypeId
+        },function (msg) {
+            if (msg.code == 200) {
+                var typeList = eval(msg.data);
+                if (typeList != undefined) {
+                    var tempTypeList = [];
+                    var parentId = "0";
+                    var grandParentId = "0";
+                    for (var i = 0; i < typeList.length; i++) {
+                        if (parentId != typeList[i].parentStandardTypeId) {
+                            if (typeof(tempTypeList) != 'undefined' && tempTypeList.length > 0) {
+                                createTidSelect(tempTypeList,null);
+                            }
+                            grandParentId = parentId;
+                            parentId = typeList[i].parentStandardTypeId;
+                            tempTypeList = [];
+                            var oldSelectType = $("#tid_" + parentId).parent().find("li[class~=cc-selected]");
+                            if(oldSelectType.length != 0){
+                                oldSelectType.removeClass('cc-selected cc-focused');
+                                var oldSelectIsParent = oldSelectType.attr('isparent');
+                                if(oldSelectIsParent.indexOf('true')>-1){
+                                    oldSelectType.addClass('cc-hasChild-item');
+                                }
+                            }
+                            $("#tid_" + parentId).addClass('cc-selected cc-focused');
+                            $("#tid_" + parentId).removeClass('cc-hasChild-item');
+                            var container = $("#tid_" + parentId).parents('div[class~=cc-cbox]'), scrollTo = $("#tid_" + parentId);
+                            //设置滚动条
+                            container.animate({scrollTop: scrollTo.offset().top - container.offset().top * 3 / 2}, 1000);
+
+                        }
+                        tempTypeList.push(typeList[i]);
+                    }
+                    if (typeof(tempTypeList) != 'undefined' && tempTypeList.length > 0) {
+                        createTidSelect(tempTypeList, parentId, grandParentId);
+                    }
+                    $("#tid_" + standardTypeId).addClass("cc-selected cc-focused");
+                    $("#tid_" + standardTypeId).removeClass("cc-hasChild-item");
+                    var container = $("#tid_" + standardTypeId).parents('div[class~=cc-cbox]'), scrollTo = $("#tid_" + standardTypeId);
+                    //设置滚动条
+                    container.animate({scrollTop: scrollTo.offset().top - container.offset().top * 3 / 2}, 1000);
+                    isParent = $("#tid_" + standardTypeId).attr('isparent');
+                    stId = standardTypeId;
+                }
+            } else {
+                hot.tip.error(msg.msg);
+                setTimeout(function(){
+                    window.location.reload();
+                },500);
+            }
+        },function(){},'post');
+    }
+    //创建类目下拉菜单
+    function createTidSelect(typeList,selectType) {
+        //删除 cc-list-item 后的li
+        if(selectType != null){
+            $(selectType).parents('div[class~=cc-list-item]').nextAll().remove();
+        }
+        if('undefined' != typeList){
+            var i;
+            var typeRow = [];
+            for(i in typeList){
+                var tempRow = $("#typeItem").html();
+                tempRow = tempRow.replace(/\{standardTypeId\}/ig, typeList[i]['standardTypeId']);
+                tempRow = tempRow.replace("{isparent}",typeList[i]['parent']);
+                tempRow = tempRow.replace("{typeName}",typeList[i]['name']);
+                if(typeList[i]['parent'] == true){
+                    tempRow = tempRow.replace("{hasChildClass}",' cc-hasChild-item');
+                }else{
+                    tempRow = tempRow.replace("{hasChildClass}",'');
+                }
+                typeRow.push(tempRow);
+            }
+        }
+        var tempTypeLi = $("#tempTypeList").html()
+        tempTypeLi = tempTypeLi.replace("{$typeList$}", typeRow.join(''));
+        $("#parentTidDiv").append(tempTypeLi);
+    }
+    //确定类型，开始新建商品
+    function submitGoodType() {
+        if (stId == null) {
+            hot.tip.error("请选择商品类型");
+            return;
+        } else if (isParent.indexOf('true') > -1) {
+            hot.tip.error("请选择下级分类");
+            return;
+        }
+        location.href = goodUrl + "/addGood?version=V2&standardTypeId=" + stId;
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
