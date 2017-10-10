@@ -2,6 +2,7 @@ package com.huotu.shopo2o.service.repository.good;
 
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 

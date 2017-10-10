@@ -60,7 +60,7 @@ public class HbmSupplierGoods {
      * 门店id
      */
     @Column(name = "Store_Id")
-    private int storeId;
+    private long storeId;
     /**
      * 缩略图
      */

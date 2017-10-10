@@ -244,7 +244,7 @@
 </head>
 <body>
 <!--/*-->
-<!--@thymesVar id="hbmSupplierGoodsSearcher" type="com.huotu.hotsupplier.hbm.service.model.goods.HbmSupplierGoodsSearcher"-->
+<!--@thymesVar id="hbmSupplierGoodsSearcher" type="com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher"-->
 <!--*/-->
 <form method="post" action="showGoodsList" id="form1" th:object="${hbmSupplierGoodsSearcher}" >
     <div class="container">
@@ -284,7 +284,7 @@
                                     <select id="catId" name="supplierCatId">
                                         <option value="-1" th:selected="*{supplierCatId == -1}">根目录</option>
                                         <option value="0" th:selected="*{supplierCatId == 0}">未分类</option>
-                                        <!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat>"*/-->
+                                        <!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.entity.store.SupShopCat>"*/-->
                                         <th:block th:each="cat:${shopCatList}">
                                             <option th:value="${cat.catId}" th:text="'&nbsp;&nbsp;└ ' + ${cat.catName}" th:selected = "${hbmSupplierGoodsSearcher.supplierCatId == cat.catId}"></option>
                                             <!--最多显示2级-->
@@ -305,7 +305,7 @@
                             <label class="first">&nbsp;状态：
                                 <select id="status" name="status">
                                     <option selected="selected" value="-1" th:selected="*{status == -1}">--请选择--</option>
-                                    <!--/*@thymesVar id="checkStatusEnums" type="com.huotu.hotsupplier.hbm.service.common.SupplierGoodsStatusEnum.CheckStatusEnum"*/-->
+                                    <!--/*@thymesVar id="checkStatusEnums" type="com.huotu.shopo2o.service.enums.CheckStatusEnum"*/-->
                                     <option th:each="checkStatus:${checkStatusEnums}" th:value="${checkStatus.code}" th:text="${checkStatus.value}" th:selected="${checkStatus.code == hbmSupplierGoodsSearcher.status}">未提交审核</option>
                                 </select>
                             </label>
@@ -378,7 +378,7 @@
                         </thead>
                         <tbody th:remove="all-but-first">
                         <!--/*-->
-                        <!--@thymesVar id="goodsList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmSupplierGoods>"-->
+                        <!--@thymesVar id="goodsList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSupplierGoods>"-->
                         <!--*/-->
                         <tr th:each="goods:${goodsList}">
                             <td class=" txt40 c" style="width: 15px;" th:text="${goodsStat.count}">
