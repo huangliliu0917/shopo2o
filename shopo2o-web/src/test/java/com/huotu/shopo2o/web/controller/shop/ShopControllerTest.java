@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.web.controller.shop;
 
+import com.alibaba.fastjson.JSON;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +30,7 @@ public class ShopControllerTest extends CommonTestBase {
     private String userName;
     private String passWord;
     List<SupShopCat> supShopCats = new ArrayList<>();
+    SupShopCat addCat;
 
     @Before
     public void setInfo() throws Exception {
@@ -50,6 +53,7 @@ public class ShopControllerTest extends CommonTestBase {
             SupShopCat shopCat = mockSupShopCat(user);
             supShopCats.add(shopCat);
         }
+        addCat = mockSupShopCatWithoutSave(user);
     }
 
     @Test
@@ -93,5 +97,15 @@ public class ShopControllerTest extends CommonTestBase {
                 .andReturn();
         SupShopCat catList = (SupShopCat) mvcResult.getModelAndView().getModel().get("updateCat");
         Assert.assertTrue(catList.getCatId() == supShopCats.get(0).getCatId());
+    }
+
+    @Test
+    public void testAddCat() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        mockMvc.perform(post(BASE_URL + "/addCat").session(mockHttpSession)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSON.toJSONString(addCat)))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 }

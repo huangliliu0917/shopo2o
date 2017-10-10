@@ -139,6 +139,12 @@ public class CommonTestBase extends SpringWebTest {
         shopCat.setStoreId(mallCustomer.getStore().getId());
         return supShopCatRepository.saveAndFlush(shopCat);
     }
+    protected SupShopCat mockSupShopCatWithoutSave(MallCustomer mallCustomer){
+        SupShopCat shopCat = new SupShopCat();
+        shopCat.setParentId(0);
+        shopCat.setStoreId(mallCustomer.getStore().getId());
+        return shopCat;
+    }
     protected SupBasicConfig mockSupBasicConfig(Store store,SupShopConfig supShopConfig){
         SupBasicConfig supBasicConfig = new SupBasicConfig();
         supBasicConfig.setStoreId(store.getId());
