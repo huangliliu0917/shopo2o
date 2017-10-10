@@ -25,8 +25,8 @@
     <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/SearchableSelect/jquery.searchableSelect-1.0.0.css"
           rel="stylesheet"/>
     <!--goodType-->
-    <link href="../resource/3rdParty/css/goodtype.css" rel="stylesheet" type="text/css"
-          th:href="@{/resource/3rdParty/css/goodtype.css}"/>
+    <link href="../../resources/3rdParty/css/goodtype.css" rel="stylesheet" type="text/css"
+          th:href="@{/resources/3rdParty/css/goodtype.css}"/>
     <style>
         .xzh.on {
             border: 1px solid #FFD400;
@@ -59,8 +59,8 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-content p-sm no-borders">
-                    <img style="margin-top: 5px;" src="../resource/images/step1b.jpg"
-                         th:src="@{/resource/images/step2b.jpg}"/>
+                    <img style="margin-top: 5px;" src="../../resources/images/step1b.jpg"
+                         th:src="@{/resources/images/step2b.jpg}"/>
                     <div style="text-align: right; float: right;">
                         <button type="button" onclick="javascript:returnTypeSelect()"
                                 class="btn btn-success m-b-none">重新选择类目
@@ -216,7 +216,7 @@
                                                 <li style="position: relative;" id="more_img">
                                                     <div class="div_upload jUploader-button" id="uploadPicDefault"
                                                          style="width: 92px; height: 92px; border: 1px solid rgb(239, 226, 238); cursor: pointer; position: relative; overflow: hidden; direction: ltr;"
-                                                         th:styleappend="'background: url(\''+@{/resource/3rdParty/images/jia.jpg}+'\');'"
+                                                         th:styleappend="'background: url(\''+@{/resources/3rdParty/images/jia.jpg}+'\');'"
                                                          title="上传图片"
                                                          onclick="javascript:configHandler.uploadImg();"></div>
                                                 </li>
@@ -502,7 +502,7 @@
     <li style="list-style-type:none;position:relative;float: left" id="li_img{imgNum}" name="liImageItem">
         <a style="cursor: pointer;" onclick="configHandler.deletePhoto(this)" title="点击删除当前图片">
             <div style="position: absolute; z-index: 99; right:4px;top:4px;">
-                <img src="../resource/images/colos.png"/>
+                <img src="../../resources/images/colos.png"/>
             </div>
         </a>
         <div id="uploadpic{imgNum}" class="div_upload" onclick="updateUpload('uploadpic{imgNum}',0)">
@@ -607,22 +607,22 @@
 <!--valid-->
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
 <script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
-<script src="../resource/3rdParty/hot/bootstrap.hot.extra-utils.js"
-        th:src="@{/resource/3rdParty/hot/bootstrap.hot.extra-utils.js}"></script>
-<script src="../resource/3rdParty/hot/bootstrap.hot.extra-init.js"
-        th:src="@{/resource/3rdParty/hot/bootstrap.hot.extra-init.js}"></script>
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-init.js}"></script>
 <!--ueditor-->
-<script src="../resource/3rdParty/ueditor/ueditor.config.js" type="text/javascript"
-        th:src="@{/resource/3rdParty/ueditor/ueditor.config.js}"></script>
-<script src="../resource/3rdParty/ueditor/ueditor.all.js" type="text/javascript"
-        th:src="@{/resource/3rdParty/ueditor/ueditor.all.js}"></script>
+<script src="../../resources/3rdParty/ueditor/ueditor.config.js" type="text/javascript"
+        th:src="@{/resources/3rdParty/ueditor/ueditor.config.js}"></script>
+<script src="../../resources/3rdParty/ueditor/ueditor.all.js" type="text/javascript"
+        th:src="@{/resources/3rdParty/ueditor/ueditor.all.js}"></script>
 <!--ueditor-->
 <!--带搜索框的下拉菜单-->
-<script type="text/javascript" src="../resource/3rdParty/searchableSelector/jquery.searchableSelect.js"
-        th:src="@{/resource/3rdParty/searchableSelector/jquery.searchableSelect.js}"></script>
+<script type="text/javascript" src="../../resources/3rdParty/searchableSelector/jquery.searchableSelect.js"
+        th:src="@{/resources/3rdParty/searchableSelector/jquery.searchableSelect.js}"></script>
 
-<script type="text/javascript" src="../resource/js/goods/goods.js"
-        th:src="@{/resource/js/goods/goods.js}"></script>
+<script type="text/javascript" src="../../resources/js/goods/goods.js"
+        th:src="@{/resources/js/goods/goods.js}"></script>
 <script type="text/javascript" th:inline="javascript">
     var imgNum = 0;
     var fileUri = "";
@@ -707,7 +707,7 @@
                 closeBtn: 1,
                 area: ['920px', '640px'],
                 //width=-1表示正方形图片
-                content: "/resource/3rdParty/Picture/gallery.html?customerId=" + supplierId + "&isMult=false&domain=" + domain + "&isapi=1&width=-1&uploaderUri=" + uploadImageUrl,
+                content: "/resources/3rdParty/Picture/gallery.html?customerId=" + supplierId + "&isMult=false&domain=" + domain + "&isapi=1&width=-1&uploaderUri=" + uploadImageUrl,
                 //btn:["确定"],
                 end: function (index, layero) {
                     var jsonStr = $("#js_cms_picture_value").val();
