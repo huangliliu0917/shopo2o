@@ -57,6 +57,11 @@ public class HbmSupplierGoods {
     @Column(name = "Supplier_Id")
     private int supplierId;
     /**
+     * 门店id
+     */
+    @Column(name = "Store_Id")
+    private int storeId;
+    /**
      * 缩略图
      */
     @Column(name = "Thumbnail_Pic")
