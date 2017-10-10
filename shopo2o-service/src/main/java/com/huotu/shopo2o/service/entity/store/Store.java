@@ -6,12 +6,21 @@ import com.huotu.shopo2o.service.entity.support.LngLatListConverter;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Cacheable;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 线下门店。非代理商门店
@@ -22,7 +31,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Cacheable(false)
-public class Store {
+public class  Store {
 
     @Id
     @Column(name = "Store_Id")
