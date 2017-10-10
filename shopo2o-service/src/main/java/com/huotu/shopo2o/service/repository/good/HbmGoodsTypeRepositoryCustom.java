@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface HbmGoodsTypeRepositoryCustom {
 
-    List<HbmGoodsType> getLastUsedByStoreId(int storeId);
+    List<HbmGoodsType> getLastUsedByStoreId(Long storeId);
 
-    List<HbmGoodsType> getAllUsedByStoreId(int storeId);
+    List<HbmGoodsType> getAllUsedByStoreId(Long storeId);
 }

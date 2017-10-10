@@ -19,14 +19,14 @@ public class HbmGoodsTypeRepositoryImpl implements HbmGoodsTypeRepositoryCustom 
     protected JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<HbmGoodsType> getLastUsedByStoreId(int storeId) {
+    public List<HbmGoodsType> getLastUsedByStoreId(Long storeId) {
         String sql = "SELECT DISTINCT c.* FROM (SELECT top 10 a.* FROM Mall_Supplier_Goods a ORDER BY a.Supplier_Goods_Id DESC) AS b " +
                 ", Mall_Goods_Type c WHERE b.Type_Id = c.Type_Id AND b.Store_Id = " + storeId;
         return getTypeList(sql);
     }
 
     @Override
-    public List<HbmGoodsType> getAllUsedByStoreId(int storeId) {
+    public List<HbmGoodsType> getAllUsedByStoreId(Long storeId) {
         String sql = "SELECT DISTINCT b.* FROM Mall_Supplier_Goods a " +
                 ", Mall_Goods_Type b WHERE a.Type_Id = b.Type_Id AND a.Store_Id = " + storeId;
         return getTypeList(sql);

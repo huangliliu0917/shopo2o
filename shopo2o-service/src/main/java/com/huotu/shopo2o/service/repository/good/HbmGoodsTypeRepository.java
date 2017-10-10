@@ -9,7 +9,10 @@ import java.util.List;
 /**
  * Created by luyuanyuan on 2017/10/10.
  */
+@Repository
 public interface HbmGoodsTypeRepository extends JpaRepository<HbmGoodsType, Integer>, HbmGoodsTypeRepositoryCustom{
 
     List<HbmGoodsType> findByParentStandardTypeIdAndDisabledAndCustomerIdOrderByTOrderAsc(String parentStandardTypeId, boolean b, int i);
+
+    HbmGoodsType findByStandardTypeId(String standardTypeId);
 }

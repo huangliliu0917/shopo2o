@@ -10,5 +10,9 @@ import java.util.List;
 public interface HbmGoodsTypeService {
     List<HbmGoodsType> getGoodsTypeByParentId(String parentStandardTypeId);
 
-    List<HbmGoodsType> getGoodsTypeLastUsed(Long customerId);
+    List<HbmGoodsType> getGoodsTypeLastUsed(Long storeId);
+
+    String getTypePath(HbmGoodsType type);
+
+    HbmGoodsType getGoodsTypeByStandardTypeId(String standardTypeId);
 }
