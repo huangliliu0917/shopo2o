@@ -429,6 +429,16 @@ public class GoodsControllerTest extends CommonTestBase {
         String content4 = new String(result4.getResponse().getContentAsByteArray(), "UTF-8");
         JSONObject obj4 = JSONObject.parseObject(content4);
         Assert.assertEquals(200, obj4.get("code"));
+
+        MvcResult result5 = mockMvc.perform(post(BASE_URL + "/updateGoodStatus")
+                .session(session)
+                .param("goodsId", String.valueOf(mockSupplierGoodsChecked.getSupplierGoodsId()))
+                .param("status", "4"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content5 = new String(result5.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj5 = JSONObject.parseObject(content5);
+        Assert.assertEquals(200, obj5.get("code"));
     }
 
 }
