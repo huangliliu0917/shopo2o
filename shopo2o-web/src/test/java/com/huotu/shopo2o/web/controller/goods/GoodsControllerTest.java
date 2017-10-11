@@ -313,7 +313,7 @@ public class GoodsControllerTest extends CommonTestBase {
         MvcResult result1 = mockMvc.perform(post(BASE_URL + "/showGoodsList")
                 .session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(view().name("goods/goodsList"))
                 .andReturn();
         List<HbmSupplierGoods> goodsList1 = (List<HbmSupplierGoods>) result1.getModelAndView().getModel().get("goodsList");
         Assert.assertEquals(3, goodsList1.size());
@@ -336,7 +336,7 @@ public class GoodsControllerTest extends CommonTestBase {
                 .session(mockHttpSession)
                 .param("status", String.valueOf(searcher.getStatus())))
                 .andExpect(status().isOk())
-                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(view().name("goods/goodsList"))
                 .andExpect(model().attribute("totalRecords", exceptGoods.getTotalElements()))
                 .andExpect(model().attribute("totalPages", exceptGoods.getTotalPages()))
                 .andReturn();
@@ -352,7 +352,7 @@ public class GoodsControllerTest extends CommonTestBase {
                 .session(mockHttpSession)
                 .param("status", String.valueOf(searcher.getStatus())))
                 .andExpect(status().isOk())
-                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(view().name("goods/goodsList"))
                 .andExpect(model().attribute("totalRecords", exceptGoods2.getTotalElements()))
                 .andExpect(model().attribute("totalPages", exceptGoods2.getTotalPages()))
                 .andReturn();
@@ -371,7 +371,7 @@ public class GoodsControllerTest extends CommonTestBase {
                 .param("pageNo", String.valueOf(searcher.getPageNo()))
                 .session(mockHttpSession))
                 .andExpect(status().isOk())
-                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(view().name("goods/goodsList"))
                 .andExpect(model().attribute("totalRecords", exceptGoods3.getTotalElements()))
                 .andExpect(model().attribute("totalPages", exceptGoods3.getTotalPages()))
                 .andReturn();
@@ -439,6 +439,47 @@ public class GoodsControllerTest extends CommonTestBase {
         String content5 = new String(result5.getResponse().getContentAsByteArray(), "UTF-8");
         JSONObject obj5 = JSONObject.parseObject(content5);
         Assert.assertEquals(200, obj5.get("code"));
+    }
+
+    /**
+     * 删除商品
+     * @throws Exception
+     */
+    @Test
+    public void deleteGood() throws Exception {
+        MockHttpSession session = loginAs(userName, passWord);
+
+        //goodsId 为空
+        MvcResult result1 = mockMvc.perform(post(BASE_URL + "/deleteGood")
+                .session(session))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content1 = new String(result1.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj1 = JSONObject.parseObject(content1);
+        Assert.assertEquals("没有传输数据", obj1.get("msg"));
+
+        //goodsId 不存在
+        MvcResult result2 = mockMvc.perform(post(BASE_URL + "/deleteGood")
+                .session(session)
+                .param("goodsId", String.valueOf(mockSupplierGoods.getSupplierGoodsId() + 100))
+                .param("status", "1"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content2 = new String(result2.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj2 = JSONObject.parseObject(content2);
+        Assert.assertEquals("商品编号错误！", obj2.get("msg"));
+
+        //3.存储的数据的正确性
+        MvcResult result4 = mockMvc.perform(post(BASE_URL + "/deleteGood")
+                .session(session)
+                .param("goodsId", String.valueOf(mockSupplierGoods.getSupplierGoodsId())))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content4 = new String(result4.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj4 = JSONObject.parseObject(content4);
+        Assert.assertEquals("请求成功", obj4.get("msg"));
+        HbmSupplierGoods exceptGoods = goodsRepository.findOne(mockSupplierGoods.getSupplierGoodsId());
+        Assert.assertEquals(exceptGoods.isDisabled(), true);
     }
 
 }

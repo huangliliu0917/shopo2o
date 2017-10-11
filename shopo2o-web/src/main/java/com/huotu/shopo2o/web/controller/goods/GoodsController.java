@@ -208,7 +208,7 @@ public class GoodsController {
             modelAndView.setViewName("goods/storeManager");
             hbmSupplierGoodsSearcher.setMarketable(true);
         } else {
-            modelAndView.setViewName("goods/goodsListV2");
+            modelAndView.setViewName("goods/goodsList");
         }
         List<HbmGoodsType> typeList = hbmGoodsTypeService.getGoodsTypeLastUsed(customer.getCustomerId());
         List<SupShopCat> shopCatList = shopCatService.findByStoreId(customer.getCustomerId());
@@ -373,5 +373,29 @@ public class GoodsController {
             log.error("保存或更改商品失败", e);
         }
         return result;
+    }
+
+    /**
+     * 删除商品（disable）
+     *
+     * @param customer 登录的门店信息
+     * @param goodsId  商品ID
+     * @return 删除结果
+     */
+    @RequestMapping(value = "/deleteGood", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    @SuppressWarnings("UnusedDeclaration")
+    public ApiResult deleteGood(@LoginUser MallCustomer customer, Integer goodsId) {
+        ApiResult apiResult;
+        try {
+            if (goodsId == null) {
+                return ApiResult.resultWith(ResultCodeEnum.DATA_NULL);
+            }
+            apiResult = hbmSupplierGoodsService.disableGood(goodsId);
+        } catch (Exception e) {
+            apiResult = ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR);
+            log.error("更新商品状态失败", e);
+        }
+        return apiResult;
     }
 }

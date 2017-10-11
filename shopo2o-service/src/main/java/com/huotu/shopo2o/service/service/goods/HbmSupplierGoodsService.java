@@ -18,7 +18,7 @@ public interface HbmSupplierGoodsService {
     Page<HbmSupplierGoods> getGoodList(long storeId, HbmSupplierGoodsSearcher searcher);
 
     /**
-     * 修改供应商商品和货品审核状态
+     * 修改门店商品和货品审核状态
      * @param storeGoodsId
      * @param storeGoodsStatus
      * @param remark --备注
@@ -27,4 +27,12 @@ public interface HbmSupplierGoodsService {
     ApiResult updateSupplierGoodsStatus(int storeGoodsId, StoreGoodsStatusEnum.CheckStatusEnum storeGoodsStatus, String remark) throws Exception;
 
     ApiResult updateGood(HbmSupplierGoods goods,List<HbmSupplierProducts> productsList,List<HbmImage> imgList,int status) throws Exception;
+
+    /**
+     * 设置商品状态为无效
+     * @param storeGoodsId
+     * @return
+     * @throws Exception
+     */
+    ApiResult disableGood(int storeGoodsId) throws Exception;
 }

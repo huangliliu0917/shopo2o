@@ -341,4 +341,22 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
         imgService.batchUpdateImg(imgList, goods.getSupplierGoodsId());
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
+
+    @Override
+    public ApiResult disableGood(int storeGoodsId) throws Exception {
+        //找到该编号的商品
+        HbmSupplierGoods supplierGoods = supplierGoodsRepository.findOne(storeGoodsId);
+        if (supplierGoods == null) {
+            return new ApiResult("商品编号错误！");
+        }
+        //判断操作是否有权执行
+        if (supplierGoods.editable()) {
+            supplierGoods.setDisabled(true);
+            supplierGoods.setStatus(StoreGoodsStatusEnum.CheckStatusEnum.UNSUBMIT);
+            supplierGoodsRepository.save(supplierGoods);
+        } else {
+            return new ApiResult("该商品已审核通过，无法删除！");
+        }
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+    }
 }
