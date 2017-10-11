@@ -23,4 +23,6 @@ public interface HbmGoodsTypeService {
      * @return
      */
     HbmGoodsType getGoodsTypeWithBrandAndSpecByStandardTypeId(String standardTypeId,Long customerId);
+
+    HbmGoodsType getGoodsTypeWithBrandAndSpecByStandardTypeId(int typeId,Long customerId);
 }

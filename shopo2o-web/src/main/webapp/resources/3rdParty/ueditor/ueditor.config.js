@@ -133,7 +133,7 @@
     window.UEDITOR_CONFIG = {
 
         //为编辑器实例添加一个路径，这个不能被注释
-        UEDITOR_HOME_URL : "/resource/3rdParty/ueditor/"
+        UEDITOR_HOME_URL : "/resources/3rdParty/ueditor/"
 
         //图片上传配置区
         , imageUrl: "/supplier/uploadImage"            //图片上传提交地址

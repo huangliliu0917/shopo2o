@@ -186,7 +186,7 @@ specProductEditor.relateSpecToImages = function (obj) {
         var iframeWin = window[layero.find('iframe')[0]['name']];
         iframeWin.setImagesRelResult();
         var arrImages = specProductEditor.getExistGoodsImages(specValueId);
-        $("img[name=pro_spec_value_img_" +specValueId + "]").attr('src',(arrImages != null && arrImages.length > 0 ? arrImages[0].src : '/resource/images/dg2017.jpg'));
+        $("img[name=pro_spec_value_img_" +specValueId + "]").attr('src',(arrImages != null && arrImages.length > 0 ? arrImages[0].src : '/resources/images/dg2017.jpg'));
         layer.close(index);
     });
     /*J.PopupIFrame(url, "定义规格图片", 800, 470, "product_menu22", {"确定": true}, "auto", "", function (result) {

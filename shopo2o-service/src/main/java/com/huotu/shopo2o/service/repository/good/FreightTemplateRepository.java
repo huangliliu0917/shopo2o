@@ -28,6 +28,6 @@ public interface FreightTemplateRepository extends JpaRepository<FreightTemplate
      * @param customerId 平台ID
      * @return 查询结果
      */
-    @Query("select a from FreightTemplate a where a.customerId = ?1 or a.customerId = ?2")
+    @Query("select a from FreightTemplate a where a.storeId = ?1 or a.customerId = ?2")
     List<FreightTemplate> findByStoreIdAndCustomerId(Long storeId, Long customerId);
 }

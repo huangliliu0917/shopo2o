@@ -1,18 +1,21 @@
 package com.huotu.shopo2o.web.controller.goods;
 
+import com.alibaba.fastjson.JSONObject;
+import com.huotu.shopo2o.common.SysConstant;
 import com.huotu.shopo2o.common.ienum.EnumHelper;
+import com.huotu.shopo2o.common.ienum.UserTypeEnum;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
-import com.huotu.shopo2o.common.SysConstant;
-import com.huotu.shopo2o.common.ienum.UserTypeEnum;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.config.MallCustomerConfig;
 import com.huotu.shopo2o.service.entity.good.FreightTemplate;
 import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
+import com.huotu.shopo2o.service.entity.good.HbmImage;
 import com.huotu.shopo2o.service.entity.good.HbmSpecification;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
+import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.entity.user.UserLevel;
 import com.huotu.shopo2o.service.enums.StoreGoodsStatusEnum;
@@ -36,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -260,5 +264,114 @@ public class GoodsController {
             log.error("更新商品状态失败", e);
         }
         return apiResult;
+    }
+
+    /**
+     * 保存或更新商品
+     *
+     * @param customer         供应商登录信息
+     * @param hbmSupplierGoods 商品信息
+     * @param request          demo
+     *                         hidGoodsImagePath:  [{bigPic:'image/invoice/6139/20160104/201601042007322.jpg',smallPic:'image/invoice/6139/20160104/201601042007322.jpg',thumbPic:''}]
+     *                         specList:  [{"productId":"88","price":"60","cost":"50","mktPrice":"100","bn":"6139KGGq3EQ2-1","weight":"100","store":"100","pdtDesc":"乳白色,160\\/80(XS)","props":"[{\"SpecId\":\"2158\",\"SpecValueId\":\"9265\",\"SpecValue\":\"乳白色\"},{\"SpecId\":\"2159\",\"SpecValueId\":\"9281\",\"SpecValue\":\"160\\\\/80(XS)\"}]"}]
+     * @return 保存结果 {@link ApiResult}
+     * @throws Exception
+     */
+    @RequestMapping(value = "/updateGood", produces = "application/json")
+    @ResponseBody
+    public ApiResult updateGood(@LoginUser MallCustomer customer, HbmSupplierGoods hbmSupplierGoods, HttpServletRequest request) throws Exception {
+        ApiResult result = ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR);
+        String[] imgPath = request.getParameterValues("hidGoodsImagePath[]");
+        String[] imgId = request.getParameterValues("hidGoodsImageId[]");
+        if (imgPath == null) {
+            imgPath = request.getParameterValues("hidGoodsImagePath");
+            imgId = request.getParameterValues("hidGoodsImageId");
+        }
+        //校验商品名字，规格名序列化，规格内容序列化
+        if (hbmSupplierGoods.getName() == null || hbmSupplierGoods.getName().length() == 0) {
+            return new ApiResult("请输入商品名称！");
+        }
+        if (hbmSupplierGoods.getSpecDesc() == null || hbmSupplierGoods.getSpecDesc().length() == 0) {
+            return new ApiResult("请选择规格！");
+        }
+        if (imgPath == null || imgPath.length == 0) {
+            return new ApiResult("请上传图片！");
+        }
+        //货品信息
+        String specListStr = request.getParameter("specList");
+        if (specListStr == null || specListStr.length() == 0) {
+            return new ApiResult("货品未录入！");
+        }
+        //货品状态 0表示仅保存，1表示保存并提交
+        String goodStatus = request.getParameter("goodStatus");
+        if (!("0".equals(goodStatus) || "1".equals(goodStatus))) {
+            return ApiResult.resultWith(ResultCodeEnum.DATA_BAD_PARSER);
+        }
+        //如果商品没有设置返利，则默认为0
+        if(hbmSupplierGoods.getDisRebatePercent() == null){
+            hbmSupplierGoods.setDisRebatePercent(0D);
+        }
+        int status = Integer.parseInt(request.getParameter("goodStatus"));
+        try {
+            //属性及属性值
+            List<HbmSupplierProducts> specList = JSONObject.parseArray(specListStr, HbmSupplierProducts.class);
+            //主图
+            List<HbmImage> imgList = new ArrayList<>();
+            if (specList == null || specList.size() == 0) {
+                return new ApiResult("货品未录入！");
+            }
+            /*specList.stream().filter(p->StringUtil.isNotEmpty(p.getRebateLayerConfig())).forEach(p -> {
+                try {
+                    p.setRebateLayerConfig(URLDecoder.decode(p.getRebateLayerConfig(), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            });*/
+            hbmSupplierGoods.setStoreId(customer.getCustomerId());
+            //设置缩略图，小图，大图
+            if (imgPath.length > 0) {
+                JSONObject imgObj = JSONObject.parseObject(imgPath[0]);
+                hbmSupplierGoods.setThumbnailPic(imgObj.getString("thumbPic"));
+                hbmSupplierGoods.setSmallPic(imgObj.getString("smallPic"));
+                hbmSupplierGoods.setBigPic(imgObj.getString("bigPic"));
+                for (int i = 0; i < imgPath.length; i++) {
+                    HbmImage tempImg = new HbmImage();
+                    if (imgId != null && imgId.length > i && imgId[i] != null && imgId[i].length() > 0) {
+                        tempImg.setGimageId(Integer.parseInt(imgId[i]));
+                    }
+                    imgObj = JSONObject.parseObject(imgPath[i]);
+                    tempImg.setThumbnail(imgObj.getString("thumbPic"));
+                    tempImg.setSmall(imgObj.getString("smallPic"));
+                    tempImg.setBig(imgObj.getString("bigPic"));
+                    tempImg.setStoreId(customer.getCustomerId());
+                    imgList.add(tempImg);
+                }
+            }
+
+            //设置品牌
+            if (hbmSupplierGoods.getBrand() == null || hbmSupplierGoods.getBrand().getBrandId() == 0) {
+                hbmSupplierGoods.setBrand(null);
+            }
+            //设置运费模板
+            if (hbmSupplierGoods.getFreightTemplate() == null || hbmSupplierGoods.getFreightTemplate().getId() == 0) {
+                hbmSupplierGoods.setFreightTemplate(null);
+            }
+            //设置类目
+            if (hbmSupplierGoods.getType() != null && hbmSupplierGoods.getType().getTypeId() != 0) {
+                HbmGoodsType type = hbmGoodsTypeService.getGoodsTypeWithBrandAndSpecByStandardTypeId(hbmSupplierGoods.getType().getTypeId(), customer.getStore().getCustomer().getCustomerId());
+                hbmSupplierGoods.setType(type);
+            }
+            //设置店铺分类
+            if (hbmSupplierGoods.getShopCat() != null && hbmSupplierGoods.getShopCat().getCatId() > 0) {
+                SupShopCat shopCat = shopCatService.findByCatId(hbmSupplierGoods.getShopCat().getCatId());
+                hbmSupplierGoods.setShopCat(shopCat);
+            } else {
+                hbmSupplierGoods.setShopCat(null);
+            }
+            result = hbmSupplierGoodsService.updateGood(hbmSupplierGoods, specList, imgList, status);
+        } catch (Exception e) {
+            log.error("保存或更改商品失败", e);
+        }
+        return result;
     }
 }

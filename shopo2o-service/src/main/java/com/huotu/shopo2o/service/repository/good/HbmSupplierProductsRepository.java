@@ -17,4 +17,11 @@ public interface HbmSupplierProductsRepository extends JpaRepository<HbmSupplier
     @Query("SELECT A FROM HbmSupplierProducts A WHERE A.supplierGoodsId = ?1 ORDER BY A.props")
     List<HbmSupplierProducts> findBySupplierGoodsId(int supplierGoodsId);
 
+    /**
+     * 根据货品ID 获取 货品
+     *
+     * @param productId -- 货品Id
+     * @return
+     */
+    HbmSupplierProducts findBySupplierProductId(int productId);
 }

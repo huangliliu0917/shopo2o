@@ -79,6 +79,13 @@ public class HbmGoodsTypeServiceImpl implements HbmGoodsTypeService {
         return type;
     }
 
+    @Override
+    public HbmGoodsType getGoodsTypeWithBrandAndSpecByStandardTypeId(int typeId, Long customerId) {
+        HbmGoodsType type = typeRepository.findOne(typeId);
+        type = setBrandAndSpec(type, customerId);
+        return type;
+    }
+
     private HbmGoodsType setBrandAndSpec(HbmGoodsType type, Long customerId) {
         if (type != null) {
             List<HbmBrand> brandList = findBrandList(type.getTypeId(), customerId);
