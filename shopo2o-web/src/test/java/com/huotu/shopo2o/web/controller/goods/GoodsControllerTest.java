@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.web.controller.goods;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
@@ -19,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,6 +32,11 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 /**
  * Created by xyr on 2017/10/11.
@@ -48,7 +55,7 @@ public class GoodsControllerTest extends CommonTestBase {
     @Autowired
     private HbmSupplierGoodsRepository goodsRepository;
 
-    private static String BASE_URL = "/goods";
+    private static String BASE_URL = "/good";
     private MallCustomer user;
     private String userName;
     private String passWord;
@@ -116,8 +123,8 @@ public class GoodsControllerTest extends CommonTestBase {
 
         type = typeService.getGoodsTypeByStandardTypeId("18");
         mockSupplierGoods = new HbmSupplierGoods();
-        mockSupplierGoods.setType(type);
-        mockSupplierGoods.setBrand(type.getBrandList().get(0));
+        /*mockSupplierGoods.setType(type);
+        mockSupplierGoods.setBrand(type.getBrandList().get(0));*/
         mockSupplierGoods.setStoreId(user.getCustomerId());
         mockSupplierGoods.setBrief("简介");
         mockSupplierGoods.setIntro("详细介绍");
@@ -158,8 +165,8 @@ public class GoodsControllerTest extends CommonTestBase {
         mockSupplierProductsSubmit = productsRepository.saveAndFlush(mockSupplierProductsSubmit);
 
         mockSupplierGoodsSubmit = new HbmSupplierGoods();
-        mockSupplierGoodsSubmit.setType(type);
-        mockSupplierGoodsSubmit.setBrand(type.getBrandList().get(0));
+        /*mockSupplierGoodsSubmit.setType(type);
+        mockSupplierGoodsSubmit.setBrand(type.getBrandList().get(0));*/
         mockSupplierGoodsSubmit.setStoreId(user.getCustomerId());
         mockSupplierGoodsSubmit.setBrief("简介");
         mockSupplierGoodsSubmit.setIntro("详细介绍");
@@ -197,8 +204,8 @@ public class GoodsControllerTest extends CommonTestBase {
         mockSupplierProductsChecked = productsRepository.saveAndFlush(mockSupplierProductsChecked);
 
         mockSupplierGoodsChecked = new HbmSupplierGoods();
-        mockSupplierGoodsChecked.setType(type);
-        mockSupplierGoodsChecked.setBrand(type.getBrandList().get(0));
+        /*mockSupplierGoodsChecked.setType(type);
+        mockSupplierGoodsChecked.setBrand(type.getBrandList().get(0));*/
         mockSupplierGoodsChecked.setStoreId(user.getCustomerId());
         mockSupplierGoodsChecked.setBrief("简介");
         mockSupplierGoodsChecked.setIntro("详细介绍");
@@ -236,8 +243,8 @@ public class GoodsControllerTest extends CommonTestBase {
         mockSupplierProductsDisabled = productsRepository.saveAndFlush(mockSupplierProductsDisabled);
 
         mockSupplierGoodsDisabled = new HbmSupplierGoods();
-        mockSupplierGoodsDisabled.setType(type);
-        mockSupplierGoodsDisabled.setBrand(type.getBrandList().get(0));
+        /*mockSupplierGoodsDisabled.setType(type);
+        mockSupplierGoodsDisabled.setBrand(type.getBrandList().get(0));*/
         mockSupplierGoodsDisabled.setStoreId(user.getCustomerId());
         mockSupplierGoodsDisabled.setBrief("简介");
         mockSupplierGoodsDisabled.setIntro("详细介绍");
@@ -273,8 +280,8 @@ public class GoodsControllerTest extends CommonTestBase {
         mockSupplierProductsInsert.setProps("[{\"SpecId\":\"2159\",\"SpecValueId\":\"9285\",\"SpecValue\":\"S\"},{\"SpecId\":\"2158\",\"SpecValueId\":\"9265\",\"SpecValue\":\"乳白色\"}]");
 
         mockSupplierGoodsInsert = new HbmSupplierGoods();
-        mockSupplierGoodsInsert.setType(type);
-        mockSupplierGoodsInsert.setBrand(type.getBrandList().get(0));
+        /*mockSupplierGoodsInsert.setType(type);
+        mockSupplierGoodsInsert.setBrand(type.getBrandList().get(0));*/
         mockSupplierGoodsInsert.setBrief("简介123");
         mockSupplierGoodsInsert.setIntro("详细介绍123");
         mockSupplierGoodsInsert.setMktPrice(mockSupplierProductsInsert.getMktPrice());
@@ -303,18 +310,125 @@ public class GoodsControllerTest extends CommonTestBase {
 
         HbmSupplierGoodsSearcher searcher = new HbmSupplierGoodsSearcher();
         //无搜索条件的情况
-        MvcResult result1 = mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/showGoodsList")
+        MvcResult result1 = mockMvc.perform(post(BASE_URL + "/showGoodsList")
                 .session(mockHttpSession))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("goods/goodsListV2"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("goods/goodsListV2"))
                 .andReturn();
         List<HbmSupplierGoods> goodsList1 = (List<HbmSupplierGoods>) result1.getModelAndView().getModel().get("goodsList");
         Assert.assertEquals(3, goodsList1.size());
+
+        //showCheckedOnly = true的情况
+        /*MvcResult result2 = mockMvc.perform(get(BASE_URL + "/showGoodsList")
+                .session(mockHttpSession)
+                .param("showCheckedOnly", "true"))
+                .andExpect(status().isOk())
+                //返回视图名称
+                .andExpect(view().name("goods/storeManager"))
+                .andReturn();
+        List<HbmSupplierGoods> goodsList2 = (List<HbmSupplierGoods>) result2.getModelAndView().getModel().get("goodsList");
+        Assert.assertNotEquals(0, goodsList2.size());*/
+
+        //查询未提交的
+        searcher.setStatus(StoreGoodsStatusEnum.CheckStatusEnum.UNSUBMIT.getCode());
+        Page<HbmSupplierGoods> exceptGoods = goodsService.getGoodList(user.getCustomerId(), searcher);
+        MvcResult result3 = mockMvc.perform(post(BASE_URL + "/showGoodsList")
+                .session(mockHttpSession)
+                .param("status", String.valueOf(searcher.getStatus())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(model().attribute("totalRecords", exceptGoods.getTotalElements()))
+                .andExpect(model().attribute("totalPages", exceptGoods.getTotalPages()))
+                .andReturn();
+        List<HbmSupplierGoods> realGoods = (List<HbmSupplierGoods>) result3.getModelAndView().getModel().get("goodsList");
+        Assert.assertEquals(exceptGoods.getContent().size(), realGoods.size());
+        Assert.assertEquals(mockSupplierGoods.getSupplierGoodsId(), realGoods.get(0).getSupplierGoodsId());
+        Assert.assertTrue(realGoods.stream().allMatch(predicate -> predicate.getStatus() == StoreGoodsStatusEnum.CheckStatusEnum.UNSUBMIT));
+
+        //查询已提交
+        searcher.setStatus(StoreGoodsStatusEnum.CheckStatusEnum.CHECKED.getCode());
+        Page<HbmSupplierGoods> exceptGoods2 = goodsService.getGoodList(user.getCustomerId(), searcher);
+        MvcResult result4 = mockMvc.perform(post(BASE_URL + "/showGoodsList")
+                .session(mockHttpSession)
+                .param("status", String.valueOf(searcher.getStatus())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(model().attribute("totalRecords", exceptGoods2.getTotalElements()))
+                .andExpect(model().attribute("totalPages", exceptGoods2.getTotalPages()))
+                .andReturn();
+        List<HbmSupplierGoods> realGoods2 = (List<HbmSupplierGoods>) result4.getModelAndView().getModel().get("goodsList");
+        Assert.assertEquals(exceptGoods2.getContent().size(), realGoods2.size());
+        Assert.assertEquals(mockSupplierGoodsChecked.getSupplierGoodsId(), realGoods2.get(0).getSupplierGoodsId());
+        Assert.assertTrue(realGoods2.stream().allMatch(predicate -> predicate.getStatus() == StoreGoodsStatusEnum.CheckStatusEnum.CHECKED));
+
+        //分页查询
+        searcher.setStatus(-1);
+        searcher.setPageSize(1);
+        searcher.setPageNo(1);
+        Page<HbmSupplierGoods> exceptGoods3 = goodsService.getGoodList(user.getCustomerId(), searcher);
+        MvcResult result5 = mockMvc.perform(post(BASE_URL + "/showGoodsList")
+                .param("pageSize", String.valueOf(searcher.getPageSize()))
+                .param("pageNo", String.valueOf(searcher.getPageNo()))
+                .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("goods/goodsListV2"))
+                .andExpect(model().attribute("totalRecords", exceptGoods3.getTotalElements()))
+                .andExpect(model().attribute("totalPages", exceptGoods3.getTotalPages()))
+                .andReturn();
+        List<HbmSupplierGoods> realGoods3 = (List<HbmSupplierGoods>) result5.getModelAndView().getModel().get("goodsList");
+        Assert.assertEquals(exceptGoods3.getContent().size(), realGoods3.size());
+        Assert.assertEquals(mockSupplierGoodsChecked.getSupplierGoodsId(), realGoods3.get(0).getSupplierGoodsId());
     }
 
+    /**
+     * 更新商品状态
+     * @throws Exception
+     */
     @Test
     public void updateGoodStatus() throws Exception {
+        MockHttpSession session = loginAs(userName, passWord);
 
+        //当goodsId或者status为空时，应返回信息没有传输数据
+        MvcResult result1 = mockMvc.perform(post(BASE_URL + "/updateGoodStatus")
+                .session(session)
+                ).andExpect(status().isOk())
+                .andReturn();
+        String content1 = new String(result1.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj1 = JSONObject.parseObject(content1);
+        Assert.assertEquals("没有传输数据", obj1.get("msg"));
+
+        //当goodsId不存在时
+        MvcResult result2 = mockMvc.perform(post(BASE_URL + "/updateGoodStatus")
+                .session(session)
+                .param("goodsId", String.valueOf(mockSupplierGoods.getSupplierGoodsId() + 100))
+                .param("status", "1"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content2 = new String(result2.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj2 = JSONObject.parseObject(content2);
+        Assert.assertEquals("商品编号错误！", obj2.get("msg"));
+
+        //当商品已审核
+        MvcResult result3 = mockMvc.perform(post(BASE_URL + "/updateGoodStatus")
+                .session(session)
+                .param("goodsId", String.valueOf(mockSupplierGoodsChecked.getSupplierGoodsId()))
+                .param("status", "1"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content3 = new String(result3.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj3 = JSONObject.parseObject(content3);
+        Assert.assertEquals("该商品已审核或已回收，无法操作！", obj3.get("msg"));
+
+        //正确的更新商品
+        MvcResult result4 = mockMvc.perform(post(BASE_URL + "/updateGoodStatus")
+                .session(session)
+                .param("goodsId", String.valueOf(mockSupplierGoods.getSupplierGoodsId()))
+                .param("status", "1"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content4 = new String(result4.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj4 = JSONObject.parseObject(content4);
+        Assert.assertEquals(200, obj4.get("code"));
     }
 
 }

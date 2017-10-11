@@ -100,7 +100,7 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
     }
 
     @Override
-    @Transactional(value = "hbmTransactionManager")
+    @Transactional
     public ApiResult updateSupplierGoodsStatus(int storeGoodsId,
                                                StoreGoodsStatusEnum.CheckStatusEnum storeGoodsStatus,
                                                String remark) throws Exception {
