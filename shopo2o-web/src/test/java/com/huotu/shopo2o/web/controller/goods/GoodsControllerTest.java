@@ -336,8 +336,8 @@ public class GoodsControllerTest extends CommonTestBase {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(), "$");
 
-        ApiResult apiResult = (ApiResult) result.get("data");
-        Assert.assertTrue(true);
+        List<ApiResult> apiResults = (List<ApiResult>) result.get("data");
+        Assert.assertTrue(apiResults.size() == 10);
 
     }
 
