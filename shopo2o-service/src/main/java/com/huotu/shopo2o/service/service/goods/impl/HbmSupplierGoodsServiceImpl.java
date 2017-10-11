@@ -276,7 +276,7 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
         pdtDesc.append("]");
         disRebateCustomPercentDesc.append("]");
         old.setType(goods.getType());
-        old.setSupplierId(goods.getSupplierId());
+        old.setStoreId(goods.getStoreId());
         old.setBrand(goods.getBrand());
         old.setThumbnailPic(goods.getThumbnailPic());
         old.setSmallPic(goods.getSmallPic());
