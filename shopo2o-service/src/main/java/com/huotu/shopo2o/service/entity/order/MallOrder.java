@@ -128,7 +128,7 @@ public class MallOrder {
     /**
      * 供应商id
      */
-    @Column(name = "Store_Id")
+    @Column(name = "StoreId")
     private Integer storeId;
     /**
      * 支付时间

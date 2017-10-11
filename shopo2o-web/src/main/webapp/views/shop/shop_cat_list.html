@@ -50,13 +50,13 @@
                             <tr>
                                 <td>
                                     <span th:attr="catId = ${cat.catId}" onclick="catListHandler.showThis(this)" style=" cursor: pointer;float:left;">
-                                        <img src="../resource/images/jian.gif"/>
+                                        <img src="../../resources/images/jian.gif"/>
                                     </span>
                                     <span th:text="${cat.catName}">分类名称</span>
                                 </td>
                                 <td>
-                                    <img src="../resource/3rdParty/images/none.png" width="48" height="48"
-                                         th:src="@{${cat.uri} != null ? ${cat.uri} : '/resource/3rdParty/images/none.png'}"/>
+                                    <img src="../../resources/images/none.png" width="48" height="48"
+                                         th:src="@{${cat.uri} != null ? ${cat.uri} : '../../resources/images/none.png'}"/>
                                 </td>
                                 <td th:text="${cat.order}">0</td>
                                 <td>
@@ -72,8 +72,8 @@
                             <tr th:if="${cat.subShopCat != null }" th:each="subCat:${cat.subShopCat}" th:classappend="'p' + ${cat.catId}">
                                 <td th:text="${subCat.catName}">分类名称</td>
                                 <td>
-                                    <img src="../resource/3rdParty/images/none.png" width="48" height="48"
-                                         th:src="@{${subCat.uri} != null ? ${subCat.uri} : '/resource/3rdParty/images/none.png'}"/>
+                                    <img src="../../resources/images/none.png" width="48" height="48"
+                                         th:src="@{${subCat.uri} != null ? ${subCat.uri} : '../../resources/images/none.png'}"/>
                                 </td>
                                 <td th:text="${subCat.order}">0</td>
                                 <td>
@@ -126,7 +126,7 @@
                 <label class="col-sm-4 control-label">图片：</label>
                 <div class="col-sm-8">
                     <div class="form-group m-r-sm" style="float: left;">
-                        <img src="../resource/3rdParty/images/none.png" width="80" height="80"/>
+                        <img src="../../resources/images/none.png" width="80" height="80"/>
                         <button type="button" class="btn btn-success btn-sm" onclick="$('#catImgFile').click();">上传</button>
                         <input onchange="catListHandler.uploadImg('catImgFile')"
                                id="catImgFile" name="btnFile"
@@ -196,7 +196,7 @@
             $("#cat_form input[name=catName]").val('');
             $("#cat_form select[name=parentId]").val(0);
             $("#cat_form input[name=pOrder]").val(0);
-            $("#cat_form img").attr('src','../resource/3rdParty/images/none.png');
+            $("#cat_form img").attr('src','../../resources/images/none.png');
             $("#catImg").val('');
         },
         uploadImg:function(btnFile){
@@ -216,11 +216,11 @@
             var oClass = '.p' + catId;
             var flag = $(oClass).is(':hidden');
             if (flag) {
-                $(obj).find('img').eq(0).attr('src', '/resource/images/jian.gif');
+                $(obj).find('img').eq(0).attr('src', '../../resources/images/jian.gif');
                 $(oClass).show();
             }
             else {
-                $(obj).find('img').eq(0).attr('src', '/resource/images/jia.gif');
+                $(obj).find('img').eq(0).attr('src', '../../resources/images/jia.gif');
                 $(oClass).hide();
             }
         },

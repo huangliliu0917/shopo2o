@@ -69,7 +69,7 @@ public class AfterSaleHandler {
     @ResponseBody
     public ApiResult batchRefundAgree(
             @LoginUser MallCustomer mallCustomer, @RequestParam("afterId") String... afterIdList) throws UnsupportedEncodingException {
-        // TODO: 2016/9/11 暂时循环操作，以后增加批量同意退款接口
+        // // TODO: 2017-10-10 暂时循环操作，以后增加批量同意退款接口
         ApiResult result = ApiResult.resultWith(ResultCodeEnum.SYSTEM_BAD_REQUEST, "操作失败,请检查售后状态", null);
         if(afterIdList != null && afterIdList.length > 0){
             for(int i = 0 ; i < afterIdList.length ; i ++){
