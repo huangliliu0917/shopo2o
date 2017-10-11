@@ -1,9 +1,10 @@
 package com.huotu.shopo2o.web.controller.goods;
 
-import com.huotu.shopo2o.common.SysConstant;
-import com.huotu.shopo2o.common.ienum.UserTypeEnum;
+import com.huotu.shopo2o.common.ienum.EnumHelper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
+import com.huotu.shopo2o.common.SysConstant;
+import com.huotu.shopo2o.common.ienum.UserTypeEnum;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.config.MallCustomerConfig;
@@ -24,11 +25,14 @@ import com.huotu.shopo2o.service.service.goods.HbmSupplierGoodsService;
 import com.huotu.shopo2o.service.service.shop.SupShopCatService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import com.huotu.shopo2o.web.service.StaticResourceService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -43,6 +47,8 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/good")
 public class GoodsController {
+
+    private static final Log log = LogFactory.getLog(GoodsController.class);
 
     @Autowired
     private HbmGoodsTypeService hbmGoodsTypeService;
@@ -223,5 +229,36 @@ public class GoodsController {
         modelAndView.addObject("pageIndex", hbmSupplierGoodsSearcher.getPageNo());
         modelAndView.addObject("checkStatusEnums", StoreGoodsStatusEnum.CheckStatusEnum.values());
         return modelAndView;
+    }
+
+    /**
+     * 更新商品状态
+     *
+     * @param customer 登录的门店信息
+     * @param goodsId  商品ID
+     * @param comment  提交审核或回收备注
+     * @param status   操作状态
+     * @return 更新结果 {@link ApiResult}
+     */
+    @RequestMapping(value = "/updateGoodStatus", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    @SuppressWarnings("UnusedDeclaration")
+    public ApiResult updateGoodStatus(@LoginUser MallCustomer customer, Integer goodsId,
+                                      String comment, Integer status) {
+        ApiResult apiResult;
+        try {
+            if (goodsId == null || status == null) {
+                return ApiResult.resultWith(ResultCodeEnum.DATA_NULL);
+            }
+            if (EnumHelper.getEnumType(StoreGoodsStatusEnum.CheckStatusEnum.class, status) == null) {
+                return new ApiResult("商品状态错误！");
+            }
+            apiResult = hbmSupplierGoodsService.updateSupplierGoodsStatus(goodsId,
+                    EnumHelper.getEnumType(StoreGoodsStatusEnum.CheckStatusEnum.class, status), comment);
+        } catch (Exception e) {
+            apiResult = ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR);
+            log.error("更新商品状态失败", e);
+        }
+        return apiResult;
     }
 }

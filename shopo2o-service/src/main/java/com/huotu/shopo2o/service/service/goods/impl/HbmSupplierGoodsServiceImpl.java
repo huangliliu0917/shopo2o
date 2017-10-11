@@ -1,12 +1,16 @@
 package com.huotu.shopo2o.service.service.goods.impl;
 
 import com.huotu.shopo2o.common.ienum.EnumHelper;
+import com.huotu.shopo2o.common.utils.ApiResult;
+import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
+import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
 import com.huotu.shopo2o.service.entity.good.MallGood;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.enums.StoreGoodsStatusEnum;
 import com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierGoodsRepository;
+import com.huotu.shopo2o.service.repository.good.HbmSupplierProductsRepository;
 import com.huotu.shopo2o.service.repository.good.MallGoodRepository;
 import com.huotu.shopo2o.service.service.goods.HbmSupplierGoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +37,8 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
     private HbmSupplierGoodsRepository supplierGoodsRepository;
     @Autowired
     private MallGoodRepository goodsRepository;
+    @Autowired
+    private HbmSupplierProductsRepository productsRepository;
 
     @Override
     public Page<HbmSupplierGoods> getGoodList(long storeId, HbmSupplierGoodsSearcher searcher) {
@@ -89,5 +97,35 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
             }
         });
         return goodsPage;
+    }
+
+    @Override
+    @Transactional(value = "hbmTransactionManager")
+    public ApiResult updateSupplierGoodsStatus(int storeGoodsId,
+                                               StoreGoodsStatusEnum.CheckStatusEnum storeGoodsStatus,
+                                               String remark) throws Exception {
+        //找到该编号的商品
+        HbmSupplierGoods supplierGoods = supplierGoodsRepository.findOne(storeGoodsId);
+        if (supplierGoods == null) { //为空，则返回
+            return new ApiResult("商品编号错误！");
+        }
+        //判断操作是否有权执行
+        if ((storeGoodsStatus == StoreGoodsStatusEnum.CheckStatusEnum.CHECKING && supplierGoods.editable())
+                || (storeGoodsStatus == StoreGoodsStatusEnum.CheckStatusEnum.RECYCLING && supplierGoods.operable())) {
+            //修改商品状态
+            supplierGoods.setStatus(storeGoodsStatus);
+            supplierGoods.setLastModify(new Date());
+            if (remark != null) {
+                supplierGoods.setRemark(remark);
+            }
+            supplierGoodsRepository.save(supplierGoods);
+            List<HbmSupplierProducts> productsList = productsRepository.findBySupplierGoodsId(storeGoodsId);
+            productsList.forEach(p -> {
+                p.setStatus(storeGoodsStatus);
+            });
+            productsRepository.save(productsList);
+            return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+        }
+        return new ApiResult("该商品已审核或已回收，无法操作！");
     }
 }
