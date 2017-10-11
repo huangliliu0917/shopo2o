@@ -1,6 +1,7 @@
 package com.huotu.shopo2o.web.controller.goods;
 
 import com.alibaba.fastjson.JSONObject;
+import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
@@ -9,34 +10,30 @@ import com.huotu.shopo2o.service.entity.store.Store;
 import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.enums.StoreGoodsStatusEnum;
 import com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher;
-import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeRepository;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierGoodsRepository;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierProductsRepository;
 import com.huotu.shopo2o.service.service.goods.HbmGoodsTypeService;
 import com.huotu.shopo2o.service.service.goods.HbmSupplierGoodsService;
 import com.huotu.shopo2o.service.service.goods.HbmSupplierProductsService;
 import com.huotu.shopo2o.web.CommonTestBase;
+import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by xyr on 2017/10/11.
@@ -295,8 +292,52 @@ public class GoodsControllerTest extends CommonTestBase {
         mockSupplierGoodsInsert.setSpecDesc("[{\"SpecId\":2159,\"SpecValue\":\"S\",\"SpecValueId\":9285,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":2158,\"SpecValue\":\"乳白色\",\"SpecValueId\":9265,\"SpecImage\":\"\",\"GoodsImageIds\":[]}]");
     }
 
+    /**
+     * 显示类型
+     * @throws Exception
+     */
     @Test
     public void showType() throws Exception {
+        //添加类目
+        int a = 10;
+        while (a -- > 0){
+            mockHbmGoodsType(false,"0");
+        }
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        MvcResult result1 = mockMvc.perform(post(BASE_URL + "/showType")
+                .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("goods/goodType"))
+                .andReturn();
+        List<HbmGoodsType> typeList = (List<HbmGoodsType>) result1.getModelAndView().getModel().get("typeList");
+        Assert.assertTrue(typeList.size() == 10);
+
+    }
+
+    /**
+     * 根据标准类目ID，获取其子类目LIST
+     * @throws Exception
+     */
+    @Test
+    public void showGoodsType() throws Exception {
+
+        HbmGoodsType hbmGoodsType = mockHbmGoodsType(true, "0");
+        //添加类目
+        int a = 10;
+        while (a -- > 0){
+            mockHbmGoodsType(false,hbmGoodsType.getStandardTypeId());
+        }
+
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        Map<String, Object>  result = JsonPath.read(mockMvc.perform(post(BASE_URL + "/getType")
+                .param("standardTypeId", hbmGoodsType.getStandardTypeId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(), "$");
+
+        ApiResult apiResult = (ApiResult) result.get("data");
+        Assert.assertTrue(true);
 
     }
 

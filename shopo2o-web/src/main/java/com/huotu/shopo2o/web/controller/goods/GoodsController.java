@@ -85,7 +85,6 @@ public class GoodsController {
     /**
      * 新增商品时，显示选择类型界面中的一级类型,并根据tOrder排序
      * 显示用户最近10个新增的商品类型
-     *
      * @param customer 用户登录
      * @return
      * @throws Exception

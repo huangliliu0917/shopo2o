@@ -5,6 +5,7 @@ import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.author.Operator;
 import com.huotu.shopo2o.service.entity.config.SupBasicConfig;
 import com.huotu.shopo2o.service.entity.config.SupShopConfig;
+import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
@@ -17,6 +18,7 @@ import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
 import com.huotu.shopo2o.service.repository.config.SupBasicConfigRepository;
+import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeRepository;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.repository.order.MallDeliveryRepository;
 import com.huotu.shopo2o.service.repository.order.MallOrderRepository;
@@ -68,6 +70,8 @@ public class CommonTestBase extends SpringWebTest {
     protected SupBasicConfigRepository supBasicConfigRepository;
     @Autowired
     protected MallPasswordEncoder passwordEncoder;
+    @Autowired
+    protected HbmGoodsTypeRepository hbmGoodsTypeRepository;
 
     protected Random random = new Random();
 
@@ -157,5 +161,16 @@ public class CommonTestBase extends SpringWebTest {
         supShopConfig.setDisabled(false);
         supShopConfig.setShopLogo(UUID.randomUUID().toString());
         return supShopConfig;
+    }
+
+    protected HbmGoodsType mockHbmGoodsType(Boolean isParent,String parentStandardTypeId){
+        HbmGoodsType hbmGoodsType = new HbmGoodsType();
+        hbmGoodsType.setStandardTypeId("标准类型id"+UUID.randomUUID().toString());
+        hbmGoodsType.setName("类型名称"+UUID.randomUUID().toString());
+        hbmGoodsType.setParent(isParent);
+        hbmGoodsType.setDisabled(false);
+        hbmGoodsType.setCustomerId(-1);
+        hbmGoodsType.setParentStandardTypeId(parentStandardTypeId);
+        return hbmGoodsTypeRepository.saveAndFlush(hbmGoodsType);
     }
 }
