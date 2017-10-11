@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.shopo2o.service.entity.order.MallAfterSales>"*/-->
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>库存管理</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+</head>
+<!--/*@thymesVar id="hbmSupplierGoodsSearcher" type="com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher"*/-->
+<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.entity.store.SupShopCat>"*/-->
+<!--/*@thymesVar id="goodsList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSupplierGoods>"*/-->
+<!--/*@thymesVar id="typeList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
+<!--/*@thymesVar id="totalRecords" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="pageIndex" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="totalPages" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="pageSize" type="java.lang.Long"*/-->
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${hbmSupplierGoodsSearcher}">
+    <!--search-->
+    <form method="get" id="searchForm" th:action="@{/good/showGoodsList(showCheckedOnly=true)}">
+        <input type="hidden" name="pageNo" value="1" th:value="${pageIndex}"/>
+        <input type="hidden" name="showCheckedOnly" value="true" />
+        <input type="hidden" name="version" value="V2" />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>商品列表</h5></div>
+                    <div class="ibox-content p-m">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm" id="parentTidDiv">
+                                <label class="control-label">商品类目：</label>
+                                <!--<input name="typeName" type="text" th:value="*{typeName}"-->
+                                       <!--id="typeName" class="form-control input-sm mb10"/>-->
+                                <select name="standardTypeId" class="form-control input-sm">
+                                    <option value="" th:selected="*{standardTypeId == null}">请选择</option>
+                                    <option th:each="type:${typeList}" th:value="${type.standardTypeId}" th:text="${type.pathStr}"
+                                            th:selected="${type.standardTypeId} == *{standardTypeId}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品品牌：</label>
+                                <input name="brandName" type="text" th:value="*{brandName}"
+                                       id="brandName" class="form-control input-sm mb10" />
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品名称：</label>
+                                <input class="form-control input-sm mb10" name="name" type="text" th:value="*{name}"
+                                       id="name" placeholder="商品名称"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">店铺分类：</label>
+                                <select id="catId" name="supplierCatId" class="form-control input-sm">
+                                    <option value="-1" th:selected="*{supplierCatId == -1}">根目录</option>
+                                    <option value="0" th:selected="*{supplierCatId == 0}">未分类</option>
+                                    <th:block th:each="cat:${shopCatList}">
+                                        <option th:value="${cat.catId}" th:text="'&nbsp;&nbsp;└ ' + ${cat.catName}"
+                                                th:selected="${hbmSupplierGoodsSearcher.supplierCatId == cat.catId}"></option>
+                                        <!--最多显示2级-->
+                                        <option th:if="${cat.subShopCat!=null}" th:each="subCat:${cat.subShopCat}"
+                                                th:value="${subCat.catId}"
+                                                th:text="'&nbsp;&nbsp;&nbsp;&nbsp;└ ' + ${subCat.catName}"
+                                                th:selected="${hbmSupplierGoodsSearcher.supplierCatId == subCat.catId}"/>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <!--<div class="form-group m-r-sm"  id="brandDiv">
+                                <label class="control-label">商品品牌：</label>
+                                <input name="brandId" type="text" th:value="*{brandId}" id="brandId" class="input-small"
+                                       style="display: none"/>
+                            </div>-->
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品编号：</label>
+                                <input name="bn" type="text" th:value="*{bn}" id="bn"
+                                       class="form-control input-sm mb10" placeholder="商品编号"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">库存量：</label>
+                                <div class="input-group">
+                                    <input name="minStore" type="text" th:value="*{minStore}" id="minStore" class="form-control input-sm mb10"/>
+                                    <span class="input-group-addon">-</span>
+                                    <input name="maxStore" type="text" th:value="*{maxStore}" id="maxStore" class="form-control input-sm mb10"/>
+                                </div>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <button type="button" onclick="goodsListHandler.search(1)" class="btn btn-success">筛选
+                                </button>
+                                <button type="button" onclick="goodsListHandler.searchAll()" class="btn btn-success">
+                                    显示全部
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div class="panel-body">
+                                <table class="table table-bordered table-hover table-center">
+                                    <thead>
+                                    <tr>
+                                        <!--<td></td>-->
+                                        <td>名称</td>
+                                        <td>品牌</td>
+                                        <td>商品编号</td>
+                                        <td>成本价</td>
+                                        <td>销售价</td>
+                                        <td>平台销售价</td>
+                                        <td>库存量</td>
+                                        <td>店铺分类</td>
+                                        <td>商品类目</td>
+                                        <td>备注</td>
+                                        <td>更新时间</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="goods:${goodsList}">
+                                        <!--<td th:text="${goodsStat.count}">1</td>-->
+                                        <td th:text="${goods.name}">商品1</td>
+                                        <td th:text="${goods.brand== null}?'':${goods.brand.brandName}">--</td>
+                                        <td th:text="${goods.bn}"></td>
+                                        <td th:text="'￥'+${goods.cost}">￥100</td>
+                                        <td th:text="'￥'+${goods.price}">￥0</td>
+                                        <td th:text="${goods.customerPrice}!=null ? '￥'+${goods.customerPrice} : ''">
+                                            ￥0
+                                        </td>
+                                        <td th:text="${goods.usableStore}">600</td>
+                                        <!--<td class="txt40 c" th:text="${goods.price==0}?'0.00%':(${#numbers.formatDecimal((goods.price - goods.cost)*100/goods.price,1,2)} + '%')">
+                                            50.00%
+                                        </td>-->
+                                        <td th:style="${goods.shopCat} == null ? 'color:#ccc;'"
+                                            th:text="${goods.shopCat}!=null?${goods.shopCat.catName}:'未分类'">分类1
+                                        </td>
+                                        <td th:text="${goods.type}!=null?${goods.type.name}:''">分类1</td>
+                                        <td th:text="${goods.remark}">分类1</td>
+                                        <td th:text="${#dates.format(goods.lastModify,'yyyy-MM-dd HH:mm:ss')}">--</td>
+                                        <td>
+                                            <span class="cursor-point" th:attr="goodsId=${goods.supplierGoodsId}" onclick="goodsListHandler.editGood(this)">
+                                                <i class="fa fa-pencil fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip"
+                                                   th:attr="data-original-title=${goods.editable() ? '编辑':'查看详细'}"></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <p style="float: left; margin: 20px 0;">共
+                                    <th:block th:text="${totalRecords}">100</th:block>
+                                    条记录，当前第
+                                    <th:block th:text="${pageIndex}">1</th:block>
+                                    /
+                                    <th:block th:text="${totalPages}">15</th:block>
+                                    ，每页
+                                    <th:block th:text="${pageSize}">10</th:block>
+                                    条记录
+                                </p>
+                                <ul style="float: right;" class="pagination pagination-split">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+</div>
+<div id="remarkModal" class="modal-content-tag">
+    <form id="remark_form" novalidate="novalidate">
+        <input type="hidden" id="remark_goodsId" name="goodsId"/>
+        <input type="hidden" id="remark_status" name="status"/>
+        <div class="form-horizontal" style="width: 479px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea name="comment" class="form-control" rows="5" style="height: 90px; width: 100%;"
+                              required="" aria-required="true"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--日期选择-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/moment.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/daterangepicker.js"></script>
+
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-init.js}"></script>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/store}]]*/"/store";
+    var goodsUrl = /*[[@{/good}]]*/ "/good";
+    var pageIndex = /*[[${pageIndex}]]*/ 1;
+    var totalPage = /*[[${totalPages}]]*/ 20;
+    var selectedType = /*[[${selectType}]]*/"";
+    var selectedBrand = /*[[${selectBrand}]]*/"";
+    var stId;
+    /*<![CDATA[*/
+    $(function () {
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+        pageinate.init(function (p) {
+            goodsListHandler.search(p);
+        });
+        //加载类目和品牌
+//        var typeList = /*[[${typeList}]]*/"";
+//        var brandList = /*[[${brandList}]]*/"";
+//        typeList = eval(typeList);
+//        brandList = eval(brandList);
+//        createTidSelect(typeList,'0',selectedType);
+//        updateBrandSelect(brandList, selectedBrand);
+//        $('select').searchableSelect();
+    })
+    var goodsListHandler = {
+        search: function (pageIndex) {
+            $("input[name=pageNo]").val(pageIndex);
+            $("#brandId").val($("#brandIdSelect").val());
+            $("#standardTypeId").val((stId == '0') ? "" : stId);
+            $("#searchForm").submit();
+        },
+        searchAll: function () {
+            window.location.href = goodsUrl + "/showGoodsList?showCheckedOnly=true&version=V2";
+        },
+        editGood:function(obj){
+            var goodsId = $(obj).attr("goodsId");
+            window.location.href=baseUrl + "/showProductsStore?goodsId="+goodsId;
+        }
+    }
+    //创建类目下拉菜单
+    function createTidSelect (typeLists, grandParentId, selectedType) {
+        var i, j;
+        var parentId;
+        for (i=0; i<typeLists.length;) {
+            parentId = typeLists[i]['parentStandardTypeId'];
+//            var selDiv = document.createElement('div');
+            var sel = document.createElement('SELECT');
+            sel.setAttribute('name', 'tid_' + parentId);
+            sel.setAttribute('id', 'tid_' + parentId);
+            sel.setAttribute('class','form-control input-sm');
+            var op = document.createElement('OPTION');
+            op.setAttribute('value', 0);
+            op.innerHTML = '--请选择--';
+            sel.appendChild(op);
+            //
+            if (typeLists[i]['disabled'] == false) {
+                var option = document.createElement('OPTION');
+                option.setAttribute('value', typeLists[i]['standardTypeId']);
+                option.innerHTML = typeLists[i]['name'];
+                option.is_parent = typeLists[i]['parent'];//判断是否是子类目
+                option.parent_id = typeLists[i]['parentStandardTypeId'];
+                sel.appendChild(option);
+            }
+            for (j=i+1; j<typeLists.length;j++) {
+                if (typeLists[i]['parentStandardTypeId'] != typeLists[j]['parentStandardTypeId']) {   //是否分级，即不是同一级option
+                    for (var k = 0; k <= (j-i); k++) { //找到下拉框的selected的option
+                        if (sel.options[k].value == typeLists[j]['parentStandardTypeId']) {
+                            sel.options[k].selected = true;
+                            stId = typeLists[j]['parentStandardTypeId'];
+                            break;
+                        }
+                    }
+                    break;
+                }
+                //同一级则继续增加option
+                if (typeLists[j]['disabled'] == false) {
+                    var option = document.createElement('OPTION');
+                    option.setAttribute('value', typeLists[j]['standardTypeId']);
+                    option.innerHTML = typeLists[j]['name'];
+                    option.is_parent = typeLists[j]['parent'];//判断是否是子类目
+                    option.parent_id = typeLists[j]['parentStandardTypeId'];
+                    sel.appendChild(option);
+                }
+            }
+            if (j == typeLists.length) {   //最后一级，找出selected对应的option
+                for (var k = 0; k <= (j-i); k++) {
+                    if (sel.options[k].value == selectedType) {
+                        sel.options[k].selected = true;
+                        stId = selectedType;
+                        break;
+                    }
+                }
+            }
+            i = j;
+            document.getElementById('parentTidDiv').appendChild(sel);
+            document.getElementById('tid_' + parentId).onchange = function(){childTidList(this);};
+            grandParentId = parentId;
+        }
+    }
+    //品牌下拉表
+    function updateBrandSelect(brandList, selectBrand) {
+        //var brandDiv = document.getElementById('brandDiv');
+        //brandDiv.parentNode().removeChild(brandDiv);
+        $("#brandDiv select").remove();
+        //
+        var brandSel = document.createElement('SELECT');
+        brandSel.id = "brandIdSelect";
+        var brandOp = document.createElement('OPTION');
+        brandOp.innerHTML = '--请选择--';
+        brandOp.setAttribute('value', 0);
+        brandSel.appendChild(brandOp);
+        if ('undefined' != brandList) {
+            var i;
+            var k = 0;
+            for (i in brandList) {
+                if (brandList[i]['brandId'] != null) {
+                    k++;
+                    var option = document.createElement('OPTION');
+                    option.innerHTML = brandList[i]['brandName'];
+                    option.setAttribute('value', brandList[i]['brandId']);
+                    brandSel.appendChild(option);
+                    if( selectBrand == brandList[i]['brandId'] )
+                        brandSel.options[k].selected = true;
+                }
+            }
+        }
+        brandSel.setAttribute('class','form-control input-sm');
+        //
+//        var selDiv = document.createElement('div');
+//        selDiv.appendChild(brandSel);
+//            brandDiv.appendChild(selDiv);
+        document.getElementById('brandDiv').appendChild(brandSel);
+        //document.getElementById('tid_' + parentId).onchange = function(){childTidList(this, parentId);};
+    }
+    //子类目监听函数
+    function childTidList(o){
+        var standardTypeId = o.value;
+        stId = standardTypeId;
+        var is_parent=o.options[o.selectedIndex].is_parent;
+        var parent_id=o.options[o.selectedIndex].parent_id;
+        //获取选中的select(parent_id)后面的select节点
+        var subSelectList = $("select[id=tid_" + parent_id+ "]").nextAll('select');
+        for(var i = subSelectList.length - 1 ; i>=0 ; i--){
+            subSelectList[i].remove();
+        }
+//        document.getElementById(o.id + '_span').innerHTML = '';
+        if( standardTypeId == 0 ) {
+            stId = o.options[o.selectedIndex+1].parent_id;
+            updateBrandSelect('0','0');
+            return;
+        }
+        if(is_parent){
+            updateBrandSelect('0','0');
+//            $.jBox.tip("正在加载", "loading");
+            hot.loading.show();
+            hot.ajax(baseUrl + "/getType",{standardTypeId:standardTypeId},function(msg){
+                if(msg.code == 200){
+                    var typeList = eval(msg.data);
+                    createTidSelect(typeList,parent_id, standardTypeId);
+                }else{
+                    hot.tip.error(msg.msg);
+                    window.location.reload();
+                }
+            },'post')
+        }else{
+            hot.loading.show();
+            hot.ajax(baseUrl + "/getBrand",{standardTypeId:standardTypeId},function (msg) {
+                if(msg.code == 200){
+                    var brandList = eval(msg.data);
+                    updateBrandSelect(brandList);
+                }else{
+                    hot.tip(msg.msg);
+                    window.location.reload();
+                }
+            },'post');
+        }
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
