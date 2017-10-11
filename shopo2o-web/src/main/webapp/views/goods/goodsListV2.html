@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<!--/*@thymesVar id="afterSales" type="java.util.List<com.huotu.shopo2o.service.entity.order.MallAfterSales>"*/-->
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>商品列表</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--datetimepick-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/datetimepick/daterangepicker.css" rel="stylesheet"/>
+</head>
+<!--/*@thymesVar id="hbmSupplierGoodsSearcher" type="com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher"*/-->
+<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.entity.store.SupShopCat>"*/-->
+<!--/*@thymesVar id="goodsList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSupplierGoods>"*/-->
+<!--/*@thymesVar id="typeList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
+<!--/*@thymesVar id="totalRecords" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="pageIndex" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="totalPages" type="java.lang.Long"*/-->
+<!--/*@thymesVar id="pageSize" type="java.lang.Long"*/-->
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo" th:object="${hbmSupplierGoodsSearcher}">
+    <!--search-->
+    <form method="get" id="searchForm" th:action="@{/good/showGoodsList}">
+        <input type="hidden" name="pageNo" value="1" th:value="${pageIndex}"/>
+        <input type="hidden" name="version" value="V2" />
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>商品列表</h5></div>
+                    <div class="ibox-content p-m">
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品类目：</label>
+                                <!--<input name="typeName" type="text" th:value="*{typeName}"-->
+                                       <!--id="typeName" class="form-control input-sm mb10"/>-->
+                                <select name="standardTypeId" class="form-control input-sm">
+                                    <option value="" th:selected="*{standardTypeId == null}">请选择</option>
+                                    <option th:each="type:${typeList}" th:value="${type.standardTypeId}" th:text="${type.pathStr}"
+                                            th:selected="${type.standardTypeId} == *{standardTypeId}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品品牌：</label>
+                                <input name="brandName" type="text" th:value="*{brandName}"
+                                       id="brandName" class="form-control input-sm mb10" />
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品名称：</label>
+                                <input class="form-control input-sm mb10" name="name" type="text" th:value="*{name}"
+                                       id="name" placeholder="商品名称"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">店铺分类：</label>
+                                <select id="catId" name="supplierCatId" class="form-control input-sm">
+                                    <option value="-1" th:selected="*{supplierCatId == -1}">根目录</option>
+                                    <option value="0" th:selected="*{supplierCatId == 0}">未分类</option>
+                                    <th:block th:each="cat:${shopCatList}">
+                                        <option th:value="${cat.catId}" th:text="'&nbsp;&nbsp;└ ' + ${cat.catName}"
+                                                th:selected="${hbmSupplierGoodsSearcher.supplierCatId == cat.catId}"></option>
+                                        <!--最多显示2级-->
+                                        <option th:if="${cat.subShopCat!=null}" th:each="subCat:${cat.subShopCat}"
+                                                th:value="${subCat.catId}"
+                                                th:text="'&nbsp;&nbsp;&nbsp;&nbsp;└ ' + ${subCat.catName}"
+                                                th:selected="${hbmSupplierGoodsSearcher.supplierCatId == subCat.catId}"/>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="divider-vertical"></p>
+                        <div class="form-inline" style="max-width: 926px;">
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">商品编号：</label>
+                                <input name="bn" type="text" th:value="*{bn}" id="bn"
+                                       class="form-control input-sm mb10" placeholder="商品编号"/>
+                            </div>
+                            <div class="form-group m-r-sm">
+                                <label class="control-label">状态：</label>
+                                <select id="status" name="status" class="form-control input-sm">
+                                    <option selected="selected" value="-1" th:selected="*{status == -1}">--请选择--
+                                    </option>
+                                    <!--/*@thymesVar id="checkStatusEnums" type="com.huotu.shopo2o.service.enums.StoreGoodsStatusEnum.CheckStatusEnum"*/-->
+                                    <option th:each="checkStatus:${checkStatusEnums}" th:value="${checkStatus.code}"
+                                            th:text="${checkStatus.value}"
+                                            th:selected="${checkStatus.code == hbmSupplierGoodsSearcher.status}">未提交审核
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group m-r-sm arrow">
+                                <button type="button" onclick="goodsListHandler.search(1)" class="btn btn-success btn-sm">筛选
+                                </button>
+                                <button type="button" onclick="goodsListHandler.searchAll()" class="btn btn-success btn-sm">
+                                    显示全部
+                                </button>
+                                <button type="button" onclick="goodsListHandler.addGood()" class="btn btn-success btn-sm">添加商品</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!--search-->
+
+    <!--list-->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <div class="tab-content">
+                        <div class="tab-pane active">
+                            <div class="panel-body">
+                                <table class="table table-bordered table-hover table-center">
+                                    <thead>
+                                    <tr>
+                                        <!--<td></td>-->
+                                        <td>名称</td>
+                                        <td>品牌</td>
+                                        <td>商品编号</td>
+                                        <td>成本价</td>
+                                        <td>销售价</td>
+                                        <!--<td>平台销售价</td>-->
+                                        <td>库存量</td>
+                                        <td>店铺分类</td>
+                                        <td>商品类目</td>
+                                        <td>状态</td>
+                                        <td>上架状态</td>
+                                        <td>备注</td>
+                                        <td>更新时间</td>
+                                        <td>操作</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="goods:${goodsList}">
+                                        <!--<td th:text="${goodsStat.count}">1</td>-->
+                                        <td>
+                                            <p>
+                                                <img style="width: 50px; height: 50px; float: left; margin-left: 5px;" src="../../resources/images/none.png"
+                                                th:src="${goods.picUri != null ? goods.picUri.toString() : '../../resources/images/none.png'}"/>
+                                                <span style="overflow: hidden; text-align: left; margin-left: 10px; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1;
+                                                 -webkit-box-orient: vertical; width: 54%; float: left;" th:text="${goods.name}">商品名称</span>
+                                            </p>
+                                        </td>
+                                        <td th:text="${goods.brand== null}?'':${goods.brand.brandName}">--</td>
+                                        <td th:text="${goods.bn}"></td>
+                                        <td th:text="'¥'+${goods.cost}">¥100</td>
+                                        <td th:text="'¥'+${goods.price}">¥0</td>
+                                        <!--<td th:text="${goods.customerPrice}!=null ? '¥'+${goods.customerPrice} : ''">
+                                            ¥0
+                                        </td>-->
+                                        <td th:text="${goods.usableStore}">600</td>
+                                        <!--<td class="txt40 c" th:text="${goods.price==0}?'0.00%':(${#numbers.formatDecimal((goods.price - goods.cost)*100/goods.price,1,2)} + '%')">
+                                            50.00%
+                                        </td>-->
+                                        <td th:style="${goods.shopCat} == null ? 'color:#ccc;' : ''"
+                                            th:text="${goods.shopCat}!=null?${goods.shopCat.catName}:'未分类'">分类1
+                                        </td>
+                                        <td th:text="${goods.type}!=null?${goods.type.name}:''">分类1</td>
+                                        <td><span style="color:red;" th:text="${goods.status.getValue()}">未提交</span>
+                                        </td>
+                                        <td><span style="color:green;"
+                                                  th:text="${goods.marketable?'上架':'未上架'}">未上架</span></td>
+                                        <td th:text="${goods.remark}">分类1</td>
+                                        <td th:text="${#dates.format(goods.lastModify,'yyyy-MM-dd HH:mm:ss')}">--</td>
+                                        <td style="width: 10%;">
+                                            <span class="cursor-point" th:attr="goodsId=${goods.supplierGoodsId}" onclick="goodsListHandler.editGood(this)">
+                                                <i class="fa fa-pencil fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip" data-original-title="编辑"></i>
+                                            </span>
+                                            &nbsp;
+                                            <span class="cursor-point" th:if="${goods.editable()}"
+                                                  th:attr="goodsId=${goods.supplierGoodsId}"
+                                                  onclick="goodsListHandler.updateGoodStatus(this,1)">
+                                                <i class="fa fa-hand-o-up fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip" data-original-title="提交审核"></i>
+                                            </span>
+                                            &nbsp;
+                                            <span class="cursor-point" th:if="${goods.operable()}"
+                                                  th:attr="goodsId=${goods.supplierGoodsId}"
+                                                  onclick="goodsListHandler.updateGoodStatus(this,4)">
+                                                <i class="fa fa-recycle fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip" data-original-title="回收"></i>
+                                            </span>
+                                            &nbsp;
+                                            <span class="cursor-point" th:if="${goods.editable()}"
+                                                  th:attr="goodsId=${goods.supplierGoodsId}"
+                                                  onclick="javascript:goodsListHandler.removeGood(this)">
+                                                <i class="fa fa-minus fa-lg tooltips" data-placement="top"
+                                                   data-toggle="tooltip" data-original-title="删除"></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <p style="float: left; margin: 20px 0;">共
+                                    <th:block th:text="${totalRecords}">100</th:block>
+                                    条记录，当前第
+                                    <th:block th:text="${pageIndex}">1</th:block>
+                                    /
+                                    <th:block th:text="${totalPages}">15</th:block>
+                                    ，每页
+                                    <th:block th:text="${pageSize}">10</th:block>
+                                    条记录
+                                </p>
+                                <ul style="float: right;" class="pagination pagination-split">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--list-->
+</div>
+<div id="remarkModal" class="modal-content-tag">
+    <form id="remark_form" novalidate="novalidate">
+        <input type="hidden" id="remark_goodsId" name="goodsId"/>
+        <input type="hidden" id="remark_status" name="status"/>
+        <div class="form-horizontal" style="width: 479px;">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注：</label>
+                <div class="col-sm-10">
+                    <textarea name="comment" class="form-control" rows="5" style="height: 90px; width: 100%;"
+                              required="" aria-required="true"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--日期选择-->
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/moment.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/plugins/datetimepick/daterangepicker.js"></script>
+
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-init.js}"></script>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/good}]]*/"/good";
+    var pageIndex = /*[[${pageIndex}]]*/ 1;
+    var totalPage = /*[[${totalPages}]]*/ 20;
+    var stId;
+    /*<![CDATA[*/
+    $(function () {
+        //初始化分页
+        var pageinate = new hot.paging(".pagination", pageIndex, totalPage, 7);
+        pageinate.init(function (p) {
+            goodsListHandler.search(p);
+        });
+    })
+    var remarkModel = $("#remarkModal").modal("备注", function () {
+        var goodsId = $("#remark_goodsId").val();
+        var status = $("#remark_status").val();
+        var comment = $("textarea[name=comment]").val();
+        if(status == 4 && comment.length == 0){
+            hot.tip.error("请输入回收原因");
+        }
+        hot.loading.show();
+        var data = {
+            goodsId:goodsId,
+            comment:comment,
+            status:status
+        }
+        hot.ajax(baseUrl + "/updateGoodStatus",data,function(result){
+            if (result.code == 200) {
+                hot.tip.success(result.msg);
+                setTimeout(function () {
+                    window.location.reload();
+                }, 500);
+            }else{
+                hot.tip.error(result.msg);
+            }
+        },function(){},'post');
+    })
+    var goodsListHandler = {
+        search: function (pageIndex) {
+            $("input[name=pageNo]").val(pageIndex);
+            $("#brandId").val($("#brandIdSelect").val());
+            $("#standardTypeId").val((stId == '0') ? "" : stId);
+            $("#searchForm").submit();
+        },
+        searchAll: function () {
+            window.location.href = baseUrl + "/showGoodsList?version=V2";
+        },
+        addGood:function(){
+            top.document.getElementById("content_left").contentDocument.getElementById("id_050102").getElementsByTagName("a")[0].click();
+        },
+        editGood:function(obj){
+            var goodsId = $(obj).attr("goodsId");
+            window.location.href=baseUrl + "/editGood?version=V2&supplierGoodId="+goodsId;
+        },
+        updateGoodStatus: function (obj, status) {
+            var goodsId = $(obj).attr('goodsId');
+            remarkModel.show();
+            $("#remark_goodsId").val(goodsId);
+            $("#remark_status").val(status);
+            $("textarea[name=comment]").val('');
+        },
+        removeGood:function(obj){
+            var goodsId = $(obj).attr('goodsId');
+            hot.confirm("确定要删除商品吗?",function(){
+                hot.loading.show();
+                var data = {
+                    goodsId:goodsId
+                };
+                hot.ajax(baseUrl + "/deleteGood",data,function(result){
+                    if (result.code == 200) {
+                        window.location.reload();
+                    } else {
+                        hot.tip.error(result.msg);
+                    }
+                },function(){},'post');
+            });
+        }
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

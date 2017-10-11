@@ -79,7 +79,7 @@ public class GoodsController {
             modelAndView.setViewName("goods/storeManager");
             hbmSupplierGoodsSearcher.setMarketable(true);
         } else {
-            modelAndView.setViewName("goods/goodsList");
+            modelAndView.setViewName("goods/goodsListV2");
         }
         List<HbmGoodsType> typeList = hbmGoodsTypeService.getGoodsTypeLastUsed(customer.getCustomerId());
         List<SupShopCat> shopCatList = shopCatService.findByStoreId(customer.getCustomerId());
