@@ -633,7 +633,7 @@
     var specList = eval(/*[[${specList}]]*/"");
     var productBn = /*[[${productBn}]]*/"";
     var domain = /*[[${domain}]]*/ "domain";
-    var supplierId = /*[[${supplierId}]]*/ "supplierId";
+    var storeId = /*[[${storeId}]]*/ "storeId";
     var settlementMode = /*[[${customerConfig.isRebate()}]]*/ "true";
     var rebateMode = /*[[${customerConfig.rebateMode()}]]*/ "true";
 </script>
@@ -707,7 +707,7 @@
                 closeBtn: 1,
                 area: ['920px', '640px'],
                 //width=-1表示正方形图片
-                content: "/resources/3rdParty/Picture/gallery.html?customerId=" + supplierId + "&isMult=false&domain=" + domain + "&isapi=1&width=-1&uploaderUri=" + uploadImageUrl,
+                content: "/resources/3rdParty/Picture/gallery.html?customerId=" + storeId + "&isMult=false&domain=" + domain + "&isapi=1&width=-1&uploaderUri=" + uploadImageUrl,
                 //btn:["确定"],
                 end: function (index, layero) {
                     var jsonStr = $("#js_cms_picture_value").val();

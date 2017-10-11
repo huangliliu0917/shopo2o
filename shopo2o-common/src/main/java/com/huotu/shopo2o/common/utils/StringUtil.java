@@ -3,6 +3,7 @@ package com.huotu.shopo2o.common.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by hxh on 2017-09-11.
@@ -64,5 +65,22 @@ public class StringUtil {
         }
 
         return date;
+    }
+
+    /**
+     * 得到随机字符串
+     *
+     * @return
+     */
+    public static String createRandomStr(int digit) {
+        String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int baseLength = base.length();
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < digit; i++) {
+            int number = random.nextInt(baseLength);
+            stringBuilder.append(base.charAt(number));
+        }
+        return stringBuilder.toString();
     }
 }
