@@ -35,4 +35,6 @@ public interface HbmSupplierGoodsService {
      * @throws Exception
      */
     ApiResult disableGood(int storeGoodsId) throws Exception;
+
+    HbmSupplierGoods findWithBrandAndSpecBySupplierGoodId(int supplierGoodId, Long customerId);
 }

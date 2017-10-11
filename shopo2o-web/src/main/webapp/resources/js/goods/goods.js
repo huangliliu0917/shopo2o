@@ -56,7 +56,7 @@ specProductEditor.initExistProductRow = function () {//修改前的货品行
             objVal['specValueId']=$(this).attr('specValueId');
             objVal['specId']=$(this).attr('specId');
             var arrImages = specProductEditor.getExistGoodsImages($(this).attr('specValueId'));
-            $("img[name=pro_spec_value_img_" +$(this).attr('specValueId') + "]").attr('src',(arrImages != null && arrImages.length > 0 ? arrImages[0].src : '/resource/images/dg2017.jpg'));
+            $("img[name=pro_spec_value_img_" +$(this).attr('specValueId') + "]").attr('src',(arrImages != null && arrImages.length > 0 ? arrImages[0].src : '/resources/images/dg2017.jpg'));
             arrTemp[i].push(objVal);
         });
     })

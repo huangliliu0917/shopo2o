@@ -1,5 +1,7 @@
 package com.huotu.shopo2o.web.controller.goods;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huotu.shopo2o.common.SysConstant;
 import com.huotu.shopo2o.common.ienum.EnumHelper;
@@ -13,6 +15,7 @@ import com.huotu.shopo2o.service.entity.good.FreightTemplate;
 import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
 import com.huotu.shopo2o.service.entity.good.HbmImage;
+import com.huotu.shopo2o.service.entity.good.HbmSpecValues;
 import com.huotu.shopo2o.service.entity.good.HbmSpecification;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
@@ -24,7 +27,9 @@ import com.huotu.shopo2o.service.repository.config.MallCustomerConfigRepository;
 import com.huotu.shopo2o.service.repository.good.FreightTemplateRepository;
 import com.huotu.shopo2o.service.repository.user.UserLevelRepository;
 import com.huotu.shopo2o.service.service.goods.HbmGoodsTypeService;
+import com.huotu.shopo2o.service.service.goods.HbmImageService;
 import com.huotu.shopo2o.service.service.goods.HbmSupplierGoodsService;
+import com.huotu.shopo2o.service.service.goods.HbmSupplierProductsService;
 import com.huotu.shopo2o.service.service.shop.SupShopCatService;
 import com.huotu.shopo2o.web.config.security.annotations.LoginUser;
 import com.huotu.shopo2o.web.service.StaticResourceService;
@@ -62,6 +67,8 @@ public class GoodsController {
     private HbmSupplierGoodsService hbmSupplierGoodsService;
     @Autowired
     private StaticResourceService resourceServer;
+    @Autowired
+    private HbmImageService imageService;
 
     @Autowired
     private MallCustomerConfigRepository customerConfigRepository;
@@ -71,6 +78,9 @@ public class GoodsController {
 
     @Autowired
     private UserLevelRepository userLevelRepository;
+
+    @Autowired
+    private HbmSupplierProductsService hbmSupplierProductsService;
 
     /**
      * 新增商品时，显示选择类型界面中的一级类型,并根据tOrder排序
@@ -373,6 +383,115 @@ public class GoodsController {
             log.error("保存或更改商品失败", e);
         }
         return result;
+    }
+
+    /**
+     * 编辑商品时，获取类型，品牌，规格和货品相关信息
+     *
+     * @param customer
+     * @param supplierGoodId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/editGood")
+    public ModelAndView editGood(@LoginUser MallCustomer customer, String supplierGoodId) throws Exception {
+        ModelAndView modelAndView = new ModelAndView();
+        Long customerId = customer.getStore().getCustomer().getCustomerId();
+        if (supplierGoodId != null && supplierGoodId.length() > 0) {
+            List<HbmBrand> brandList;
+            List<HbmImage> imageList;
+            HbmSupplierGoods good;
+            List<HbmSupplierProducts> productList;
+            //目前上传图片时仅保存第一张图片，缩略图，小图，大图指向同一张图片
+            //商品信息
+            good = hbmSupplierGoodsService.findWithBrandAndSpecBySupplierGoodId(Integer.parseInt(supplierGoodId), customer.getStore().getCustomer().getCustomerId());
+            //设置规格uri
+            good = makeSpecValueImg(good);
+            if (good != null && !good.isDisabled()) {
+                //类目PATH，品牌LIST和货品LIST
+                String typePath = hbmGoodsTypeService.getTypePath(good.getType());
+                brandList = good.getType().getBrandList();
+                productList = hbmSupplierProductsService.getProductListByGoodId(good.getSupplierGoodsId());
+                //商品图片路径
+                imageList = imageService.findBySupplierGoodId(good.getSupplierGoodsId());
+                //设置uri
+                if (imageList != null && imageList.size() > 0) {
+                    imageList.forEach(img -> {
+                        try {
+                            URI imgUri = resourceServer.getResource(StaticResourceService.huobanmallMode, img.getThumbnail());
+                            img.setUri(imgUri.toString());
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+                //获取供应商店铺分类
+                modelAndView.addObject("imgList", imageList);
+                modelAndView.addObject("typePath", typePath);
+                modelAndView.addObject("productList", productList);
+                modelAndView.addObject("good", good);
+                //如果商品可编辑，则跳转到编辑页面；如果不可编辑，则跳转到查看详细页面
+//                if (good.editable()) {
+                modelAndView.setViewName("goods/editGood");
+                goodsBasicInfo(modelAndView, customerId, customer.getCustomerId());
+                modelAndView.addObject("brandList", brandList);
+                /*}
+                else {
+                    //商城基本配置
+                    MallCustomerConfig customerConfig = customerConfigRepository.findByCustomerId(customerId);
+                    SisConfig sisConfig = sisConfigRepository.findByCustomerId(customerId);
+                    modelAndView.addObject("customerConfig",customerConfig);
+                    modelAndView.addObject("sisConfig",sisConfig);
+                    modelAndView.setViewName("goods/detailGood");
+                }*/
+            } else {
+                return new ModelAndView("redirect:/good/showGoodsList");
+            }
+        } else {
+            return new ModelAndView("redirect:/good/showGoodsList");
+        }
+        return modelAndView;
+    }
+
+    private HbmSupplierGoods makeSpecValueImg(HbmSupplierGoods good) {
+        if (good != null && good.getSpecDesc() != null && good.getType() != null && good.getType().getSpecList() != null && good.getType().getSpecList().size() > 0) {
+            JSONArray array = JSON.parseArray(good.getSpecDesc());
+            good.getType().getSpecList().forEach(spec -> {
+                List<HbmSpecValues> specValues = spec.getSpecValues();
+                if (specValues != null && specValues.size() > 0) {
+                    specValues.forEach(specValue -> {
+                        for (int i = 0; i < array.size(); i++) {
+                            JSONObject obj = array.getJSONObject(i);
+                            if (obj.getIntValue("SpecValueId") == specValue.getId()) {
+                                String images = "";
+                                if (obj.getString("GoodsImageIds") != null && obj.getString("GoodsImageIds").length() > 0) {
+                                    JSONArray imageArray = JSON.parseArray(obj.getString("GoodsImageIds"));
+                                    for (int j = 0; j < imageArray.size(); j++) {
+                                        if (imageArray.getString(j) != null && imageArray.getString(j).length() > 0) {
+                                            if (images.length() > 0) {
+                                                images += "^";
+                                            }
+                                            try {
+                                                String imgResource = resourceServer.getResource(StaticResourceService.huobanmallMode, imageArray.getString(j)).toString();
+                                                images += ("0|" + imageArray.getString(j) + "|" + imgResource);
+                                                if(StringUtil.isEmptyStr(specValue.getFirstSpecValueImg())){
+                                                    specValue.setFirstSpecValueImg(imgResource);
+                                                }
+                                            } catch (URISyntaxException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                }
+                                specValue.setSpecValueImg(images);
+                                break;
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        return good;
     }
 
     /**

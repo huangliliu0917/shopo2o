@@ -5,8 +5,11 @@ import com.huotu.shopo2o.common.ienum.EnumHelper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.DoubleUtil;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
+import com.huotu.shopo2o.common.utils.StringUtil;
+import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsSpecIndex;
 import com.huotu.shopo2o.service.entity.good.HbmImage;
+import com.huotu.shopo2o.service.entity.good.HbmSpecValues;
 import com.huotu.shopo2o.service.entity.good.HbmSpecification;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
@@ -14,7 +17,10 @@ import com.huotu.shopo2o.service.entity.good.MallGood;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.enums.StoreGoodsStatusEnum;
 import com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher;
+import com.huotu.shopo2o.service.repository.good.HbmBrandRepository;
 import com.huotu.shopo2o.service.repository.good.HbmGoodsSpecIndexRepository;
+import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeRepository;
+import com.huotu.shopo2o.service.repository.good.HbmSpecificationRepository;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierGoodsRepository;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierProductsRepository;
 import com.huotu.shopo2o.service.repository.good.MallGoodRepository;
@@ -54,6 +60,13 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
     private HbmSupplierProductsService productsService;
     @Autowired
     private HbmGoodsSpecIndexRepository goodsSpecIndexRepository;
+
+    @Autowired
+    private HbmGoodsTypeRepository typeRepository;
+    @Autowired
+    private HbmSpecificationRepository specRepository;
+    @Autowired
+    private HbmBrandRepository brandRepository;
 
     @Override
     public Page<HbmSupplierGoods> getGoodList(long storeId, HbmSupplierGoodsSearcher searcher) {
@@ -358,5 +371,36 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
             return new ApiResult("该商品已审核通过，无法删除！");
         }
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public HbmSupplierGoods findWithBrandAndSpecBySupplierGoodId(int supplierGoodId, Long customerId) {
+        HbmSupplierGoods good = supplierGoodsRepository.findOne(supplierGoodId);
+        if (good != null && !good.isDisabled()) {
+            if (good.getType() != null) {
+                List<HbmBrand> brandList = brandRepository.findByTypeId(good.getType().getTypeId(),customerId);
+                good.getType().setBrandList(brandList);
+                //过滤掉平台添加的供应商商品-关闭规格
+                if(!"[]".equals(good.getSpecDesc())){
+                    List<HbmSpecification> specList = typeRepository.findSpecListByTypeId(good.getType().getTypeId(),customerId);
+                    if (specList != null && specList.size() > 0) {
+                        specList.forEach(spec -> {
+                            List<HbmSpecValues> specValuesList;
+                            if(StringUtil.isNotEmpty(good.getType().getStandardTypeId())){
+                                specValuesList = specRepository.findSpecValueListByTypeIdAndSpecId(good.getType().getTypeId(), spec.getSpecId(),customerId);
+                            }else{
+                                specValuesList = specRepository.findCustomerSpecValueListByCustomerIdAndSpecId(customerId, spec.getSpecId());
+                            }
+                            if (specValuesList != null && specValuesList.size() > 0) {
+                                spec.setSpecValues(specValuesList);
+                            }
+                        });
+                        good.getType().setSpecList(specList);
+                    }
+                }
+            }
+            return good;
+        }
+        return null;
     }
 }

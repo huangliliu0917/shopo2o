@@ -10,4 +10,5 @@ import java.util.List;
 public interface HbmImageService {
     void batchUpdateImg(List<HbmImage> imgList, Integer supplierGoodId);
 
+    List<HbmImage> findBySupplierGoodId(Integer supplierGoodsId);
 }

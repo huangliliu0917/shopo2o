@@ -66,5 +66,10 @@ public class HbmImageServiceImpl implements HbmImageService {
         });
     }
 
+    @Override
+    public List<HbmImage> findBySupplierGoodId(Integer supplierGoodsId) {
+        return imageRepository.findBySupplierGoodId(supplierGoodsId);
+    }
+
 
 }
