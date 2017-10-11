@@ -311,7 +311,7 @@ specProductEditor.updateProductTable = function () {
                     objSpecVal.specValueId,
                     _spec_Value,
                     objSpecVal.specId,
-                    isImg?specValueImg[0].src:'/resource/images/dg2017.jpg');
+                    isImg?specValueImg[0].src:'/resources/images/dg2017.jpg');
 
                 rowIds.push(objSpecVal.specId + '|' + objSpecVal.specValueId);
             }
