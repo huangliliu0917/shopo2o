@@ -7,7 +7,11 @@ import com.huotu.shopo2o.service.entity.config.SupBasicConfig;
 import com.huotu.shopo2o.service.entity.config.SupShopConfig;
 import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
+import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
+import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
 import com.huotu.shopo2o.service.entity.good.HbmTypeBrand;
+import com.huotu.shopo2o.service.entity.good.MallGood;
+import com.huotu.shopo2o.service.entity.good.MallProduct;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
@@ -23,6 +27,8 @@ import com.huotu.shopo2o.service.repository.config.SupBasicConfigRepository;
 import com.huotu.shopo2o.service.repository.good.HbmBrandRepository;
 import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeRepository;
 import com.huotu.shopo2o.service.repository.good.HbmTypeBrandRepository;
+import com.huotu.shopo2o.service.repository.good.MallGoodRepository;
+import com.huotu.shopo2o.service.repository.good.MallProductRepository;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.repository.order.MallDeliveryRepository;
 import com.huotu.shopo2o.service.repository.order.MallOrderRepository;
@@ -42,6 +48,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -78,6 +85,10 @@ public class CommonTestBase extends SpringWebTest {
     protected HbmGoodsTypeRepository hbmGoodsTypeRepository;
     @Autowired
     protected HbmBrandRepository hbmBrandRepository;
+    @Autowired
+    protected MallGoodRepository mallGoodRepository;
+    @Autowired
+    protected MallProductRepository mallProductRepository;
 
     @Autowired
     protected HbmTypeBrandRepository hbmTypeBrandRepository;
@@ -202,5 +213,60 @@ public class CommonTestBase extends SpringWebTest {
         hbmTypeBrand.setTypeId(typeId);
         hbmTypeBrand.setBrandId(brandId);
         return hbmTypeBrandRepository.saveAndFlush(hbmTypeBrand);
+    }
+
+    protected MallGood mockMallGood(HbmSupplierGoods supplierGoods, List<MallProduct> productss) {
+        MallGood mallGood = new MallGood();
+        mallGood.setTypeId(supplierGoods.getType() != null? supplierGoods.getType().getTypeId(): null);
+        mallGood.setStoreCatId(supplierGoods.getShopCat() != null? supplierGoods.getShopCat().getCatId(): null);
+        mallGood.setBigPic(supplierGoods.getBigPic());
+        mallGood.setBn(supplierGoods.getBn());
+        mallGood.setBrief(supplierGoods.getBrief());
+        mallGood.setCost(supplierGoods.getCost());
+        mallGood.setCustomerId(new Long(supplierGoods.getStoreId()).intValue());
+        mallGood.setDisabled(supplierGoods.isDisabled());
+        mallGood.setIntro(supplierGoods.getIntro());
+        mallGood.setLimitBuyNum(supplierGoods.getLimitBuyNum());
+        mallGood.setMarketable(supplierGoods.isMarketable());
+        mallGood.setMktPrice(supplierGoods.getMktPrice());
+        mallGood.setName(supplierGoods.getName());
+        mallGood.setNotifyNum(supplierGoods.getNotifyNum());
+        mallGood.setPrice(supplierGoods.getPrice());
+        mallGood.setProducts(productss);
+        mallGood.setSmallPic(supplierGoods.getSmallPic());
+        mallGood.setSpec(supplierGoods.getSpec());
+        mallGood.setSpecDesc(supplierGoods.getSpecDesc());
+        mallGood.setStoreId(supplierGoods.getStoreId());
+        mallGood.setSubTitle(supplierGoods.getSubTitle());
+        mallGood.setThumbnailPic(supplierGoods.getThumbnailPic());
+        mallGood.setUnit(supplierGoods.getUnit());
+        mallGood.setWeight(supplierGoods.getWeight());
+        return mallGoodRepository.saveAndFlush(mallGood);
+    }
+
+    protected MallProduct mockMallProduct(HbmSupplierProducts supplierProducts) {
+        MallProduct mallProduct = new MallProduct();
+        mallProduct.setCost(supplierProducts.getCost());
+        mallProduct.setWeight(supplierProducts.getWeight());
+        mallProduct.setUnit(supplierProducts.getUnit());
+        mallProduct.setBarcode(supplierProducts.getBarcode());
+        mallProduct.setBn(supplierProducts.getBn());
+        mallProduct.setFreez(supplierProducts.getFreez());
+        mallProduct.setDisRebateCustomPercent(supplierProducts.getDisRebateCustomPercent());
+        mallProduct.setLastModify(new Date());
+        mallProduct.setMarketable(supplierProducts.getMarketable());
+        mallProduct.setMktPrice(supplierProducts.getMktPrice());
+        mallProduct.setName(supplierProducts.getName());
+        mallProduct.setPrice(150);
+        mallProduct.setProps(supplierProducts.getProps());
+        mallProduct.setStandard(supplierProducts.getPdtDesc());
+        mallProduct.setStore(supplierProducts.getStore());
+        mallProduct.setMarketable(1);
+        mallProduct.setSupplierProductId(supplierProducts.getSupplierProductId());
+        mallProduct.setTitle(supplierProducts.getTitle());
+        mallProduct.setUserIntegralInfo(supplierProducts.getUserIntegralInfo());
+        mallProduct.setUserPriceInfo(supplierProducts.getUserPriceInfo());
+
+        return mallProductRepository.saveAndFlush(mallProduct);
     }
 }

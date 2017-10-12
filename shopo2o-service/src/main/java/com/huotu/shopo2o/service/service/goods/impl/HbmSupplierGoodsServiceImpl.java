@@ -14,6 +14,7 @@ import com.huotu.shopo2o.service.entity.good.HbmSpecification;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
 import com.huotu.shopo2o.service.entity.good.MallGood;
+import com.huotu.shopo2o.service.entity.good.MallProduct;
 import com.huotu.shopo2o.service.entity.store.SupShopCat;
 import com.huotu.shopo2o.service.enums.StoreGoodsStatusEnum;
 import com.huotu.shopo2o.service.model.HbmSupplierGoodsSearcher;
@@ -24,6 +25,8 @@ import com.huotu.shopo2o.service.repository.good.HbmSpecificationRepository;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierGoodsRepository;
 import com.huotu.shopo2o.service.repository.good.HbmSupplierProductsRepository;
 import com.huotu.shopo2o.service.repository.good.MallGoodRepository;
+import com.huotu.shopo2o.service.repository.good.MallProductRepository;
+import com.huotu.shopo2o.service.repository.store.SupShopCatRepository;
 import com.huotu.shopo2o.service.service.goods.HbmImageService;
 import com.huotu.shopo2o.service.service.goods.HbmSupplierGoodsService;
 import com.huotu.shopo2o.service.service.goods.HbmSupplierProductsService;
@@ -60,7 +63,10 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
     private HbmSupplierProductsService productsService;
     @Autowired
     private HbmGoodsSpecIndexRepository goodsSpecIndexRepository;
-
+    @Autowired
+    private MallProductRepository mallProductRepository;
+    @Autowired
+    private SupShopCatRepository shopCatRepository;
     @Autowired
     private HbmGoodsTypeRepository typeRepository;
     @Autowired
@@ -402,5 +408,63 @@ public class HbmSupplierGoodsServiceImpl implements HbmSupplierGoodsService {
             return good;
         }
         return null;
+    }
+
+    @Override
+    public HbmSupplierGoods findById(int supplierGoodId) {
+        HbmSupplierGoods good = supplierGoodsRepository.findOne(supplierGoodId);
+        if (good != null && !good.isDisabled()) {
+            return good;
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public ApiResult updateGoodsAndProductsStore(int supplierGoodsId, Integer shopCatId, String[] productId, String[] productStore) throws Exception {
+        HbmSupplierGoods hbmSupplierGoods = null;
+        MallGood mallGood = null;
+        SupShopCat shopCat = null;
+        List<HbmSupplierProducts> productList = new ArrayList<>();
+        //
+        hbmSupplierGoods = findById(supplierGoodsId);
+        if (hbmSupplierGoods == null) {
+            return new ApiResult("商品编号错误！");
+        }
+        if (!hbmSupplierGoods.operable()) {
+            return new ApiResult("商品未审核！");
+        }
+        if (hbmSupplierGoods.getMallGoodsId() == null) {
+            return new ApiResult("商品未上架");
+        }
+        if (shopCatId != null) {
+            shopCat = shopCatRepository.findOne(shopCatId);
+        }
+        mallGood = goodsRepository.findOne(hbmSupplierGoods.getMallGoodsId());
+        hbmSupplierGoods.setLastModify(new Date());
+        int newStore = 0;
+        for (int i = 0; i < productStore.length; i++) {
+            HbmSupplierProducts products = productsService.getProductByProductId(Integer.parseInt(productId[i]));
+            if (products.getMallProductId() != null && products.getMallProductId() != 0) {
+                MallProduct mallProduct = mallProductRepository.findOne(products.getMallProductId());
+                if (mallProduct != null && mallProduct.getMarketable() == 1
+                        && mallProduct.getFreez() <= Integer.parseInt(productStore[i])) {
+                    newStore += Integer.parseInt(productStore[i]);
+                    mallProduct.setStore(Integer.parseInt(productStore[i]));
+                    products.setStore(Integer.parseInt(productStore[i]));
+                    productList.add(products);
+                } else {
+                    throw new Exception("库存不足，保存失败！");
+                }
+
+            }
+        }
+        if (productList != null && productList.size() > 0) {
+            hbmSupplierGoods.setStore(newStore);
+            mallGood.setStore(newStore);
+            hbmSupplierGoods.setShopCat(shopCat);
+            mallGood.setStoreCatId(shopCat == null ? 0 : shopCat.getCatId());
+        }
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 }

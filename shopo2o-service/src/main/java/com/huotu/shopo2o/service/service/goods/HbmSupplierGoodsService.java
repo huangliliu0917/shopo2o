@@ -37,4 +37,17 @@ public interface HbmSupplierGoodsService {
     ApiResult disableGood(int storeGoodsId) throws Exception;
 
     HbmSupplierGoods findWithBrandAndSpecBySupplierGoodId(int supplierGoodId, Long customerId);
+
+    HbmSupplierGoods findById(int supplierGoodId);
+
+    /**
+     * 更新商品库存
+     * @param supplierGoodsId 商品id
+     * @param shopCatId 门店分类集合
+     * @param productId 产品id集合
+     * @param productStore 更新后的库存量集合
+     * @return
+     * @throws Exception
+     */
+    ApiResult updateGoodsAndProductsStore(int supplierGoodsId, Integer shopCatId, String[] productId, String[] productStore) throws Exception;
 }

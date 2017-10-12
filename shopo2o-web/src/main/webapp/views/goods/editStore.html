@@ -1,0 +1,237 @@
+<!DOCTYPE html >
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>库存修改</title>
+    <link href="../../resources/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resources/css/admin.global.css}"/>
+    <link href="../../resources/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resources/css/admin.content.css}"/>
+    <link href="../../resources/css/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resources/css/jBox/Skins/Green/jbox.css}"/>
+    <link href="../../resources/css/jquery-ui-1.10.3.custom.min.css"
+          th:href="@{/resources/css/jquery-ui-1.10.3.custom.min.css}" rel="stylesheet"/>
+    <link href="../../resources/css/settlements.css" rel="stylesheet" th:href="@{/resources/css/settlements.css}"
+          type="text/css"/>
+    <link href="../../resources/css/shouji.css" rel="stylesheet" th:href="@{/resources/css/shouji.css}" type="text/css"/>
+    <script type="text/javascript" src="../../resources/js/jquery/jquery-1.7.2.min.js"
+            th:src="@{/resources/js/jquery/jquery-1.7.2.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/jquery/jquery.utils.js"
+            th:src="@{/resources/js/jquery/jquery.utils.js}"></script>
+    <script type="text/javascript" src="../../resources/js/jquery/jquery.jBox-2.3.min.js"
+            th:src="@{/resources/js/jquery/jquery.jBox-2.3.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/hot/admin.js"
+            th:src="@{/resources/js/hot/admin.js}"></script>
+    <script src="../../resources/js/jquery/jquery-ui-1.8.20.min.js"
+            th:src="@{/resources/js/jquery/jquery-ui-1.8.20.min.js}"></script>
+    <script type="text/javascript" src="../../resources/js/My97DatePicker/WdatePicker.js"
+            th:src="@{/resources/js/My97DatePicker/WdatePicker.js}"></script>
+    <style type="text/css">
+        .over {
+            background-color: #00ff21;
+        }
+
+        body, td, th {
+            font-family: "微软雅黑", "宋体", Arial;
+        }
+    </style>
+    <script type="text/javascript" th:inline="javascript">
+        var productList;
+        var hbmSupplierGoods;
+        $(function () {
+            $('.OnlyNum').OnlyNum();
+            productList = /*[[${productList}]]*/"";
+            hbmSupplierGoods = /*[[${hbmSupplierGoods}]]*/"";
+            storeUrl = /*[[@{/store}]]*/"store";
+            setTableValue();
+        })
+
+        function setTableValue() {
+            for (var i in productList) {
+                var props = JSON.parse(productList[i].props);
+                for (j in props) {
+//                    document.getElementById(productList[i].productId + '_' + props[j].SpecId).innerHTML = props[j].SpecValue;
+                    $("#" + productList[i].productId + '_' + props[j].SpecId).text(props[j].SpecValue);
+                }
+            }
+        }
+
+        function submitForm() {
+            for (var i in productList) {
+//                var store = document.getElementById(productList[i].productId + '_store_val').value;
+                var store = $("#" + productList[i].productId + '_store_val').val();
+                if (productList[i].freez > store) {
+                    jBox.tip('库存数量不能小于预占库存数量，请检查！', 'info');
+                    return;
+                }
+                productList[i].store = store;
+            }
+            var dataPara = getFormJson($("#form1"));
+            $.jBox.tip("正在保存...", "loading");
+            $.ajax({
+                type: "POST",
+                url: storeUrl + "/storeManager",
+                data: dataPara,
+                dataType: "json",
+                success: function (msg) {
+                    $.jBox.closeTip();
+                    if(msg.code == 200){
+                        $.jBox.tip(msg.msg,"success");
+                        setTimeout(function(){
+                            top.document.getElementById("content_left").contentDocument.getElementById("id_050103").getElementsByTagName("a")[0].click();
+                        },500);
+                    }else{
+                        $.jBox.tip(msg.msg,"error");
+                    }
+                }
+            });
+        }
+
+        //将form中的值转换为键值对。
+        function getFormJson(frm) {
+            var o = {};
+            var a = $(frm).serializeArray();
+            $.each(a, function () {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        }
+
+        function cancelForm() {
+            top.document.getElementById("content").contentWindow.$.jBox.close(true);
+        }
+    </script>
+</head>
+<body>
+<form method="post" action="storeManager" id="form1">
+    <div class="block" style="margin-left: 1px;">
+        <div class="h">
+            <span class="icon-sprite icon-list"></span>
+
+            <h3 style="float: left; width: 180px;">货品列表</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <!--/*-->
+                <!--@thymesVar id="hbmSupplierGoods" type="com.huotu.shopo2o.service.entity.good.HbmSupplierGoods"-->
+                <!--*/-->
+                <input name="supplierGoodsId" type="hidden"
+                       th:value="${hbmSupplierGoods==null}?0:${hbmSupplierGoods.supplierGoodsId}"/>
+                <div class="division">
+
+                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                        <tbody>
+                        <tr>
+                            <th>门店店铺分类：</th>
+                            <td>
+                                <select id="catId" name="shopCatId">
+                                    <option value="0"
+                                            th:selected="${hbmSupplierGoods == null || hbmSupplierGoods.shopCat == null || hbmSupplierGoods.shopCat.catId == 0}">
+                                        根目录
+                                    </option>
+                                    <!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.service.shop.SupShopCat>"*/-->
+                                    <th:block th:each="cat:${shopCatList}">
+                                        <option th:value="${cat.catId}" th:text="'&nbsp;&nbsp;└ ' + ${cat.catName}"
+                                                th:selected="${hbmSupplierGoods.shopCat != null and hbmSupplierGoods.shopCat.catId == cat.catId}"></option>
+                                        <!--最多显示2级-->
+                                        <option th:if="${cat.subShopCat!=null}" th:each="subCat:${cat.subShopCat}"
+                                                th:value="${subCat.catId}"
+                                                th:text="'&nbsp;&nbsp;&nbsp;&nbsp;└ ' + ${subCat.catName}"/>
+                                    </th:block>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="division">
+
+                    <table class="data-table even1" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <thead>
+                        <tr>
+                            <th class="header">商家编码
+                            </th>
+                            <!--/*-->
+                            <!--@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"-->
+                            <!--*/-->
+                            <!--<th th:each="spec:${specList}" class="header" th:text="${spec.specName}">
+                                <span style="display: none;" th:text="${spec.specId}"></span>
+                            </th>-->
+                            <th class="header">规格
+                            </th>
+                            <th class="header">状态
+                            </th>
+                            <th class="header">库存
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody th:remove="all-but-first">
+                        <!--/*-->
+                        <!--@thymesVar id="productList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSupplierProducts>"-->
+                        <!--*/-->
+                        <tr th:each="product:${productList}">
+                            <input th:name="${product.marketable == 1?'productId':''}" type="hidden"
+                                   th:value="${product.supplierProductId}"/>
+                            <td class="txt80 c" th:text="${product.bn}">
+                                商品1
+                            </td>
+                            <!--/*-->
+                            <!--@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"-->
+                            <!--*/-->
+                            <!--@thymesVar id="product" type="com.huotu.shopo2o.service.entity.good.HbmSupplierProducts"-->
+                            <!--<td th:each="spec:${specList}" class="txt80 c" th:id="${product.supplierProductId} + '_' + ${spec.specId}" th:text="${spec.specName}">
+                            </td>-->
+                            <td class="txt80 c" th:text="${product.pdtDesc}"></td>
+                            <td class="txt80 c" style="color: red" th:text="${product.marketable == 1 ? '已上架':'下架'}">
+
+                            </td>
+                            <td class="txt80 c">
+                                <div>
+                                    <input type="text" th:disabled="${product.marketable == 1 ? 'false' : 'true'}"
+                                           name="productStore" th:value="${product.store}"
+                                           th:id="${product.supplierProductId} + '_store_val'" class="input-small OnlyNum"
+                                           style="width: 80px;"/>
+                                    <br/>
+                                    <label style="padding-left:5px;color:#aaa;">当前预占:<label
+                                            th:text="${product.freez}">0</label>件</label>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <br/>
+
+                <div style="padding:5px;color:#666;width:100%;overflow: hidden;">
+                    1、预占库存：当商品被下单(含未支付和已支付)后，预占库存增加，当取消订单或完成发货后，预占库存释放，总库存相应减少。<br/>
+                    2、可用库存=总库存-预占库存。<br/>
+                    <span style="color:red;font-size:14px;font-weight:bold;">注意、设置过会员价和商品规格价格不一致的商品是不能参与砍价活动的。</span>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <button type="submit" id="btnSave" style="display:none;"></button>
+            <a class="btn-lit" href="javascript:submitForm();"><span>确定</span></a>
+            <a class="btn-lit" href="javascript:cancelForm()"><span>取消</span></a>
+        </div>
+        <p style="height: 20px;"></p>
+    </div>
+</form>
+</body>
+</html>
