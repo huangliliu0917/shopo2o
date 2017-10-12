@@ -43,15 +43,13 @@
         }
     </style>
 </head>
-<!--/*@thymesVar id="good" type="com.huotu.hotsupplier.hbm.service.entity.good.HbmSupplierGoods"*/-->
-<!--/*@thymesVar id="brandList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmBrand>"*/-->
-<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmGoodsType>"*/-->
-<!--/*@thymesVar id="brandList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmBrand>"*/-->
-<!--/*@thymesVar id="freightTemplateList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.FreightTemplate>"*/-->
-<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat>"*/-->
-<!--/*@thymesVar id="productList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmSupplierProducts>"*/-->
-<!--/*@thymesVar id="customerConfig" type="com.huotu.hotsupplier.hbm.service.entity.config.MallCustomerConfig"*/-->
-<!--/*@thymesVar id="sisConfig" type="com.huotu.hotsupplier.hbm.service.entity.config.SisConfig"*/-->
+<!--/*@thymesVar id="good" type="com.huotu.shopo2o.service.entity.good.HbmSupplierGoods"*/-->
+<!--/*@thymesVar id="brandList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmBrand>"*/-->
+<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
+<!--/*@thymesVar id="freightTemplateList" type="java.util.List<com.huotu.shopo2o.service.entity.good.FreightTemplate>"*/-->
+<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.entity.store.SupShopCat>"*/-->
+<!--/*@thymesVar id="productList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSupplierProducts>"*/-->
+<!--/*@thymesVar id="customerConfig" type="com.huotu.shopo2o.service.entity.config.MallCustomerConfig"*/-->
 <!--/*@thymesVar id="typePath" type="java.lang.String"*/-->
 <!--/*@thymesVar id="typeId" type="java.lang.Integer"*/-->
 <body class="gray-bg">
@@ -328,7 +326,7 @@
                                                 <tr>
                                                     <th class="header">货号
                                                     </th>
-                                                    <!--@thymesVar id="specList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmSpecification>"-->
+                                                    <!--@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"-->
                                                     <th th:each="spec:${good.type.specList}" class="header"
                                                         th:text="${spec.specName}">
                                                         <span style="display: none;" th:text="${spec.specId}"></span>
@@ -360,7 +358,7 @@
                                                     </td>
                                                     <td  width="10%" th:each="spec:${good.type.specList}" th:if="${good.type.specList!=null}">
                                                         <!--/*-->
-                                                        <!--@thymesVar id="product" type="com.huotu.hotsupplier.hbm.service.entity.good.HbmSupplierProducts"-->
+                                                        <!--@thymesVar id="product" type="com.huotu.shopo2o.service.entity.good.HbmSupplierProducts"-->
                                                         <!--*/-->
                                                         <input type="hidden" th:name="'pro_spec_value_id_'+${spec.specId}" name="pro_spec_value_id_0" th:value="${product.getSpecValueId(spec.specId)}" value="0" />
                                                         <input type="hidden" th:name="'pro_spec_value_'+${spec.specId}" name="pro_spec_value_0" th:class="'cls_spec_value_'+${product.getSpecValueId(spec.specId)}" class="cls_spec_value_0" th:value="${product.getSpecValue(spec.specId)}" value="0"/>
@@ -503,7 +501,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!--/*@thymesVar id="levelList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.user.UserLevel>"*/-->
+                        <!--/*@thymesVar id="levelList" type="java.util.List<com.huotu.shopo2o.service.entity.user.UserLevel>"*/-->
                         <tr th:each="level:${levelList}">
                             <td>
                                 <th:block th:text="${level.levelName}"></th:block>
@@ -875,7 +873,7 @@
                 hot.tip.success(msg.msg);
                 isSave = 1;
                 setTimeout(function () {
-//                    top.document.getElementById("content_left").contentDocument.getElementById("id_050101").getElementsByTagName("a")[0].click();
+          //          top.document.getElementById("content_left").contentDocument.getElementById("id_050101").getElementsByTagName("a")[0].click();
                     window.location.reload();
                 }, 500);
             } else {
