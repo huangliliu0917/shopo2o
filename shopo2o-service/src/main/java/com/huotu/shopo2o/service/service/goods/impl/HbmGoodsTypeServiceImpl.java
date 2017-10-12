@@ -11,6 +11,7 @@ import com.huotu.shopo2o.service.service.goods.HbmGoodsTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -84,6 +85,27 @@ public class HbmGoodsTypeServiceImpl implements HbmGoodsTypeService {
         HbmGoodsType type = typeRepository.findOne(typeId);
         type = setBrandAndSpec(type, customerId);
         return type;
+    }
+
+    @Override
+    public List<HbmGoodsType> getAllParentTypeList(String path) {
+        List<HbmGoodsType> typeList = new ArrayList<>();
+        //根据path，检索出当前及所有父路径下的类型值
+        if (path != null && path.length() > 0) {
+            String[] parentStandardTypeIdList = path.split("\\|"); //“.”或“|”必须前面加\\才能分开成数组，即String.split("\\|")
+            for (int i = 0; i < parentStandardTypeIdList.length; i++) {
+                if (parentStandardTypeIdList[i] != null && parentStandardTypeIdList[i].length() > 0) {
+                    List<HbmGoodsType> tempTypeList = typeRepository.findByParentStandardTypeIdAndDisabledAndCustomerIdOrderByTOrderAsc(parentStandardTypeIdList[i], false, -1);
+                    if (tempTypeList != null && tempTypeList.size() > 0) {
+                        typeList.addAll(tempTypeList);
+                    }
+                }
+            }
+        } else {
+            List<HbmGoodsType> tempTypeList = typeRepository.findByParentStandardTypeIdAndDisabledAndCustomerIdOrderByTOrderAsc("0", false, -1);
+            typeList.addAll(tempTypeList);
+        }
+        return typeList;
     }
 
     private HbmGoodsType setBrandAndSpec(HbmGoodsType type, Long customerId) {

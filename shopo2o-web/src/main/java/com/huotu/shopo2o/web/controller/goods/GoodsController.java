@@ -103,6 +103,27 @@ public class GoodsController {
         modelAndView.addObject("typeList", typeList);
         return modelAndView;
     }
+    /**
+     * 根据标准类目ID，获取路径下所有类目
+     *
+     * @param standardTypeId 类目ID
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getPathType", produces = "application/json")
+    @ResponseBody
+    public ApiResult getAllTypeByStandardTypeId(@LoginUser MallCustomer customer, String standardTypeId) throws Exception {
+        if (standardTypeId == null || standardTypeId.length() == 0) {
+            return new ApiResult("类目不存在！");
+        }
+        HbmGoodsType hbmGoodsType = hbmGoodsTypeService.getGoodsTypeByStandardTypeId(standardTypeId);
+        if (hbmGoodsType == null || hbmGoodsType.isDisabled()) {
+            return new ApiResult("类目不存在或已失效");
+        }
+
+        List<HbmGoodsType> typeList = hbmGoodsTypeService.getAllParentTypeList(hbmGoodsType.getPath());
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS, typeList);
+    }
 
     /**
      * 根据标准类目ID，获取其子类目LIST

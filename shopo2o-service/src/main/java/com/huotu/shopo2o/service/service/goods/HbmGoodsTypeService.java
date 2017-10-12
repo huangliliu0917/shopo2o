@@ -25,4 +25,6 @@ public interface HbmGoodsTypeService {
     HbmGoodsType getGoodsTypeWithBrandAndSpecByStandardTypeId(String standardTypeId,Long customerId);
 
     HbmGoodsType getGoodsTypeWithBrandAndSpecByStandardTypeId(int typeId,Long customerId);
+
+    List<HbmGoodsType> getAllParentTypeList(String path);
 }
