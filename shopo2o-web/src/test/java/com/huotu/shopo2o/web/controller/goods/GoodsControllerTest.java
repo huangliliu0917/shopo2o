@@ -1,10 +1,14 @@
 package com.huotu.shopo2o.web.controller.goods;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
+import com.huotu.shopo2o.service.entity.good.HbmGoodsTypeSpec;
+import com.huotu.shopo2o.service.entity.good.HbmSpecValues;
+import com.huotu.shopo2o.service.entity.good.HbmSpecification;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
 import com.huotu.shopo2o.service.entity.store.Store;
@@ -28,12 +32,13 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -296,14 +301,15 @@ public class GoodsControllerTest extends CommonTestBase {
 
     /**
      * 显示类型
+     *
      * @throws Exception
      */
     @Test
     public void showType() throws Exception {
         //添加类目
         int a = 10;
-        while (a -- > 0){
-            mockHbmGoodsType(false,"0");
+        while (a-- > 0) {
+            mockHbmGoodsType(false, "0");
         }
         MockHttpSession mockHttpSession = loginAs(userName, passWord);
         MvcResult result1 = mockMvc.perform(post(BASE_URL + "/showType")
@@ -318,6 +324,7 @@ public class GoodsControllerTest extends CommonTestBase {
 
     /**
      * 根据标准类目ID，获取其子类目LIST
+     *
      * @throws Exception
      */
     @Test
@@ -327,12 +334,12 @@ public class GoodsControllerTest extends CommonTestBase {
         HbmGoodsType hbmGoodsType = mockHbmGoodsType(true, "0");
         //添加类目
         int a = 10;
-        while (a -- > 0){
-            mockHbmGoodsType(false,hbmGoodsType.getStandardTypeId());
+        while (a-- > 0) {
+            mockHbmGoodsType(false, hbmGoodsType.getStandardTypeId());
         }
 
         MockHttpSession mockHttpSession = loginAs(userName, passWord);
-        Map<String, Object>  result = JsonPath.read(mockMvc.perform(post(BASE_URL + "/getType")
+        Map<String, Object> result = JsonPath.read(mockMvc.perform(post(BASE_URL + "/getType")
                 .param("standardTypeId", hbmGoodsType.getStandardTypeId())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .session(mockHttpSession))
@@ -345,7 +352,101 @@ public class GoodsControllerTest extends CommonTestBase {
     }
 
     /**
+     * 添加商品时，根据选择的类目ID获取相关信息
+     * 1.参数 standardTypeId 为空
+     * 2.参数 standardTypeId 不存在
+     * 3.参数 standardTypeId 200 存在子类目
+     * 4.参数 standardTypeId 50011167 羽绒服
+     *
+     * @throws Exception
+     */
+    @Test
+    public void addGood() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        //1.参数 standardTypeId 为空
+        MvcResult result1 = mockMvc.perform(get("/good/addGood")
+                .session(mockHttpSession))
+                //302 跳转
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/good/showType"))
+                .andReturn();
+
+        //2.参数 standardTypeId 不存在
+        MvcResult result2 = mockMvc.perform(get("/good/addGood")
+                .session(mockHttpSession)
+                .param("standardTypeId", "-1"))
+                //302 跳转
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/good/showType"))
+                .andReturn();
+
+        //一级父类目,存在子类目
+        HbmGoodsType hbmGoodsType = mockHbmGoodsType(true, "0");
+        mockHbmGoodsType(false, hbmGoodsType.getStandardTypeId());
+        MvcResult result3 = mockMvc.perform(get("/good/addGood")
+                .session(mockHttpSession)
+                .param("standardTypeId", hbmGoodsType.getStandardTypeId()))
+                //302 跳转
+                .andExpect(status().isFound())
+                .andExpect(view().name("redirect:/good/showType"))
+                .andReturn();
+
+        //4.参数 standardTypeId 50011167 羽绒服,规格共2个，第一个为尺寸(1627207)，第二个为规格(20509)
+        //添加类型和品牌
+        HbmGoodsType hbmGoodsType1 = mockHbmGoodsType(false, "0");
+        //添加品牌
+        HbmBrand hbmBrand = mockHbmBrand();
+        //品牌和类型关联
+        mockHbmTypeBrand(hbmGoodsType1.getTypeId(), hbmBrand.getBrandId());
+        //添加两个规格
+        HbmSpecification hbmSpecification = mockHbmSpecification();
+        HbmSpecification hbmSpecification1 = mockHbmSpecification();
+        //添加规格值
+        HbmSpecValues hbmSpecValues = mockHbmSpecValues(hbmSpecification.getSpecId());
+        HbmSpecValues hbmSpecValues1 = mockHbmSpecValues(hbmSpecification1.getSpecId());
+
+        //类型和规格关联
+        HbmGoodsTypeSpec hbmGoodsTypeSpec = mockHbmGoodsTypeSpec(hbmGoodsType1.getTypeId(),hbmSpecification.getSpecId(),hbmSpecValues.getId());
+        HbmGoodsTypeSpec hbmGoodsTypeSpec1 = mockHbmGoodsTypeSpec(hbmGoodsType1.getTypeId(),hbmSpecification1.getSpecId(),hbmSpecValues1.getId());
+
+        //商户配置
+        mockMallCustomerConfig(1);
+
+        MvcResult result4 = mockMvc.perform(get("/good/addGood")
+                .session(mockHttpSession)
+                .param("standardTypeId", hbmGoodsType1.getStandardTypeId()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("goods/addGood"))
+                .andExpect(model().attributeExists("typeId"))
+                .andExpect(model().attributeExists("typePath"))
+                .andExpect(model().attributeExists("productBn"))
+                .andExpect(model().attributeExists("specList"))
+                .andExpect(model().attributeExists("brandList"))
+                .andReturn();
+        Integer typeId = (Integer) result4.getModelAndView().getModel().get("typeId");
+        String typePath = (String) result4.getModelAndView().getModel().get("typePath");
+        List<HbmSpecification> specList = (List<HbmSpecification>) result4.getModelAndView().getModel().get("specList");
+        List<HbmBrand> brandList = (List<HbmBrand>) result4.getModelAndView().getModel().get("brandList");
+
+        //期望返回数据
+        HbmGoodsType expectType = typeService.getGoodsTypeByStandardTypeId(hbmGoodsType1.getStandardTypeId());
+        List<HbmSpecification> expectSpecList = expectType.getSpecList();
+        List<HbmBrand> expectBrandList = expectType.getBrandList();
+
+        Assert.assertEquals(expectType.getTypeId(), typeId);
+        Assert.assertEquals(expectSpecList.size(), specList.size());
+        Assert.assertEquals(expectSpecList.size(), specList.size());
+        Assert.assertEquals(hbmSpecification.getSpecId(), specList.get(0).getSpecId());
+        Assert.assertEquals(hbmSpecification1.getSpecId(), specList.get(1).getSpecId());
+
+        Assert.assertEquals(expectBrandList.size(), brandList.size());
+    }
+
+
+
+    /**
      * 保存或更新商品测试
+     *
      * @throws Exception
      */
     @Test
@@ -355,36 +456,167 @@ public class GoodsControllerTest extends CommonTestBase {
         //添加品牌
         HbmBrand hbmBrand = mockHbmBrand();
         //品牌和类型关联
-        mockHbmTypeBrand(hbmGoodsType.getTypeId(),hbmBrand.getBrandId());
+        mockHbmTypeBrand(hbmGoodsType.getTypeId(), hbmBrand.getBrandId());
 
         MockHttpSession mockHttpSession = loginAs(userName, passWord);
 
-        HashMap<String, Object> toPost = new HashMap<>();
-        toPost.put("type.typeId", hbmGoodsType.getStandardTypeId());
-        toPost.put("name", "商品名称"+UUID.randomUUID().toString());
-        toPost.put("goodStatus", "1");
-        toPost.put("specDesc", "1");
-
-
-        Map<String, Object>  result = JsonPath.read(mockMvc.perform(post(BASE_URL + "/updateGood")
-                .param("type.typeId", hbmGoodsType.getStandardTypeId())
-                .param("name","商品名称"+UUID.randomUUID().toString())
-                .param("goodStatus","1")
-                .param("specDesc","[{\"SpecId\":\"7904\",\"SpecValue\":\"红色\",\"SpecValueId\":61500,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7905\",\"SpecValue\":\"官方标配\",\"SpecValueId\":61515,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7932\",\"SpecValue\":\"64G以上\",\"SpecValueId\":65322,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7929\",\"SpecValue\":\"中国大陆\",\"SpecValueId\":65269,\"SpecImage\":\"\",\"GoodsImageIds\":[]}]")
-                .param("brand.brandId",hbmBrand.getBrandId().toString())
-                .param("subTitle","商品描述"+UUID.randomUUID().toString())
-                .param("specList","[{\"supplierProductId\":\"0\",\"minPrice\":\"133\",\"maxPrice\":\"133\",\"cost\":\"122\",\"bn\":\"56950dxHAQstX-1-1\",\"weight\":\"23\",\"store\":\"122\",\"pdtDesc\":\"红色,官方标配,64G以上,中国大陆\",\"props\":\"[{\\\"SpecId\\\":\\\"7904\\\",\\\"SpecValueId\\\":\\\"61500\\\",\\\"SpecValue\\\":\\\"红色\\\"},{\\\"SpecId\\\":\\\"7905\\\",\\\"SpecValueId\\\":\\\"61515\\\",\\\"SpecValue\\\":\\\"官方标配\\\"},{\\\"SpecId\\\":\\\"7932\\\",\\\"SpecValueId\\\":\\\"65322\\\",\\\"SpecValue\\\":\\\"64G以上\\\"},{\\\"SpecId\\\":\\\"7929\\\",\\\"SpecValueId\\\":\\\"65269\\\",\\\"SpecValue\\\":\\\"中国大陆\\\"}]\",\"userPriceInfo\":\"648:34:244|785:34:244|786:34:244|789:34:244|647:34:244\",\"userIntegralInfo\":\"\",\"minUserPrice\":34}]")
-                .param("hidGoodsImagePath","{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+        Map<String, Object> result = JsonPath.read(mockMvc.perform(post(BASE_URL + "/updateGood")
+                .param("type.typeId", hbmGoodsType.getTypeId().toString())
+                .param("name", "商品名称" + UUID.randomUUID().toString())
+                .param("goodStatus", "1")
+                .param("specDesc", "[{\"SpecId\":\"7904\",\"SpecValue\":\"红色\",\"SpecValueId\":61500,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7905\",\"SpecValue\":\"官方标配\",\"SpecValueId\":61515,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7932\",\"SpecValue\":\"64G以上\",\"SpecValueId\":65322,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7929\",\"SpecValue\":\"中国大陆\",\"SpecValueId\":65269,\"SpecImage\":\"\",\"GoodsImageIds\":[]}]")
+                .param("brand.brandId", hbmBrand.getBrandId().toString())
+                .param("subTitle", "商品描述" + UUID.randomUUID().toString())
+                .param("specList", "[{\"supplierProductId\":\"0\",\"minPrice\":\"133\",\"maxPrice\":\"133\",\"cost\":\"122\",\"bn\":\"56950dxHAQstX-1-1\",\"weight\":\"23\",\"store\":\"122\",\"pdtDesc\":\"红色,官方标配,64G以上,中国大陆\",\"props\":\"[{\\\"SpecId\\\":\\\"7904\\\",\\\"SpecValueId\\\":\\\"61500\\\",\\\"SpecValue\\\":\\\"红色\\\"},{\\\"SpecId\\\":\\\"7905\\\",\\\"SpecValueId\\\":\\\"61515\\\",\\\"SpecValue\\\":\\\"官方标配\\\"},{\\\"SpecId\\\":\\\"7932\\\",\\\"SpecValueId\\\":\\\"65322\\\",\\\"SpecValue\\\":\\\"64G以上\\\"},{\\\"SpecId\\\":\\\"7929\\\",\\\"SpecValueId\\\":\\\"65269\\\",\\\"SpecValue\\\":\\\"中国大陆\\\"}]\",\"userPriceInfo\":\"648:34:244|785:34:244|786:34:244|789:34:244|647:34:244\",\"userIntegralInfo\":\"\",\"minUserPrice\":34}]")
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
                 .contentType(MediaType.APPLICATION_JSON)
                 .session(mockHttpSession))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString(), "$");
 
-        System.out.println(result);
+        //1.新增商品 类型不存在
+        List<HbmSupplierProducts> insertProducts = new ArrayList<>();
+        insertProducts.add(mockSupplierProductsInsert);
+        String specList1 = JSONArray.toJSONString(insertProducts);
+
+        MvcResult result1 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .param("name", mockSupplierGoodsInsert.getName())
+                .param("spec", mockSupplierGoodsInsert.getSpec())
+                .param("specDesc", mockSupplierGoodsInsert.getSpecDesc())
+                .param("goodStatus", "0")
+                .param("specList", specList1))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content1 = new String(result1.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj1 = JSONObject.parseObject(content1);
+        Assert.assertEquals("请先选择商品类型！", obj1.get("msg"));
+
+        //2.新增商品 货品未录入
+        MvcResult result2 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("name", mockSupplierGoodsInsert.getName())
+                .param("goodStatus", "0"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content2 = new String(result2.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj2 = JSONObject.parseObject(content2);
+        Assert.assertEquals("请选择规格！", obj2.get("msg"));
+
+        //3.新增商品
+        insertProducts.clear();
+        insertProducts.add(mockSupplierProductsInsert);
+        String specList2 = JSONArray.toJSONString(insertProducts);
+
+        mockSupplierGoodsInsert.setType(mockHbmGoodsType(false, "0"));
+
+        MvcResult result3 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .param("name", mockSupplierGoodsInsert.getName())
+                .param("type.typeId", mockSupplierGoodsInsert.getType().getTypeId().toString())
+                .param("spec", mockSupplierGoodsInsert.getSpec())
+                .param("specDesc", mockSupplierGoodsInsert.getSpecDesc())
+                .param("goodStatus", "0")
+                .param("specList", specList2))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content3 = new String(result3.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj3 = JSONObject.parseObject(content3);
+        Assert.assertEquals(200, obj3.get("code"));
+
+        //5.编辑商品 商品已删除
+        insertProducts.clear();
+        insertProducts.add(mockSupplierProductsDisabled);
+        String specList5 = JSONArray.toJSONString(insertProducts);
+
+        mockSupplierGoodsDisabled.setType(mockHbmGoodsType(false, "0"));
+        MvcResult result5 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .param("supplierGoodsId", mockSupplierGoodsDisabled.getSupplierGoodsId().toString())
+                .param("name", mockSupplierGoodsDisabled.getName())
+                .param("type.typeId", mockSupplierGoodsDisabled.getType().getTypeId().toString())
+                .param("spec", mockSupplierGoodsDisabled.getSpec())
+                .param("specDesc", mockSupplierGoodsDisabled.getSpecDesc())
+                .param("goodStatus", "0")
+                .param("specList", specList5))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content5 = new String(result5.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj5 = JSONObject.parseObject(content5);
+        Assert.assertEquals("商品已删除，无法编辑！", obj5.get("msg"));
+        //6.编辑商品 类型不存在
+        insertProducts.clear();
+        insertProducts.add(mockSupplierProducts);
+        String specList6 = JSONArray.toJSONString(insertProducts);
+
+        MvcResult result6 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .param("supplierGoodsId", mockSupplierGoods.getSupplierGoodsId().toString())
+                .param("name", mockSupplierGoods.getName())
+                .param("spec", mockSupplierGoods.getSpec())
+                .param("specDesc", mockSupplierGoods.getSpecDesc())
+                .param("goodStatus", "0")
+                .param("specList", specList6))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content6 = new String(result6.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj6 = JSONObject.parseObject(content6);
+        Assert.assertEquals("请先选择商品类型！", obj6.get("msg"));
+
+        //7.编辑商品 货品未录入
+        MvcResult result7 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .param("supplierGoodsId", mockSupplierGoods.getSupplierGoodsId().toString())
+                .param("name", mockSupplierGoods.getName())
+                .param("type.typeId", mockSupplierGoodsDisabled.getType().getTypeId().toString())
+                .param("spec", mockSupplierGoods.getSpec())
+                .param("specDesc", mockSupplierGoods.getSpecDesc())
+                .param("goodStatus", "0"))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content7 = new String(result7.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj7 = JSONObject.parseObject(content7);
+        Assert.assertEquals("货品未录入！", obj7.get("msg"));
+
+        //8.编辑货品,修改货品 M,栗色 为 S,乳白色
+        insertProducts.clear();
+        insertProducts.add(mockSupplierProductsInsert);
+        String specList8 = JSONArray.toJSONString(insertProducts);
+
+        mockSupplierGoods.setType(mockHbmGoodsType(false, "0"));
+        MvcResult result8 = mockMvc.perform(get("/good/updateGood")
+                .session(mockHttpSession)
+                .param("supplierGoodsId", mockSupplierGoods.getSupplierGoodsId().toString())
+                .param("type.typeId", mockSupplierGoods.getType().getTypeId().toString())
+                .param("name", mockSupplierGoodsInsert.getName())
+                .param("spec", mockSupplierGoodsInsert.getSpec())
+                .param("specDesc", mockSupplierGoodsInsert.getSpecDesc())
+                .param("hidGoodsImagePath", "{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .param("goodStatus", "0")
+                .param("specList", specList8))
+                .andExpect(status().isOk())
+                .andReturn();
+        String content8 = new String(result8.getResponse().getContentAsByteArray(), "UTF-8");
+        JSONObject obj8 = JSONObject.parseObject(content8);
+        Assert.assertEquals(200, obj8.get("code"));
+
+        HbmSupplierGoods realGood8 = goodsService.findById(mockSupplierGoods.getSupplierGoodsId());
+        Assert.assertEquals(mockSupplierGoodsInsert.getName(), realGood8.getName());
+        Assert.assertEquals(mockSupplierGoodsInsert.getSpecDesc(), realGood8.getSpecDesc());
+
+        List<HbmSupplierProducts> realProduct8 = productsService.getProductListByGoodId(mockSupplierGoods.getSupplierGoodsId());
+        Assert.assertEquals(1, realProduct8.size());
+        Assert.assertEquals(mockSupplierProductsInsert.getProps(), realProduct8.get(0).getProps());
     }
 
     /**
      * 显示商品列表
+     *
      * @throws Exception
      */
     @Test
@@ -465,6 +697,7 @@ public class GoodsControllerTest extends CommonTestBase {
 
     /**
      * 更新商品状态
+     *
      * @throws Exception
      */
     @Test
@@ -474,7 +707,7 @@ public class GoodsControllerTest extends CommonTestBase {
         //当goodsId或者status为空时，应返回信息没有传输数据
         MvcResult result1 = mockMvc.perform(post(BASE_URL + "/updateGoodStatus")
                 .session(session)
-                ).andExpect(status().isOk())
+        ).andExpect(status().isOk())
                 .andReturn();
         String content1 = new String(result1.getResponse().getContentAsByteArray(), "UTF-8");
         JSONObject obj1 = JSONObject.parseObject(content1);
@@ -526,6 +759,7 @@ public class GoodsControllerTest extends CommonTestBase {
 
     /**
      * 删除商品
+     *
      * @throws Exception
      */
     @Test

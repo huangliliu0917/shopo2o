@@ -1,12 +1,17 @@
 package com.huotu.shopo2o.web;
 
+import com.huotu.shopo2o.common.ienum.RebateCompatibleEnum;
 import com.huotu.shopo2o.service.config.MallPasswordEncoder;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.author.Operator;
+import com.huotu.shopo2o.service.entity.config.MallCustomerConfig;
 import com.huotu.shopo2o.service.entity.config.SupBasicConfig;
 import com.huotu.shopo2o.service.entity.config.SupShopConfig;
 import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
+import com.huotu.shopo2o.service.entity.good.HbmGoodsTypeSpec;
+import com.huotu.shopo2o.service.entity.good.HbmSpecValues;
+import com.huotu.shopo2o.service.entity.good.HbmSpecification;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
 import com.huotu.shopo2o.service.entity.good.HbmTypeBrand;
@@ -23,9 +28,13 @@ import com.huotu.shopo2o.service.enums.CustomerTypeEnum;
 import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
+import com.huotu.shopo2o.service.repository.config.MallCustomerConfigRepository;
 import com.huotu.shopo2o.service.repository.config.SupBasicConfigRepository;
 import com.huotu.shopo2o.service.repository.good.HbmBrandRepository;
 import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeRepository;
+import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeSpecRepository;
+import com.huotu.shopo2o.service.repository.good.HbmSpecValuesRepository;
+import com.huotu.shopo2o.service.repository.good.HbmSpecificationRepository;
 import com.huotu.shopo2o.service.repository.good.HbmTypeBrandRepository;
 import com.huotu.shopo2o.service.repository.good.MallGoodRepository;
 import com.huotu.shopo2o.service.repository.good.MallProductRepository;
@@ -36,6 +45,7 @@ import com.huotu.shopo2o.service.repository.store.StoreRepository;
 import com.huotu.shopo2o.service.repository.store.SupShopCatRepository;
 import com.huotu.shopo2o.web.config.MVCConfig;
 import com.huotu.shopo2o.web.config.SecurityConfig;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +102,17 @@ public class CommonTestBase extends SpringWebTest {
 
     @Autowired
     protected HbmTypeBrandRepository hbmTypeBrandRepository;
+
+    @Autowired
+    private HbmSpecificationRepository hbmSpecificationRepository;
+
+    @Autowired
+    private HbmSpecValuesRepository hbmSpecValuesRepository;
+
+    @Autowired
+    private HbmGoodsTypeSpecRepository hbmGoodsTypeSpecRepository;
+    @Autowired
+    private MallCustomerConfigRepository mallCustomerConfigRepository;
 
     protected Random random = new Random();
 
@@ -191,7 +212,7 @@ public class CommonTestBase extends SpringWebTest {
      */
     protected HbmGoodsType mockHbmGoodsType(Boolean isParent,String parentStandardTypeId){
         HbmGoodsType hbmGoodsType = new HbmGoodsType();
-        hbmGoodsType.setStandardTypeId("标准类型id"+UUID.randomUUID().toString());
+        hbmGoodsType.setStandardTypeId(RandomStringUtils.randomNumeric(5));
         hbmGoodsType.setName("类型名称"+UUID.randomUUID().toString());
         hbmGoodsType.setParent(isParent);
         hbmGoodsType.setDisabled(false);
@@ -213,6 +234,38 @@ public class CommonTestBase extends SpringWebTest {
         hbmTypeBrand.setTypeId(typeId);
         hbmTypeBrand.setBrandId(brandId);
         return hbmTypeBrandRepository.saveAndFlush(hbmTypeBrand);
+    }
+
+    private int i;
+    protected HbmSpecification mockHbmSpecification(){
+
+        HbmSpecification hbmSpecification = new HbmSpecification();
+        hbmSpecification.setOrder(++i);
+        hbmSpecification.setSpecName("规格名"+UUID.randomUUID().toString());
+        return hbmSpecificationRepository.saveAndFlush(hbmSpecification);
+    }
+
+    protected HbmSpecValues mockHbmSpecValues(Integer specId) {
+        HbmSpecValues hbmSpecValues = new HbmSpecValues();
+        hbmSpecValues.setSpecId(specId);
+        return hbmSpecValuesRepository.saveAndFlush(hbmSpecValues);
+    }
+
+    protected HbmGoodsTypeSpec mockHbmGoodsTypeSpec(Integer typeId, Integer specId, Integer specValuesId) {
+        HbmGoodsTypeSpec hbmGoodsTypeSpec = new HbmGoodsTypeSpec();
+        hbmGoodsTypeSpec.setTypeId(typeId);
+        hbmGoodsTypeSpec.setSpecId(specId);
+        hbmGoodsTypeSpec.setSpecValueId(specValuesId);
+        hbmGoodsTypeSpec.setCustomerId(-1);
+        return hbmGoodsTypeSpecRepository.saveAndFlush(hbmGoodsTypeSpec);
+    }
+
+    protected MallCustomerConfig mockMallCustomerConfig(Integer customerId){
+        MallCustomerConfig mallCustomerConfig = new MallCustomerConfig();
+        mallCustomerConfig.setCustomerId(customerId);
+        mallCustomerConfig.setDisRebateCalculateMode(0);
+        mallCustomerConfig.setRebateCompatibleEnum(RebateCompatibleEnum.eightMode);
+        return mallCustomerConfigRepository.saveAndFlush(mallCustomerConfig);
     }
 
     protected MallGood mockMallGood(HbmSupplierGoods supplierGoods, List<MallProduct> productss) {

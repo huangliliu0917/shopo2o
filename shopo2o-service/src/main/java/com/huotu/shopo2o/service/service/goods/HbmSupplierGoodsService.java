@@ -38,6 +38,11 @@ public interface HbmSupplierGoodsService {
 
     HbmSupplierGoods findWithBrandAndSpecBySupplierGoodId(int supplierGoodId, Long customerId);
 
+    /**
+     * 根据主键ID获取商品信息
+     * @param supplierGoodId
+     * @return
+     */
     HbmSupplierGoods findById(int supplierGoodId);
 
     /**
