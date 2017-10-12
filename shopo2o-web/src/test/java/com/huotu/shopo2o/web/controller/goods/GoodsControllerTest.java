@@ -3,6 +3,7 @@ package com.huotu.shopo2o.web.controller.goods;
 import com.alibaba.fastjson.JSONObject;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.service.entity.MallCustomer;
+import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierGoods;
 import com.huotu.shopo2o.service.entity.good.HbmSupplierProducts;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -321,6 +323,7 @@ public class GoodsControllerTest extends CommonTestBase {
     @Test
     public void showGoodsType() throws Exception {
 
+        //添加父类目
         HbmGoodsType hbmGoodsType = mockHbmGoodsType(true, "0");
         //添加类目
         int a = 10;
@@ -339,6 +342,45 @@ public class GoodsControllerTest extends CommonTestBase {
         List<ApiResult> apiResults = (List<ApiResult>) result.get("data");
         Assert.assertTrue(apiResults.size() == 10);
 
+    }
+
+    /**
+     * 保存或更新商品测试
+     * @throws Exception
+     */
+    @Test
+    public void updateGood() throws Exception {
+        //添加类型
+        HbmGoodsType hbmGoodsType = mockHbmGoodsType(false, "0");
+        //添加品牌
+        HbmBrand hbmBrand = mockHbmBrand();
+        //品牌和类型关联
+        mockHbmTypeBrand(hbmGoodsType.getTypeId(),hbmBrand.getBrandId());
+
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+
+        HashMap<String, Object> toPost = new HashMap<>();
+        toPost.put("type.typeId", hbmGoodsType.getStandardTypeId());
+        toPost.put("name", "商品名称"+UUID.randomUUID().toString());
+        toPost.put("goodStatus", "1");
+        toPost.put("specDesc", "1");
+
+
+        Map<String, Object>  result = JsonPath.read(mockMvc.perform(post(BASE_URL + "/updateGood")
+                .param("type.typeId", hbmGoodsType.getStandardTypeId())
+                .param("name","商品名称"+UUID.randomUUID().toString())
+                .param("goodStatus","1")
+                .param("specDesc","[{\"SpecId\":\"7904\",\"SpecValue\":\"红色\",\"SpecValueId\":61500,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7905\",\"SpecValue\":\"官方标配\",\"SpecValueId\":61515,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7932\",\"SpecValue\":\"64G以上\",\"SpecValueId\":65322,\"SpecImage\":\"\",\"GoodsImageIds\":[]},{\"SpecId\":\"7929\",\"SpecValue\":\"中国大陆\",\"SpecValueId\":65269,\"SpecImage\":\"\",\"GoodsImageIds\":[]}]")
+                .param("brand.brandId",hbmBrand.getBrandId().toString())
+                .param("subTitle","商品描述"+UUID.randomUUID().toString())
+                .param("specList","[{\"supplierProductId\":\"0\",\"minPrice\":\"133\",\"maxPrice\":\"133\",\"cost\":\"122\",\"bn\":\"56950dxHAQstX-1-1\",\"weight\":\"23\",\"store\":\"122\",\"pdtDesc\":\"红色,官方标配,64G以上,中国大陆\",\"props\":\"[{\\\"SpecId\\\":\\\"7904\\\",\\\"SpecValueId\\\":\\\"61500\\\",\\\"SpecValue\\\":\\\"红色\\\"},{\\\"SpecId\\\":\\\"7905\\\",\\\"SpecValueId\\\":\\\"61515\\\",\\\"SpecValue\\\":\\\"官方标配\\\"},{\\\"SpecId\\\":\\\"7932\\\",\\\"SpecValueId\\\":\\\"65322\\\",\\\"SpecValue\\\":\\\"64G以上\\\"},{\\\"SpecId\\\":\\\"7929\\\",\\\"SpecValueId\\\":\\\"65269\\\",\\\"SpecValue\\\":\\\"中国大陆\\\"}]\",\"userPriceInfo\":\"648:34:244|785:34:244|786:34:244|789:34:244|647:34:244\",\"userIntegralInfo\":\"\",\"minUserPrice\":34}]")
+                .param("hidGoodsImagePath","{'bigPic':'/resource/images/photo/56950/2017050910472245181627.png','smallPic':'/resource/images/photo/56950/2017050910472245181627.png','thumbPic':'/resource/images/photo/56950/2017050910472245181627.png'}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString(), "$");
+
+        System.out.println(result);
     }
 
     /**

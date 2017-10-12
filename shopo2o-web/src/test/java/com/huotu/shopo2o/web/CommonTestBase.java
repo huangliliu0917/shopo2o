@@ -5,7 +5,9 @@ import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.author.Operator;
 import com.huotu.shopo2o.service.entity.config.SupBasicConfig;
 import com.huotu.shopo2o.service.entity.config.SupShopConfig;
+import com.huotu.shopo2o.service.entity.good.HbmBrand;
 import com.huotu.shopo2o.service.entity.good.HbmGoodsType;
+import com.huotu.shopo2o.service.entity.good.HbmTypeBrand;
 import com.huotu.shopo2o.service.entity.order.MallAfterSales;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
@@ -18,7 +20,9 @@ import com.huotu.shopo2o.service.enums.OrderEnum;
 import com.huotu.shopo2o.service.repository.MallCustomerRepository;
 import com.huotu.shopo2o.service.repository.author.OperatorRepository;
 import com.huotu.shopo2o.service.repository.config.SupBasicConfigRepository;
+import com.huotu.shopo2o.service.repository.good.HbmBrandRepository;
 import com.huotu.shopo2o.service.repository.good.HbmGoodsTypeRepository;
+import com.huotu.shopo2o.service.repository.good.HbmTypeBrandRepository;
 import com.huotu.shopo2o.service.repository.order.MallAfterSalesRepository;
 import com.huotu.shopo2o.service.repository.order.MallDeliveryRepository;
 import com.huotu.shopo2o.service.repository.order.MallOrderRepository;
@@ -72,6 +76,11 @@ public class CommonTestBase extends SpringWebTest {
     protected MallPasswordEncoder passwordEncoder;
     @Autowired
     protected HbmGoodsTypeRepository hbmGoodsTypeRepository;
+    @Autowired
+    protected HbmBrandRepository hbmBrandRepository;
+
+    @Autowired
+    protected HbmTypeBrandRepository hbmTypeBrandRepository;
 
     protected Random random = new Random();
 
@@ -163,6 +172,12 @@ public class CommonTestBase extends SpringWebTest {
         return supShopConfig;
     }
 
+    /**
+     * 添加类型
+     * @param isParent
+     * @param parentStandardTypeId
+     * @return
+     */
     protected HbmGoodsType mockHbmGoodsType(Boolean isParent,String parentStandardTypeId){
         HbmGoodsType hbmGoodsType = new HbmGoodsType();
         hbmGoodsType.setStandardTypeId("标准类型id"+UUID.randomUUID().toString());
@@ -172,5 +187,20 @@ public class CommonTestBase extends SpringWebTest {
         hbmGoodsType.setCustomerId(-1);
         hbmGoodsType.setParentStandardTypeId(parentStandardTypeId);
         return hbmGoodsTypeRepository.saveAndFlush(hbmGoodsType);
+    }
+
+    protected HbmBrand mockHbmBrand(){
+        HbmBrand hbmBrand = new HbmBrand();
+        hbmBrand.setBrandName("品牌名称"+UUID.randomUUID().toString());
+        hbmBrand.setCustomerId(-1);
+        return hbmBrandRepository.saveAndFlush(hbmBrand);
+
+    }
+
+    protected HbmTypeBrand mockHbmTypeBrand(int typeId,int brandId){
+        HbmTypeBrand hbmTypeBrand = new HbmTypeBrand();
+        hbmTypeBrand.setTypeId(typeId);
+        hbmTypeBrand.setBrandId(brandId);
+        return hbmTypeBrandRepository.saveAndFlush(hbmTypeBrand);
     }
 }
