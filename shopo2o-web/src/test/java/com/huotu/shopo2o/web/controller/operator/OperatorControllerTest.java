@@ -149,7 +149,7 @@ public class OperatorControllerTest extends CommonTestBase {
         MockHttpSession mockHttpSession = loginAs(userName, passWord);
         //operatorId不存在
         MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/disabled").session(mockHttpSession)
-                .param("operatorId", String.valueOf(new Random().nextInt(100))))
+                .param("operatorId", String.valueOf(new Random().nextInt(10000))))
                 .andExpect(status().isOk())
                 .andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();

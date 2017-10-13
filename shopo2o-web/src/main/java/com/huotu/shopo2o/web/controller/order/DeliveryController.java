@@ -127,10 +127,10 @@ public class DeliveryController {
     }
     @RequestMapping( "/editDelivery")
     @ResponseBody
-    public ApiResult editDelivery(String deliveryId, DeliveryInfo deliveryInfo, ApiResult apiResult) {
+    public ApiResult editDelivery(String deliveryId, DeliveryInfo deliveryInfo) {
         MallDelivery delivery = mallDeliveryService.findById(deliveryId);
         if(delivery==null){
-            return apiResult;
+            return ApiResult.resultWith(ResultCodeEnum.DATA_NULL);
         }
         delivery.setLogisticsNo(deliveryInfo.getLogiNo());
         delivery.setMemo(deliveryInfo.getRemark());
