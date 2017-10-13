@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.web.controller.order;
 
+import com.alibaba.fastjson.JSONObject;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
 import com.huotu.shopo2o.service.entity.order.MallOrder;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -110,5 +112,35 @@ public class DeliveryControllerTest extends CommonTestBase {
         MallDelivery deliveryInfo = (MallDelivery) mvcResult.getModelAndView().getModel().get("deliveryInfo");
         Assert.assertNotNull(deliveryInfo);
         Assert.assertTrue(deliveryInfo.getDeliveryId() == mallDeliveryList.get(0).getDeliveryId());
+    }
+
+    @Test
+    public void testEditDelivery() throws Exception {
+        MockHttpSession mockHttpSession = loginAs(userName, passWord);
+        MvcResult mvcResult = mockMvc.perform(post(BASE_URL + "/editDelivery")
+                .session(mockHttpSession)
+                .param("deliveryId", mallDeliveryList.get(0).getDeliveryId())
+                .param("logiNo", UUID.randomUUID().toString())
+                .param("remark", UUID.randomUUID().toString())
+                .param("freight", String.valueOf(new Random().nextFloat())))
+                .andExpect(status().isOk())
+                .andReturn();
+        String contentAsString = mvcResult.getResponse().getContentAsString();
+        JSONObject jsonObject = JSONObject.parseObject(contentAsString);
+        Assert.assertEquals(200, jsonObject.get("code"));
+        Assert.assertEquals("请求成功", jsonObject.get("msg"));
+        //deliveryId不存在
+        MvcResult mvcResult1 = mockMvc.perform(post(BASE_URL + "/editDelivery")
+                .session(mockHttpSession)
+                .param("deliveryId", String.valueOf(new Random().nextInt()))
+                .param("logiNo", UUID.randomUUID().toString())
+                .param("remark", UUID.randomUUID().toString())
+                .param("freight", String.valueOf(new Random().nextFloat())))
+                .andExpect(status().isOk())
+                .andReturn();
+        String contentAsString1 = mvcResult1.getResponse().getContentAsString();
+        JSONObject jsonObject1 = JSONObject.parseObject(contentAsString1);
+        Assert.assertEquals(500, jsonObject1.get("code"));
+        Assert.assertEquals("没有传输数据", jsonObject1.get("msg"));
     }
 }

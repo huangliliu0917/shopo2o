@@ -53,7 +53,7 @@ public class AfterSaleControllerTest extends CommonTestBase {
             mallOrderList.add(mallOrder);
         }
         for (int i = 0; i < mallOrderList.size(); i++) {
-            MallAfterSales mallAfterSales = mockMallAfterSales(user,mallOrderList.get(i));
+            MallAfterSales mallAfterSales = mockMallAfterSales(user, mallOrderList.get(i));
             afterSalesList.add(mallAfterSales);
         }
     }

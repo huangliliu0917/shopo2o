@@ -31,6 +31,9 @@ public class OperatorServiceImpl implements OperatorService {
     public Operator findById(Long id) {
         Operator operator = operatorRepository.findOne(id);
         String authoritiesStr = "";
+        if(operator==null){
+            return null;
+        }
         Set<Authority> authoritySet = operator.getAuthoritySet();
         for (Authority authority : authoritySet) {
             if(authority!=null){
