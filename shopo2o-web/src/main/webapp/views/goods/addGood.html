@@ -43,13 +43,13 @@
         }
     </style>
 </head>
-<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmGoodsType>"*/-->
-<!--/*@thymesVar id="brandList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmBrand>"*/-->
-<!--/*@thymesVar id="freightTemplateList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.FreightTemplate>"*/-->
-<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.shop.SupShopCat>"*/-->
-<!--/*@thymesVar id="specList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmSpecification>"*/-->
-<!--/*@thymesVar id="customerConfig" type="com.huotu.hotsupplier.hbm.service.entity.config.MallCustomerConfig"*/-->
-<!--/*@thymesVar id="sisConfig" type="com.huotu.hotsupplier.hbm.service.entity.config.SisConfig"*/-->
+<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
+<!--/*@thymesVar id="brandList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmBrand>"*/-->
+<!--/*@thymesVar id="freightTemplateList" type="java.util.List<com.huotu.shopo2o.service.entity.good.FreightTemplate>"*/-->
+<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.entity.store.SupShopCat>"*/-->
+<!--/*@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"*/-->
+<!--/*@thymesVar id="customerConfig" type="com.huotu.shopo2o.service.entity.config.MallCustomerConfig"*/-->
+<!--/*@thymesVar id="sisConfig" type="com.huotu.shopo2o.service.entity.config.SisConfig"*/-->
 <!--/*@thymesVar id="typePath" type="java.lang.String"*/-->
 <!--/*@thymesVar id="typeId" type="java.lang.Integer"*/-->
 <body class="gray-bg">
@@ -333,7 +333,7 @@
                                                 <tr>
                                                     <th class="header">货号
                                                     </th>
-                                                    <!--@thymesVar id="specList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmSpecification>"-->
+                                                    <!--@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"-->
                                                     <th th:each="spec:${specList}" class="header"
                                                         th:text="${spec.specName}">
                                                         <span style="display: none;" th:text="${spec.specId}"></span>
@@ -439,7 +439,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <!--/*@thymesVar id="levelList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.user.UserLevel>"*/-->
+                        <!--/*@thymesVar id="levelList" type="java.util.List<com.huotu.shopo2o.service.entity.user.UserLevel>"*/-->
                         <tr th:each="level:${levelList}">
                             <td>
                                 <th:block th:text="${level.levelName}"></th:block>

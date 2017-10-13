@@ -23,7 +23,7 @@
     <link href="../../resources/3rdParty/css/goodtype.css" rel="stylesheet" type="text/css"
           th:href="@{/resources/3rdParty/css/goodtype.css}"/>
 </head>
-<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmGoodsType>"*/-->
+<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
 <body class="gray-bg">
 <div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
     <div class="row">
@@ -65,7 +65,7 @@
                                                     <input type="text" placeholder="请输入分类名称,并回车" onchange="typeSearchChange(this)"
                                                            style="border: 0px;padding: 10px; width: 193px"/>
                                                 </li>
-                                                <!--/*@thymesVar id="typeList" type="java.util.List<com.huotu.hotsupplier.hbm.service.entity.good.HbmGoodsType>"*/-->
+                                                <!--/*@thymesVar id="typeList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
                                                 <li th:each="type:${typeList}" th:id="'tid_'+ ${type.standardTypeId}"
                                                     class="cc-tree-item" th:classappend="${type.parent==true?'cc-hasChild-item':''}"
                                                     th:attr="isparent=${type.parent},standardTypeId=${type.standardTypeId}" th:text="${type.name}"
