@@ -14,7 +14,7 @@ var contextMenu = {}; //右键菜单
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 // var areaSelect = document.getElementById('street');
-var openTime, closeTime, deadlineTime;
+var openTime, closeTime, deliveryBeginTime, deadlineTime;
 $(function () {
     // 最多两位小数
     $.validator.addMethod("isFloat2", function (value, element) {
@@ -97,6 +97,17 @@ $(function () {
         defaultMinute: 0
     });
     closeTime = $('input[name=closeTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        allowInput: true,
+        defaultMinute: 0
+    });
+    deliveryBeginTime = $('input[name=deliveryBeginTime]').flatpickr({
         enableTime: true,
         noCalendar: true,
         enableSeconds: false,

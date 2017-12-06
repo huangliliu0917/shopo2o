@@ -107,6 +107,12 @@ public class  Store {
     private LocalTime closeTime;
 
     /**
+     * 配送时段开始时间
+     */
+    @Column(name = "Delivery_Begin_Time",columnDefinition = "time")
+    private LocalTime deliveryBeginTime;
+
+    /**
      * 截单时间
       */
     @Column(name = "Deadline_Time",columnDefinition = "time")

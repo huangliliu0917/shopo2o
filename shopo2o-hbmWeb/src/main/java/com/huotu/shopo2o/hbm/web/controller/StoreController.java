@@ -91,8 +91,8 @@ public class StoreController extends MallBaseController {
             , @RequestParam String provinceCode, @RequestParam String cityCode, @RequestParam String districtCode
             , @RequestParam String address, @RequestParam Double lng, @RequestParam Double lat
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime openTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime closeTime
-            , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime, @RequestParam String logo
-            , @RequestParam String erpId) {
+            , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deliveryBeginTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime
+            , @RequestParam String logo, @RequestParam String erpId) {
         Store store;
         if (storeId != null && storeId != 0) {
             store = storeService.findOne(storeId, customerId);
@@ -119,6 +119,7 @@ public class StoreController extends MallBaseController {
         store.setLngLat(new LngLat(lng, lat));
         store.setOpenTime(openTime);
         store.setCloseTime(closeTime);
+        store.setDeliveryBeginTime(deliveryBeginTime);
         store.setDeadlineTime(deadlineTime);
         store.setLogo(logo);
         store.setErpId(erpId);
@@ -164,9 +165,9 @@ public class StoreController extends MallBaseController {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域解析失败");
         }
         List<LngLat[]> divisionList = null;
-        if(!CollectionUtils.isEmpty(distributionDivisionRegionMap)){
-            divisionList = distributionDivisionRegionMap.values().stream().filter(p->!CollectionUtils.isEmpty(p.getDistributionRegions()))
-                    .map(p->p.getDistributionRegions().toArray(new LngLat[p.getDistributionRegions().size()])).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(distributionDivisionRegionMap)) {
+            divisionList = distributionDivisionRegionMap.values().stream().filter(p -> !CollectionUtils.isEmpty(p.getDistributionRegions()))
+                    .map(p -> p.getDistributionRegions().toArray(new LngLat[p.getDistributionRegions().size()])).collect(Collectors.toList());
         }
         store.setDistributionRegions(distributionRegionList);
         store.setDistributionMarkers(storeService.saveMarker(store, distributionMarkerMap));
