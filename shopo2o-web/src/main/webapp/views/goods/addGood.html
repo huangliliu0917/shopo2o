@@ -190,7 +190,7 @@
                                         </div>
                                     </div>
                                     <div class="hr-line-dashed "></div>
-                                    <div class="form-group form-inline" th:if="${customerConfig.isRebate()}">
+                                    <div class="form-group form-inline" th:if="${customerConfig != null && customerConfig.isRebate()}">
                                         <label class="col-sm-2 control-label">返利分配比例</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
@@ -292,7 +292,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-12">
-                                            <h4 class="text-danger" th:if="${customerConfig.isRebate()}">返利分配比例默认为【基本信息】中的返利分配比例</h4>
+                                            <h4 class="text-danger" th:if="${customerConfig != null && customerConfig.isRebate()}">返利分配比例默认为【基本信息】中的返利分配比例</h4>
                                             <div id="batch-update" class="form-group form-inline">
                                                 <label>批量填充:</label>
                                                 <input type="text" class="form-control input-sm input-s-sm m-l"
@@ -318,7 +318,7 @@
                                                        id="js-batch-userPrice" placeholder="会员价"/>
                                                 <input type="text" class="form-control input-sm input-s-sm m-l only-float js-price-rebate-verity"
                                                        id="js-batch-userCashIntegral" placeholder="最高抵用积分"/>
-                                                <input th:if="${customerConfig.isRebate()}" type="text" class="form-control input-sm input-s-sm m-l only-float js-price-rebate-verity"
+                                                <input th:if="${customerConfig != null && customerConfig.isRebate()}" type="text" class="form-control input-sm input-s-sm m-l only-float js-price-rebate-verity"
                                                        id="js-batch-user-rebate-type" placeholder="返利分配" />
                                                 <input type="button"
                                                        class="btn btn-success m-l btn-sm m-b-none batch-submit"
@@ -348,7 +348,7 @@
                                                     </th>
                                                     <th class="header">重量(g)
                                                     </th>
-                                                    <th class="header" th:if="${customerConfig.isRebate()}">返利分配(<th:block th:text="${customerConfig.rebateMode()} ? '%': '元'"></th:block>)
+                                                    <th class="header" th:if="${customerConfig != null && customerConfig.isRebate()}">返利分配(<th:block th:text="${customerConfig.rebateMode()} ? '%': '元'"></th:block>)
                                                     </th>
                                                 </tr>
                                                 </thead>
@@ -558,7 +558,7 @@
         <td  width="10%">
             <input type="text" class="form-control input-sm" placeholder="重量" name="pro_weight" value="0"/>
         </td>
-        <td  width="10%" th:if="${customerConfig.isRebate()}">
+        <td  width="10%" th:if="${customerConfig != null && customerConfig.isRebate()}">
             <div class="input-group">
                 <input type="text" class="form-control input-sm only-float js-batch-user-rebate-percent-value-type js-price-rebate-percent-verity"
                        id="js-batch-user-rebate-percent-value-type-{specids}" placeholder="返利分配比例" name="pro_disrebate_pecent_unified" onkeyup="_userPricesModule.verifyRebate('{specids}')"/>
@@ -634,8 +634,8 @@
     var productBn = /*[[${productBn}]]*/"";
     var domain = /*[[${domain}]]*/ "domain";
     var storeId = /*[[${storeId}]]*/ "storeId";
-    var settlementMode = /*[[${customerConfig.isRebate()}]]*/ "true";
-    var rebateMode = /*[[${customerConfig.rebateMode()}]]*/ "true";
+    var settlementMode = /*[[${customerConfig != null && customerConfig.isRebate()}]]*/ "true";
+    var rebateMode = /*[[${customerConfig != null && customerConfig.rebateMode()}]]*/ "true";
 </script>
 <script th:inline="javascript">
     /*<![CDATA[*/
