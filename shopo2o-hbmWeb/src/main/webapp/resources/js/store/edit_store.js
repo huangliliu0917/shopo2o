@@ -906,6 +906,34 @@ function tmpPosition(positionArr) {
     }
     return position;
 }
+//校验erp门店id
+function checkErpId(erp) {
+    var erpId = erp.value;
+    if(erpId == ''){
+        return;
+    }
+    $.ajax(baseUrl + "mall/store/checkErpId", {
+        method: 'POST',
+        data: {
+            customerId:customerId,
+            erpId:erpId
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (data.code != 200) {
+                var error = '<label id="erpId-error" class="error" for="erpId">'+data.msg+'</label>';
+                $('#erpId-error').remove();
+                $(erp).after(error)
+            } else {
+                $("#erpId-error").remove();
+            }
+        },
+        error: function () {
+            layer.closeAll('loading');
+            layer.msg("系统错误");
+        }
+    })
+}
 var Region = {
     id: 0,
     index: Object.keys(RegionListObj).length,

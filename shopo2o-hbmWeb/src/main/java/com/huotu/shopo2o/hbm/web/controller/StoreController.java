@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
+import com.huotu.shopo2o.hbm.web.service.K3Service;
 import com.huotu.shopo2o.hbm.web.service.StaticResourceService;
 import com.huotu.shopo2o.service.entity.store.DistributionMarker;
 import com.huotu.shopo2o.service.entity.store.DistributionRegion;
@@ -44,6 +45,8 @@ public class StoreController extends MallBaseController {
     private MallCustomerService customerService;
     @Autowired
     private StaticResourceService resourceService;
+    @Autowired
+    private K3Service k3Service;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/list")
@@ -92,7 +95,7 @@ public class StoreController extends MallBaseController {
             , @RequestParam String address, @RequestParam Double lng, @RequestParam Double lat
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime openTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime closeTime
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deliveryBeginTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime
-            , @RequestParam String logo, @RequestParam String erpId) {
+            , @RequestParam String logo, @RequestParam String erpId) throws Exception {
         Store store;
         if (storeId != null && storeId != 0) {
             store = storeService.findOne(storeId, customerId);
@@ -108,6 +111,10 @@ public class StoreController extends MallBaseController {
                 return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "登录用户名已存在");
             }
             store.setCreateTime(new Date());
+        }
+        boolean flag = k3Service.getOrganizations(customerId,erpId);
+        if(!flag){
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "erp门店id错误");
         }
         store.setName(name);
         store.setAreaCode(areaCode);
@@ -203,6 +210,16 @@ public class StoreController extends MallBaseController {
         }
         if (!store.isDeleted()) {
             storeService.deleteStore(store);
+        }
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+    }
+
+    @PostMapping("/checkErpId")
+    @ResponseBody
+    public ApiResult remove(@RequestParam("customerId") Long customerId,@RequestParam String erpId) throws Exception {
+        boolean flag = k3Service.getOrganizations(customerId,erpId);
+        if(!flag){
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "erp门店id错误");
         }
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }

@@ -30,4 +30,5 @@ public class MallApiConfig {
 
     @Column(name = "Kd_password")
     private String password;
+
 }
