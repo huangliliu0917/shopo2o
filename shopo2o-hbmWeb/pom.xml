@@ -89,12 +89,38 @@
             <!--</exclusions>-->
         </dependency>
 
+        <dependency>
+            <groupId>k3cloud</groupId>
+            <artifactId>k3cloud</artifactId>
+            <systemPath>${pom.basedir}/src/main/webapp/WEB-INF/lib/k3cloud-webapi-client.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
 
     </dependencies>
 
     <build>
         <finalName>hbmWeb</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>other-dependencies</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -116,6 +142,15 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <targetPath>lib/</targetPath>
+                <directory>lib/</directory>
+                <includes>
+                    <include>**/k3cloud-webapi-client.jar</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 
