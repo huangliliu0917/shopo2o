@@ -177,7 +177,7 @@
                                             <label id="erpId-info" style="margin-left: 5px;" for="erpId"
                                                    th:if="${currentData.id !=null}"
                                                    th:classappend="${organName == null ? 'error' : ''}"
-                                                   th:text="${organName == null ? '门店ID有误' : ''}"></label>
+                                                   th:text="${organName == null ? '门店ID有误' : organName}"></label>
                                         </div>
                                     </div>
                                     <div class="col-sm-offset-2 col-sm-10">
