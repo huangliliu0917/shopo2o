@@ -912,6 +912,7 @@ function checkErpId(erp) {
     if(erpId == ''){
         return;
     }
+    layer.load();
     $.ajax(baseUrl + "mall/store/checkErpId", {
         method: 'POST',
         data: {
@@ -920,8 +921,9 @@ function checkErpId(erp) {
         },
         dataType: 'json',
         success: function (data) {
+            layer.closeAll('loading');
             if (data.code != 200) {
-                var error = '<label id="erpId-error" class="error" for="erpId">'+data.msg+'</label>';
+                var error = '<label id="erpId-error" class="error" for="erpId">'+data.data+'</label>';
                 $('#erpId-error').remove();
                 $(erp).after(error)
             } else {
