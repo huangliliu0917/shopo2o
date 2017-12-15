@@ -27,25 +27,6 @@ var shopListHandler = {
             },'post');
         })
     },
-    delete: function (obj) {
-        var storeId = $(obj).attr("storeId");
-        hot.confirm("确定要删除该门店吗",function(){
-            hot.ajax(baseUrl + "/remove",{
-                storeId:storeId
-            },function(result){
-                if(result.code == 200){
-                    hot.tip.success("删除成功");
-                    setTimeout(function(){
-                        window.location.reload()
-                    },300);
-                }else{
-                    hot.tip.error(result.data);
-                }
-            },function(){
-                hot.tip.error("系统错误");
-            },'post');
-        })
-    },
     addShop:function(){
         window.location.href= baseUrl + "edit";
     }

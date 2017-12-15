@@ -200,20 +200,6 @@ public class StoreController extends MallBaseController {
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 
-    @PostMapping("/remove")
-    @ResponseBody
-    public ApiResult remove(@ModelAttribute("customerId") Long customerId
-            , @RequestParam Long storeId) {
-        Store store = storeService.findOne(storeId, customerId);
-        if (store == null) {
-            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
-        }
-        if (!store.isDeleted()) {
-            storeService.deleteStore(store);
-        }
-        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
-    }
-
     @PostMapping("/checkErpId")
     @ResponseBody
     public ApiResult remove(@RequestParam("customerId") Long customerId,@RequestParam String erpId) throws Exception {

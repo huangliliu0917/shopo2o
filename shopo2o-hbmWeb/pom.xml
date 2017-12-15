@@ -92,7 +92,8 @@
         <dependency>
             <groupId>k3cloud</groupId>
             <artifactId>k3cloud</artifactId>
-            <systemPath>${pom.basedir}/src/main/webapp/WEB-INF/lib/k3cloud-webapi-client.jar</systemPath>
+            <version>1.0.0</version>
+            <systemPath>${project.basedir}/lib/k3cloud-webapi-client.jar</systemPath>
             <scope>system</scope>
         </dependency>
 
@@ -102,25 +103,6 @@
     <build>
         <finalName>hbmWeb</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <finalName>other-dependencies</finalName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -139,18 +121,18 @@
                 <version>2.3</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <webResources>
+                        <resource>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <directory>${project.basedir}/lib</directory>
+                            <includes>
+                                <include>k3cloud-webapi-client.jar</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <targetPath>lib/</targetPath>
-                <directory>lib/</directory>
-                <includes>
-                    <include>**/k3cloud-webapi-client.jar</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 
 
