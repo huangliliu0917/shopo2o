@@ -1,5 +1,6 @@
 package com.huotu.shopo2o.hbm.web.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huotu.shopo2o.hbm.web.service.K3Service;
 import com.huotu.shopo2o.service.entity.config.MallApiConfig;
@@ -18,7 +19,8 @@ public class K3ServiceImpl implements K3Service {
     private MallApiConfigRepository mallApiConfigRepository;
 
     @Override
-    public  boolean getOrganizations(Long customerId,String erpId) throws Exception {
+    public  String getOrganizations(Long customerId,String erpId) throws Exception {
+        String organName = null;
         MallApiConfig mallApiConfig = mallApiConfigRepository.findOne(customerId);
         String dbId = mallApiConfig.getDbId();
         String userName = mallApiConfig.getUserName();
@@ -28,14 +30,17 @@ public class K3ServiceImpl implements K3Service {
         K3CloudApiClient apiClient = new K3CloudApiClient(apiServerUrl);
         if(apiClient.login(dbId,userName,password,2052)){
             String resultStr = apiClient.view("ORG_Organizations", data);
-            JSONObject obj = (JSONObject) JSONObject.parse(resultStr);
-            JSONObject result = (JSONObject) obj.get("Result");
-            JSONObject responseStatus = (JSONObject) result.get("ResponseStatus");
+            JSONObject obj = JSONObject.parseObject(resultStr);
+            JSONObject result = obj.getJSONObject("Result");
+            JSONObject responseStatus = result.getJSONObject("ResponseStatus");
             if(responseStatus == null){
-                return true;
+                JSONArray nameArray = result.getJSONObject("Result").getJSONArray("Name");
+                if(nameArray.size() > 0){
+                    organName = nameArray.getJSONObject(0).getString("Value");
+                }
             }
         }
-        return false;
+        return organName;
     }
 
 }

@@ -30,10 +30,10 @@ public class K3ServiceTest extends CommonTestBase{
         mallApiConfig.setPassword(password);
         mallApiConfigRepository.saveAndFlush(mallApiConfig);
 
-        boolean flag = k3Service.getOrganizations(customerId, "01");
-        Assert.assertTrue(flag);
-        boolean flag1 = k3Service.getOrganizations(customerId, "00");
-        Assert.assertFalse(flag1);
+        String result = k3Service.getOrganizations(customerId, "01");
+        Assert.assertNotNull(result);
+        String result1 = k3Service.getOrganizations(customerId, "00");
+        Assert.assertNull(result1);
     }
 
 }

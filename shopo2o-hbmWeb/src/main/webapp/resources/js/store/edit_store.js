@@ -922,13 +922,14 @@ function checkErpId(erp) {
         dataType: 'json',
         success: function (data) {
             layer.closeAll('loading');
+            $('#erpId-info').remove();
+            var msg;
             if (data.code != 200) {
-                var error = '<label id="erpId-error" class="error" for="erpId">'+data.data+'</label>';
-                $('#erpId-error').remove();
-                $(erp).after(error)
+                msg = '<label id="erpId-info" class="error" for="erpId">'+data.data+'</label>';
             } else {
-                $("#erpId-error").remove();
+                msg = '<label id="erpId-info" style="margin-left: 5px;" for="erpId">'+data.data+'</label>';
             }
+            $(erp).after(msg)
         },
         error: function () {
             layer.closeAll('loading');

@@ -66,10 +66,10 @@ public class CustomerInterceptor extends HandlerInterceptorAdapter {
                 if(!StringUtils.isEmpty(requestCustomerId)){
                     customerId = Integer.valueOf(requestCustomerId);
                     if (customerId <= 1 && environment.acceptsProfiles("development")) {
-                        customerId = 4421;
+                        customerId = 7031;
                     }
                 }else if (environment.acceptsProfiles("development")) {
-                    customerId = 4421;
+                    customerId = 7031;
                 }
             }
         }

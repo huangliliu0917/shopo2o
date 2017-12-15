@@ -6,6 +6,6 @@ package com.huotu.shopo2o.hbm.web.service;
  */
 public interface K3Service {
 
-    boolean getOrganizations(Long customerId,String erpId) throws Exception;
+    String getOrganizations(Long customerId,String erpId) throws Exception;
 
 }

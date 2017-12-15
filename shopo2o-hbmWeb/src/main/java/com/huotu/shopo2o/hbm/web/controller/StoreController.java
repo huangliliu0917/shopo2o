@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
+import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.hbm.web.service.K3Service;
 import com.huotu.shopo2o.hbm.web.service.StaticResourceService;
 import com.huotu.shopo2o.service.entity.store.DistributionMarker;
@@ -64,7 +65,7 @@ public class StoreController extends MallBaseController {
     @GetMapping("/edit")
     public String edit(@ModelAttribute("customerId") Long customerId
             , @RequestParam(value = "storeId", required = false, defaultValue = "0") Long storeId
-            , Model model) {
+            , Model model) throws Exception {
         Store store = null;
         if (storeId != null && storeId != 0) {
             store = storeService.findOne(storeId, customerId);
@@ -76,6 +77,10 @@ public class StoreController extends MallBaseController {
                 URI imgUri = resourceService.getResource(StaticResourceService.huobanmallMode, store.getLogo());
                 store.setMallLogoUri(imgUri.toString());
             } catch (URISyntaxException ignored) {
+            }
+            if(StringUtil.isNotEmpty(store.getErpId())){
+                String organName = k3Service.getOrganizations(customerId,store.getErpId());
+                model.addAttribute("organName",organName);
             }
         }
         if (store == null) {
@@ -112,8 +117,8 @@ public class StoreController extends MallBaseController {
             }
             store.setCreateTime(new Date());
         }
-        boolean flag = k3Service.getOrganizations(customerId,erpId);
-        if(!flag){
+        String organName = k3Service.getOrganizations(customerId,erpId);
+        if(StringUtil.isEmptyStr(organName)){
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "erp门店id错误");
         }
         store.setName(name);
@@ -203,10 +208,10 @@ public class StoreController extends MallBaseController {
     @PostMapping("/checkErpId")
     @ResponseBody
     public ApiResult remove(@RequestParam("customerId") Long customerId,@RequestParam String erpId) throws Exception {
-        boolean flag = k3Service.getOrganizations(customerId,erpId);
-        if(!flag){
-            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "erp门店id错误");
+        String organName = k3Service.getOrganizations(customerId,erpId);
+        if(StringUtil.isEmptyStr(organName)){
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店ID有误");
         }
-        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS,organName);
     }
 }

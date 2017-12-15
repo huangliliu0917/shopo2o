@@ -173,7 +173,11 @@
                                             <span class="asterisk">*</span></label>
                                         <div class="col-sm-10">
                                             <input name="erpId" onblur="checkErpId(this)" type="text" th:value="${currentData.erpId}" required="true"
-                                                   class="form-control" placeholder="请输入对应的erp门店id"/>
+                                                   class="form-control" placeholder="请输入对应的erp门店id" id="erpId"/>
+                                            <label id="erpId-info" style="margin-left: 5px;" for="erpId"
+                                                   th:if="${currentData.id !=null}"
+                                                   th:classappend="${organName == null ? 'error' : ''}"
+                                                   th:text="${organName == null ? '门店ID有误' : ''}"></label>
                                         </div>
                                     </div>
                                     <div class="col-sm-offset-2 col-sm-10">
