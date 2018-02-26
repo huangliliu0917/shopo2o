@@ -61,7 +61,7 @@ public class StoreControllerTest extends CommonTestBase {
     @Test
     public void saveBaseInfo() throws Exception {
         String saveUrl = baseUrl + "/saveStoreBaseInfo";
-        String loginName = UUID.randomUUID().toString(), openTime = "09:00", closeTime = "18:00", deadlineTime = "20:00";
+        String loginName = UUID.randomUUID().toString(), openTime = "09:00", closeTime = "18:00", deliveryBeginTime = "09:00",deadlineTime = "20:00";
         Store store = mockShopWithoutSave();
         mockMvc.perform(post(saveUrl)
                 .cookie(cookies)
@@ -78,6 +78,7 @@ public class StoreControllerTest extends CommonTestBase {
                 .param("openTime",openTime)
                 .param("closeTime",closeTime)
                 .param("deadlineTime",deadlineTime)
+                .param("deliveryBeginTime",deliveryBeginTime)
                 .param("logo", store.getLogo())
                 .param("erpId", store.getErpId()))
                 .andExpect(status().isOk())
@@ -112,6 +113,7 @@ public class StoreControllerTest extends CommonTestBase {
                 .andDo(print())
                 .andExpect(jsonPath("$.code").value(200));
         Store realStore = storeService.findOne(mockStore.getId());
+        assertNotNull(realStore);
         assertEquals(randomNum, realStore.getDistributionRegions().size());
         for(int i = 0;i<randomNum;i++){
             assertEquals(regionList.get(i).getLng(), realStore.getDistributionRegions().get(i).getLng());

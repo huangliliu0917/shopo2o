@@ -56,7 +56,7 @@ public class CookieUtils {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(1209600);
         cookie.setPath("/");
-        cookie.setDomain(domain);
+        cookie.setDomain(domain.substring(1));
         response.addCookie(cookie);
     }
 }

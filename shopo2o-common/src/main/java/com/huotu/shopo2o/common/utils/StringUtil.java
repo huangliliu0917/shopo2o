@@ -3,6 +3,7 @@ package com.huotu.shopo2o.common.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by hxh on 2017-09-11.
@@ -64,5 +65,53 @@ public class StringUtil {
         }
 
         return date;
+    }
+
+    /**
+     * 得到随机字符串
+     *
+     * @return
+     */
+    public static String createRandomStr(int digit) {
+        String base = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int baseLength = base.length();
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < digit; i++) {
+            int number = random.nextInt(baseLength);
+            stringBuilder.append(base.charAt(number));
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 判断str是否为空
+     *
+     * @param str 要判断的字符
+     * @return str为null或?为""则返回true,否则返回false
+     */
+    public static boolean isEmptyStr(String str) {
+        if (str == null)
+            return true;
+        if ("".equals(str.trim()))
+            return true;
+        return false;
+    }
+
+    /**
+     * 是否不为?
+     *
+     * @param str
+     * @return
+     */
+    public static boolean isNotEmpty(String str) {
+        if (str != null) {
+            if (str.length() == 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

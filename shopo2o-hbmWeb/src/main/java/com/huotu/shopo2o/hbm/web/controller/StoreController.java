@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huotu.shopo2o.common.utils.ApiResult;
 import com.huotu.shopo2o.common.utils.Constant;
 import com.huotu.shopo2o.common.utils.ResultCodeEnum;
+import com.huotu.shopo2o.common.utils.StringUtil;
+import com.huotu.shopo2o.hbm.web.service.K3Service;
 import com.huotu.shopo2o.hbm.web.service.StaticResourceService;
 import com.huotu.shopo2o.service.entity.store.DistributionMarker;
 import com.huotu.shopo2o.service.entity.store.DistributionRegion;
@@ -44,6 +46,8 @@ public class StoreController extends MallBaseController {
     private MallCustomerService customerService;
     @Autowired
     private StaticResourceService resourceService;
+    @Autowired
+    private K3Service k3Service;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping("/list")
@@ -61,7 +65,7 @@ public class StoreController extends MallBaseController {
     @GetMapping("/edit")
     public String edit(@ModelAttribute("customerId") Long customerId
             , @RequestParam(value = "storeId", required = false, defaultValue = "0") Long storeId
-            , Model model) {
+            , Model model) throws Exception {
         Store store = null;
         if (storeId != null && storeId != 0) {
             store = storeService.findOne(storeId, customerId);
@@ -73,6 +77,10 @@ public class StoreController extends MallBaseController {
                 URI imgUri = resourceService.getResource(StaticResourceService.huobanmallMode, store.getLogo());
                 store.setMallLogoUri(imgUri.toString());
             } catch (URISyntaxException ignored) {
+            }
+            if(StringUtil.isNotEmpty(store.getErpId())){
+                String organName = k3Service.getOrganizations(customerId,store.getErpId());
+                model.addAttribute("organName",organName);
             }
         }
         if (store == null) {
@@ -91,8 +99,8 @@ public class StoreController extends MallBaseController {
             , @RequestParam String provinceCode, @RequestParam String cityCode, @RequestParam String districtCode
             , @RequestParam String address, @RequestParam Double lng, @RequestParam Double lat
             , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime openTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime closeTime
-            , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime, @RequestParam String logo
-            , @RequestParam String erpId) {
+            , @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deliveryBeginTime, @DateTimeFormat(pattern = "HH:mm") @RequestParam LocalTime deadlineTime
+            , @RequestParam String logo, @RequestParam String erpId) throws Exception {
         Store store;
         if (storeId != null && storeId != 0) {
             store = storeService.findOne(storeId, customerId);
@@ -109,6 +117,10 @@ public class StoreController extends MallBaseController {
             }
             store.setCreateTime(new Date());
         }
+        String organName = k3Service.getOrganizations(customerId,erpId);
+        if(StringUtil.isEmptyStr(organName)){
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "erp门店id错误");
+        }
         store.setName(name);
         store.setAreaCode(areaCode);
         store.setTelephone(telephone);
@@ -119,6 +131,7 @@ public class StoreController extends MallBaseController {
         store.setLngLat(new LngLat(lng, lat));
         store.setOpenTime(openTime);
         store.setCloseTime(closeTime);
+        store.setDeliveryBeginTime(deliveryBeginTime);
         store.setDeadlineTime(deadlineTime);
         store.setLogo(logo);
         store.setErpId(erpId);
@@ -164,9 +177,9 @@ public class StoreController extends MallBaseController {
             return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "配送区域解析失败");
         }
         List<LngLat[]> divisionList = null;
-        if(!CollectionUtils.isEmpty(distributionDivisionRegionMap)){
-            divisionList = distributionDivisionRegionMap.values().stream().filter(p->!CollectionUtils.isEmpty(p.getDistributionRegions()))
-                    .map(p->p.getDistributionRegions().toArray(new LngLat[p.getDistributionRegions().size()])).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(distributionDivisionRegionMap)) {
+            divisionList = distributionDivisionRegionMap.values().stream().filter(p -> !CollectionUtils.isEmpty(p.getDistributionRegions()))
+                    .map(p -> p.getDistributionRegions().toArray(new LngLat[p.getDistributionRegions().size()])).collect(Collectors.toList());
         }
         store.setDistributionRegions(distributionRegionList);
         store.setDistributionMarkers(storeService.saveMarker(store, distributionMarkerMap));
@@ -192,17 +205,13 @@ public class StoreController extends MallBaseController {
         return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
     }
 
-    @PostMapping("/remove")
+    @PostMapping("/checkErpId")
     @ResponseBody
-    public ApiResult remove(@ModelAttribute("customerId") Long customerId
-            , @RequestParam Long storeId) {
-        Store store = storeService.findOne(storeId, customerId);
-        if (store == null) {
-            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店不存在");
+    public ApiResult remove(@RequestParam("customerId") Long customerId,@RequestParam String erpId) throws Exception {
+        String organName = k3Service.getOrganizations(customerId,erpId);
+        if(StringUtil.isEmptyStr(organName)){
+            return ApiResult.resultWith(ResultCodeEnum.SAVE_DATA_ERROR, "门店ID有误");
         }
-        if (!store.isDeleted()) {
-            storeService.deleteStore(store);
-        }
-        return ApiResult.resultWith(ResultCodeEnum.SUCCESS);
+        return ApiResult.resultWith(ResultCodeEnum.SUCCESS,organName);
     }
 }

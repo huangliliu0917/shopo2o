@@ -64,6 +64,7 @@ public class CommonTestBase extends SpringWebTest {
         // TODO: 2017-08-24 这个时间以后测试要用到了再改吧
         store.setOpenTime(LocalTime.now());
         store.setCloseTime(LocalTime.now());
+        store.setDeliveryBeginTime(LocalTime.now());
         store.setDeadlineTime(LocalTime.now());
         return storeRepository.saveAndFlush(store);
     }

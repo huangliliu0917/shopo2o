@@ -35,6 +35,12 @@ public class FreightTemplate {
      */
     @Column(name = "Customer_Id", updatable = false)
     private int customerId;
+
+    /**
+     * 门店id
+     */
+    @Column(name = "Store_Id")
+    private long storeId;
     /**
      * 商户类型
      * 0:伙伴商城

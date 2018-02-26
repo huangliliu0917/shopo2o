@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,7 +41,7 @@ public class MallGood {
     @Column(name = "Brief")
     private String brief;
 
-    @OneToMany(mappedBy = "good")
+    @OneToMany(mappedBy = "good", cascade = CascadeType.PERSIST)
     private List<MallProduct> products;
     /**
      * 成本价

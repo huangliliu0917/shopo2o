@@ -14,7 +14,7 @@ var contextMenu = {}; //右键菜单
 var citySelect = document.getElementById('city');
 var districtSelect = document.getElementById('district');
 // var areaSelect = document.getElementById('street');
-var openTime, closeTime, deadlineTime;
+var openTime, closeTime, deliveryBeginTime, deadlineTime;
 $(function () {
     // 最多两位小数
     $.validator.addMethod("isFloat2", function (value, element) {
@@ -97,6 +97,17 @@ $(function () {
         defaultMinute: 0
     });
     closeTime = $('input[name=closeTime]').flatpickr({
+        enableTime: true,
+        noCalendar: true,
+        enableSeconds: false,
+        time_24hr: true,
+        dateFormat: "H:i",
+        minuteIncrement: 15,
+        locale: 'zh',
+        allowInput: true,
+        defaultMinute: 0
+    });
+    deliveryBeginTime = $('input[name=deliveryBeginTime]').flatpickr({
         enableTime: true,
         noCalendar: true,
         enableSeconds: false,
@@ -894,6 +905,37 @@ function tmpPosition(positionArr) {
         position.push(positionArr[i]);
     }
     return position;
+}
+//校验erp门店id
+function checkErpId(erp) {
+    var erpId = erp.value;
+    if(erpId == ''){
+        return;
+    }
+    layer.load();
+    $.ajax(baseUrl + "mall/store/checkErpId", {
+        method: 'POST',
+        data: {
+            customerId:customerId,
+            erpId:erpId
+        },
+        dataType: 'json',
+        success: function (data) {
+            layer.closeAll('loading');
+            $('#erpId-info').remove();
+            var msg;
+            if (data.code != 200) {
+                msg = '<label id="erpId-info" class="error" for="erpId">'+data.data+'</label>';
+            } else {
+                msg = '<label id="erpId-info" style="margin-left: 5px;" for="erpId">'+data.data+'</label>';
+            }
+            $(erp).after(msg)
+        },
+        error: function () {
+            layer.closeAll('loading');
+            layer.msg("系统错误");
+        }
+    })
 }
 var Region = {
     id: 0,

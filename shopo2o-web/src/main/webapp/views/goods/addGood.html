@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<!--
+  ~ 版权所有:杭州火图科技有限公司
+  ~ 地址:浙江省杭州市滨江区西兴街道阡陌路智慧E谷B幢4楼在地图中查看
+  ~
+  ~ (c) Copyright Hangzhou Hot Technology Co., Ltd.
+  ~ Floor 4,Block B,Wisdom E Valley,Qianmo Road,Binjiang District
+  ~ 2013-2016. All rights reserved.
+  ~
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>添加商品</title>
+    <link href="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+    <!-- Morris -->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/animate.min.css" rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/style.min-1.0.8.css" rel="stylesheet"/>
+    <!--checkbox-->
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"
+          rel="stylesheet"/>
+    <link href="http://resali.huobanplus.com/cdn/hotui/css/plugins/SearchableSelect/jquery.searchableSelect-1.0.0.css"
+          rel="stylesheet"/>
+    <!--goodType-->
+    <link href="../../resources/3rdParty/css/goodtype.css" rel="stylesheet" type="text/css"
+          th:href="@{/resources/3rdParty/css/goodtype.css}"/>
+    <style>
+        .xzh.on {
+            border: 1px solid #FFD400;
+            background-color: #FFF7E6
+        }
+
+        .xzh .dl {
+            display: none
+        }
+
+        .search {
+            border: 1px solid #FFD400;
+            background-color: #FFF7E6;
+        }
+    </style>
+</head>
+<!--/*@thymesVar id="lastUsedType" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmGoodsType>"*/-->
+<!--/*@thymesVar id="brandList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmBrand>"*/-->
+<!--/*@thymesVar id="freightTemplateList" type="java.util.List<com.huotu.shopo2o.service.entity.good.FreightTemplate>"*/-->
+<!--/*@thymesVar id="shopCatList" type="java.util.List<com.huotu.shopo2o.service.entity.store.SupShopCat>"*/-->
+<!--/*@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"*/-->
+<!--/*@thymesVar id="customerConfig" type="com.huotu.shopo2o.service.entity.config.MallCustomerConfig"*/-->
+<!--/*@thymesVar id="sisConfig" type="com.huotu.shopo2o.service.entity.config.SisConfig"*/-->
+<!--/*@thymesVar id="typePath" type="java.lang.String"*/-->
+<!--/*@thymesVar id="typeId" type="java.lang.Integer"*/-->
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight tooltip-demo">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content p-sm no-borders">
+                    <img style="margin-top: 5px;" src="../../resources/images/step1b.jpg"
+                         th:src="@{/resources/images/step2b.jpg}"/>
+                    <div style="text-align: right; float: right;">
+                        <button type="button" onclick="javascript:returnTypeSelect()"
+                                class="btn btn-success m-b-none">重新选择类目
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a id="baseInfoBtn" data-toggle="tab" href="#tab-1" aria-expanded="true">基本信息</a>
+                        </li>
+                        <li>
+                            <a id="specTabBtn" data-toggle="tab" href="#tab-2" aria-expanded="true">规格货品</a>
+                        </li>
+                        <li>
+                            <a id="detailInfoBtn" data-toggle="tab" href="#tab-3" aria-expanded="true">详细信息</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <form id="tab-1-form">
+                                <div class="panel-body form-horizontal ">
+                                    <div class="form-group form-inline">
+                                        <input name="type.typeId" id="type" style="display: none;" th:value="${typeId}"/>
+                                        <label class="col-sm-2 control-label">商品类目:</label>
+                                        <div class="col-sm-10">
+                                            <p class="form-control-static" style="color: #ff9966" th:text="${typePath}">
+                                                [天猫点券]-[品牌卡]-[实体卡]</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">供应商店铺分类:</label>
+                                        <div class="col-sm-10">
+                                            <select id="catId" name="shopCat.catId"
+                                                    class="form-control input-sm input-s">
+                                                <option value="-1" selected="true">根目录</option>
+                                                <th:block th:each="cat:${shopCatList}">
+                                                    <option th:value="${cat.catId}"
+                                                            th:text="'&nbsp;&nbsp;└ ' + ${cat.catName}">一级目录
+                                                    </option>
+                                                    <!--最多显示2级-->
+                                                    <option th:if="${cat.subShopCat!=null}"
+                                                            th:each="subCat:${cat.subShopCat}"
+                                                            th:value="${subCat.catId}"
+                                                            th:text="'&nbsp;&nbsp;&nbsp;&nbsp;└ ' + ${subCat.catName}">
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;└二级目录
+                                                    </option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">商品品牌:</label>
+                                        <div class="col-sm-10">
+                                            <select id="brand" name="brand.brandId"
+                                                    class="form-control input-sm input-s">
+                                                <option value="0" selected="true">请选择</option>
+                                                <!--/*-->
+                                                <!--*/-->
+                                                <option th:each="brand:${brandList}" th:value="${brand.brandId}"
+                                                        th:text="${brand.brandName}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">商品名称:</label>
+                                        <div class="col-sm-10">
+                                            <input name="name" type="text" id="name"
+                                                   class="form-control input-sm" placeholder="商品名称"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">商品描述:</label>
+                                        <div class="col-sm-10">
+                                            <input name="subTitle" type="text" id="subTitle"
+                                                      class="form-control input-sm" placeholder="商品描述"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label">商品编号:</label>
+                                        <div class="col-sm-10">
+                                            <input name="bn" type="text" id="bn" class="form-control input-sm input-s"
+                                                   placeholder="商品编号"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group ">
+                                        <label class="col-sm-2 control-label">计量单位:</label>
+
+                                        <div class="col-sm-10">
+                                            <input name="unit" type="text" id="unit"
+                                                   class="form-control input-sm input-s" placeholder="计量单位"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">限购数量:</label>
+                                        <div class="col-sm-10">
+                                            <input name="limitBuyNum" type="text" id="limitBuyNum" value="0"
+                                                   class="form-control input-sm input-s only-num" placeholder="限购数量"/>
+                                            <p class="form-control-static m-l-sm color-notice">
+                                                每一个会员ID的限购数量，等于或小于0则没有限制。</p>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">运费模板:</label>
+                                        <div class="col-sm-10">
+                                            <select id="freightTemplateId" name="freightTemplate.id"
+                                                    class="form-control input-sm input-s">
+                                                <option value="0" selected="true">请选择</option>
+                                                <option th:each="freightTemplate:${freightTemplateList}"
+                                                        th:value="${freightTemplate.id}"
+                                                        th:text="${freightTemplate.freightTemplateType != null and freightTemplate.freightTemplateType == 1} ? ${freightTemplate.name} : '平台运费模板-' + ${freightTemplate.name}"></option>
+                                            </select>
+                                            <button type="button" class="btn m-b-none btn-white" onclick="showFreightTemplateDetail()">查看</button>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed "></div>
+                                    <div class="form-group form-inline" th:if="${customerConfig != null && customerConfig.isRebate()}">
+                                        <label class="col-sm-2 control-label">返利分配比例</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control input-sm only-float js-goods-disRebatePercent" value="0"
+                                                       id="disRebatePercent" placeholder="返利分配比例" name="disRebatePercent" onkeyup="_userPricesModule.verifyRebateAll()"/>
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">
+                                            商品图片:
+                                            <br/>
+                                            <span style="color: #ccc; font-size: 9pt;">第一张图作为商品主图</span>
+                                            <br/>
+                                            <span style="color: #ccc; font-size: 9pt;">请上传正方形图片</span>
+                                        </label>
+
+                                        <div class="col-sm-10">
+                                            <ul class="list-inline" id="imgs">
+                                                <li style="position: relative;" id="more_img">
+                                                    <div class="div_upload jUploader-button" id="uploadPicDefault"
+                                                         style="width: 92px; height: 92px; border: 1px solid rgb(239, 226, 238); cursor: pointer; position: relative; overflow: hidden; direction: ltr;"
+                                                         th:styleappend="'background: url(\''+@{/resources/3rdParty/images/jia.jpg}+'\');'"
+                                                         title="上传图片"
+                                                         onclick="javascript:configHandler.uploadImg();"></div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">规格货品:</label>
+
+                                        <div class="col-sm-10">
+                                            <button type="button" class="btn btn-success hasSpecToggle display-none"
+                                                    onclick="javascript:$('#specTabBtn').click();"
+                                                    style="display: block;">挑选货品
+                                            </button>
+                                            <p class="form-control-static m-l-sm color-notice noSpecToggle"
+                                               style="display: none;">当前类型无规格，请重新选择类型</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <form id="tab-2-form">
+                                <div id="divProductSepc">
+                                    <div class="panel-body form-horizontal">
+                                        <div class="ibox float-e-margins">
+
+                                            <!--规格列表BEGIN-->
+                                            <div id="divSpecList">
+                                                <label id="specDesc-error" class="error" style="display: none;"></label>
+                                                <div class="ibox-content m-b" style="border: 1px solid #e7eaec;"
+                                                     th:each="spec:${specList}"
+                                                     th:attr="specId=${spec.specId},specName=${spec.specName}">
+                                                    <div class="col-sm-12 form-group form-inline">
+                                                        <label th:text="${spec.specName}">规格名</label>
+                                                        <input class="form-control input-sm input-s-sm" type="text"
+                                                               onchange="specProductEditor.searchSpecV2(this)"
+                                                               placeholder="规格值搜索"/>
+                                                    </div>
+                                                    <div class="form-inline specPanel">
+                                                        <div class="form-control checkbox checkbox-primary m-t xzh"
+                                                             th:each="specValue:${spec.specValues}"
+                                                             th:attr="specValueId=${specValue.id},specValue = ${specValue.value},specId=${spec.specId}">
+                                                            <input class="js-specValue-check" type="checkbox" name="spec" th:name="'spec' + ${spec.specId}"
+                                                                   onclick="specProductEditor.getCheckedSpecValue(this);"
+                                                                   th:attr="specValue=${specValue.value},specValueId=${specValue.id},specId=${spec.specId}"/>
+                                                            <label th:text="${specValue.value}"
+                                                                   class="js-spec_value_origin">橘红色</label>
+                                                            <input type="text"
+                                                                   class="form-control input-sm input-s-sm sv_custom dl"
+                                                                   name="spec_value_customer"
+                                                                   value="橘红色" placeholder="别名"
+                                                                   onchange="specProductEditor.changeSpecValueCustomer(this)"
+                                                                   th:value="${specValue.value}"/>
+                                                            <input type="hidden" value="" name="spec_rel_images"/>
+                                                            <i onclick="specProductEditor.relateSpecToImages(this);"
+                                                               class="fa fa-image cursor-point dl js-spec-images-link"
+                                                               title="关联图片"
+                                                               th:attr="specValueId=${specValue.id}"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--规格列表END-->
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <div>
+                                                <label id="specList-error" class="error" for="specList" style="display: none;"></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <h4 class="text-danger" th:if="${customerConfig != null && customerConfig.isRebate()}">返利分配比例默认为【基本信息】中的返利分配比例</h4>
+                                            <div id="batch-update" class="form-group form-inline">
+                                                <label>批量填充:</label>
+                                                <input type="text" class="form-control input-sm input-s-sm m-l"
+                                                       id="batch-seller-id" placeholder="货号" maxlength="64"/>
+                                                <input type="text" class="form-control input-sm input-s-sm m-l"
+                                                       id="batch-store" placeholder="库存"/>
+                                                <!--<input type="text" class="form-control input-sm input-s-sm m-l"
+                                                       id="batch-mktPrice" placeholder="市场价"/>-->
+                                                <!--<div class="input-group">-->
+                                                    <input type="text" class="form-control input-sm input-s-sm m-l"
+                                                           id="batch-min-price" placeholder="销售价"
+                                                    />
+                                                    <!--<span class="input-group-addon">-</span>
+                                                    <input type="text" class="form-control input-sm input-s-sm"
+                                                           id="batch-max-price" placeholder="最高销售价"
+                                                    />-->
+                                                <!--</div>-->
+                                                <input type="text" class="form-control input-sm input-s-sm m-l"
+                                                       id="batch-cost" placeholder="成本价"/>
+                                                <input type="text" class="form-control input-sm input-s-sm m-l"
+                                                       id="batch-weight" placeholder="重量"/>
+                                                <input type="text" class="form-control input-sm input-s-sm m-l only-float js-price-rebate-verity"
+                                                       id="js-batch-userPrice" placeholder="会员价"/>
+                                                <input type="text" class="form-control input-sm input-s-sm m-l only-float js-price-rebate-verity"
+                                                       id="js-batch-userCashIntegral" placeholder="最高抵用积分"/>
+                                                <input th:if="${customerConfig != null && customerConfig.isRebate()}" type="text" class="form-control input-sm input-s-sm m-l only-float js-price-rebate-verity"
+                                                       id="js-batch-user-rebate-type" placeholder="返利分配" />
+                                                <input type="button"
+                                                       class="btn btn-success m-l btn-sm m-b-none batch-submit"
+                                                       value="确定"
+                                                       onclick="specProductEditor.setBatchProductParams();"/>
+                                            </div>
+                                            <div class="hr-line-dashed "></div>
+                                            <!--货品规格BEGIN-->
+                                            <table class="table table-bordered table-hover table-center"
+                                                   id="specProductTable">
+                                                <thead>
+                                                <tr>
+                                                    <th class="header">货号
+                                                    </th>
+                                                    <!--@thymesVar id="specList" type="java.util.List<com.huotu.shopo2o.service.entity.good.HbmSpecification>"-->
+                                                    <th th:each="spec:${specList}" class="header"
+                                                        th:text="${spec.specName}">
+                                                        <span style="display: none;" th:text="${spec.specId}"></span>
+                                                    </th>
+                                                    <th class="header">库存
+                                                    </th>
+                                                    <!--<th class="header">市场价
+                                                    </th>-->
+                                                    <th class="header">销售价
+                                                    </th>
+                                                    <th class="header">成本价
+                                                    </th>
+                                                    <th class="header">重量(g)
+                                                    </th>
+                                                    <th class="header" th:if="${customerConfig != null && customerConfig.isRebate()}">返利分配(<th:block th:text="${customerConfig.rebateMode()} ? '%': '元'"></th:block>)
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="specProductList"></tbody>
+                                            </table>
+                                            <input style="display: none" name="specDesc" id="specDesc"/>
+                                            <input style="display: none" name="specList" id="specList"/>
+                                            <!--货品规格BEGIN-->
+                                        </div>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-sm-12">
+                                            <label>1.预占库存：当商品被下单(含未支付和已支付)后，预占库存增加，当取消订单或完成发货后，预占库存释放，总库存相应减少。</label>
+                                            <br/>
+                                            <label>2.可用库存=总库存-预占库存。</label>
+                                            <br/>
+                                            <label style="color: #ed5565;">注意：设置过会员价的商品是不能参与“砍价”、“拼团”活动的。</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <form id="tab-3-form">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">商品简介:</label>
+                                        <div class="col-sm-10">
+                                        <textarea id="txtBrief" name="brief" class="form-control" rows="5"
+                                                  placeholder="商品简介" style="width:50%"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group form-inline">
+                                        <label class="col-sm-2 control-label">
+                                            商品详情：
+                                            <br/>
+                                            <br/>
+                                            <a href="javascript:appendGoodsImage2Editor();">[点这里插入所有已上传商品图片]</a>
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <div id="editor" runat="server">
+                                            </div>
+                                            <div class="con-split">
+                                            </div>
+                                                <textarea rows="4" cols="10" id="hidContent" name="intro"
+                                                          class="input-normal"
+                                                          style="height: 80px; width: 70%; display: none;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="ibox float-e-margins m-b-none">
+                            <div class="ibox-content no-borders text-center">
+                                <button type="button" class="btn btn-warning m-b-none m-l" onclick="submitForm(0)">
+                                    仅保存
+                                </button>
+                                <button type="button" class="btn btn-danger m-b-none m-l" onclick="submitForm(1)">
+                                    保存并提交审核
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--会员价设置-->
+<div id="level_price_dialog" class="modal-content-tag">
+    <input type="hidden" id="level_price_ppid" />
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins m-b-none">
+                <div class="ibox-content p-xxs no-top-border">
+                    <table class="table table-bordered table-hover table-center" style="min-width: 600px;">
+                        <thead>
+                        <tr>
+                            <th>会员等级</th>
+                            <th>会员类型</th>
+                            <th>会员价</th>
+                            <th>最高可抵用积分</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!--/*@thymesVar id="levelList" type="java.util.List<com.huotu.shopo2o.service.entity.user.UserLevel>"*/-->
+                        <tr th:each="level:${levelList}">
+                            <td>
+                                <th:block th:text="${level.levelName}"></th:block>
+                                <input type="hidden" class="js-user-level-id" th:value="${level.id}" />
+                            </td>
+                            <td th:text="${level.type.value}"></td>
+                            <td class="form-inline">
+                                <div class="input-group">
+                                    <span class="input-group-addon">¥</span>
+                                    <input type="text" class="form-control input-sm input-s-sm only-float" data-name="moreprice" th:id="'price' + ${level.id}" placeholder="会员价" />
+                                </div>
+                            </td>
+                            <td class="form-inline">
+                                <div class="input-group" th:if="${level.type.code == 0}">
+                                    <input type="text" th:id="'maxIntegral'+${level.id}" data-name="moreMaxIntegral" class="form-control input-sm input-s-sm only-num" placeholder="最高可抵用积分"/>
+                                    <span class="input-group-addon">分</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">批量设置
+                            </td>
+                            <td class="form-inline">
+                                <div class="input-group">
+                                    <span class="input-group-addon">¥</span>
+                                    <input type="text" class="form-control input-sm input-s-sm only-float" to-set="moreprice" onkeyup="userInfoHandler.batchSetInfo(this)" placeholder="会员价" />
+                                </div>
+                            </td>
+                            <td class="form-inline">
+                                <div class="input-group">
+                                    <input type="text" class="form-control input-sm input-s-sm only-num" to-set="moreMaxIntegral" onkeyup="userInfoHandler.batchSetInfo(this)" placeholder="最高可抵用积分"/>
+                                    <span class="input-group-addon">分</span>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/*@thymesVar id="levelIdList" type="java.lang.String"*/-->
+<input type="hidden" id="hdLevelList" th:value="${levelIdList}" />
+<div style="position: fixed;bottom: 200px;right: 10px;z-index: 2;" >
+    <button type="button" class="btn btn-danger m-b-none m-l" onclick="returnTop()">回到顶部
+    </button>
+</div>
+<div id="freightTemplateModel" class="modal-content-tag">
+    <table class="table table-bordered">
+        <thead>
+        <tr class="js-freightTemplate-head"></tr>
+        </thead>
+        <tbody class="js-freightTemplate-body">
+        </tbody>
+    </table>
+</div>
+
+<script type="text/html" id="ltlImgs">
+    <li style="list-style-type:none;position:relative;float: left" id="li_img{imgNum}" name="liImageItem">
+        <a style="cursor: pointer;" onclick="configHandler.deletePhoto(this)" title="点击删除当前图片">
+            <div style="position: absolute; z-index: 99; right:4px;top:4px;">
+                <img src="../../resources/images/colos.png"/>
+            </div>
+        </a>
+        <div id="uploadpic{imgNum}" class="div_upload" onclick="updateUpload('uploadpic{imgNum}',0)">
+            <div class="div_center">
+                <img id="imgsrc0" name="imgGoods" src="{fileUrl}" alt="" width="92" height="92"/>
+                <input id="picid{imgNum}" name="hidGoodsImageId" type="hidden" value="0"/>
+                <input id="picsrc{imgNum}" name="hidGoodsImagePath" type="hidden" value="{fileUri}"/>
+            </div>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="tmplProductTableRow">
+    <tr class="{$rowclass$}" ppid="{$specids}" name="trProductInfo">
+        <td width="10%">
+            <input type="hidden" name="ppid" value="{$specids}"/>
+            <input type="hidden" name="pro_id" value="0"/>
+            <!--<input type="hidden" name="lvPriceInfo" id="lvPriceInfo{specids}"/>-->
+            <input type="hidden" name="lvIntegralInfo" id="lvIntegralInfo{specids}" value=""/>
+            <input type="text" class="form-control input-sm " placeholder="货号" name="pro_bn"/>
+            <input type="hidden" class="js-goods-price-info" data-productid="{specids}" name="lvPriceInfo" id='lvPriceInfo{specids}' value=""/>
+        </td>
+        {$specs$}
+        <td  width="10%">
+            <input type="text" class="form-control input-sm" placeholder="库存" name="pro_store" value="0"/>
+        </td>
+        <!--<td  width="10%">
+            <div class="input-group">
+                <span class="input-group-addon">¥</span>
+                <input type="text" class="form-control input-sm" id="pro_mktPrice{specids}" placeholder="市场价"
+                       name="pro_mktPrice" value="0"/>
+            </div>
+        </td>-->
+        <td  width="10%">
+            <div class="input-group">
+                <span class="input-group-addon">¥</span>
+                <input type="text" class="form-control input-sm" id="pro_min_price{specids}"
+                       placeholder="销售价" name="pro_min_price" value="0" onkeyup="_userPricesModule.verifyRebate('{specids}')"/>
+                <input type="text" style="display: none" id="js-user-price-calculate"/>
+                <!--<span class="input-group-addon">-</span>
+                <input type="text" class="form-control input-sm" id="pro_max_price{specids}"
+                       placeholder="最高销售价" name="pro_max_price" value="0"/>-->
+            </div>
+            <button type="button" class="btn btn-white m-t-sm btn-xs" onclick="userInfoHandler.userPriceConfig('{specids}')">会员价</button>
+        </td>
+        <td  width="10%">
+            <div class="input-group">
+                <span class="input-group-addon">¥</span>
+                <input type="text" class="form-control input-sm" id="pro_cost{specids}" placeholder="成本价"
+                       name="pro_cost"
+                       value="0"/>
+            </div>
+        </td>
+        <td  width="10%">
+            <input type="text" class="form-control input-sm" placeholder="重量" name="pro_weight" value="0"/>
+        </td>
+        <td  width="10%" th:if="${customerConfig != null && customerConfig.isRebate()}">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm only-float js-batch-user-rebate-percent-value-type js-price-rebate-percent-verity"
+                       id="js-batch-user-rebate-percent-value-type-{specids}" placeholder="返利分配比例" name="pro_disrebate_pecent_unified" onkeyup="_userPricesModule.verifyRebate('{specids}')"/>
+                <span class="input-group-addon">%</span>
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon" >¥</span>
+                <input type="text" disabled="disabled" class="form-control input-sm only-float js-batch-user-rebate-value-type js-price-rebate-verity"
+                       id="js-batch-user-rebate-value-type-{specids}" placeholder="返利分配" name="pro_disrebate_unified" onkeyup="_userPricesModule.verifyRebatePercent('{specids}')"/>
+            </div>
+        </td>
+    </tr>
+</script>
+<script type="text/html" id="tmplSpecValueRow">
+    <tr id="js-specValue-{specValueId}">
+        <td class="txt40 c">
+            <span>{specValue}</span>
+            <input type="hidden" name="spec_value_orignal" value="{specValue}"/>
+        </td>
+        <td class="txt40">
+            <input type="text" class="input-small sv_custom" value="{specValue}" id="spec_value_custom_{specValueId}"
+                   name="spec_value_custom"/>
+        </td>
+        <td class="txt40">
+            <input type="hidden" value="" name="spec_rel_images" id="spec_rel_images_{specValueId}"/>
+            <span class="sysiconBtn delete closespec" valueid="{specValueId}"
+                  onclick="specProductEditor.relateSpecToImages(this)">关联图片</span>
+        </td>
+    </tr>
+</script>
+<script type="text/html" id="tmplProductTableHeader">
+    <tr>
+        <th class="header">货号</th>
+        {$specs$}
+        <th class="header">库存</th>
+        <th class="header">建议销售价</th>
+        <th class="header">成本价</th>
+        <th class="header">重量(g)</th>
+        <th class="header">上架</th>
+    </tr>
+</script>
+<!--基础框架js-->
+<script src="http://resali.huobanplus.com/cdn/jquery/2.2.4/jquery.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/bootstrap/3.3.5/bootstrap.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/hotui/js/content.min.js"></script>
+<!--valid-->
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/jquery.validate.min.js"></script>
+<script src="http://resali.huobanplus.com/cdn/jquery-validation/1.15.0/localization/messages_zh.min.js"></script>
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-utils.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-utils.js}"></script>
+<script src="../../resources/3rdParty/hot/bootstrap.hot.extra-init.js"
+        th:src="@{/resources/3rdParty/hot/bootstrap.hot.extra-init.js}"></script>
+<!--ueditor-->
+<script src="../../resources/3rdParty/ueditor/ueditor.config.js" type="text/javascript"
+        th:src="@{/resources/3rdParty/ueditor/ueditor.config.js}"></script>
+<script src="../../resources/3rdParty/ueditor/ueditor.all.js" type="text/javascript"
+        th:src="@{/resources/3rdParty/ueditor/ueditor.all.js}"></script>
+<!--ueditor-->
+<!--带搜索框的下拉菜单-->
+<script type="text/javascript" src="../../resources/3rdParty/searchableSelector/jquery.searchableSelect.js"
+        th:src="@{/resources/3rdParty/searchableSelector/jquery.searchableSelect.js}"></script>
+
+<script type="text/javascript" src="../../resources/js/goods/goods.js"
+        th:src="@{/resources/js/goods/goods.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    var imgNum = 0;
+    var fileUri = "";
+    var baseUrl = /*[[@{/}]]*/ "/";
+    var uploadImageUrl = /*[[@{/supplier/picture/uploadImage}]]*/"/supplier/picture/uploadImage";
+    var submitUrl = /*[[@{/good/updateGood}]]*/"/good/updateGood";
+    var goodType = /*[[@{/good/showType}]]*/"/good/showType";
+    var specList = eval(/*[[${specList}]]*/"");
+    var productBn = /*[[${productBn}]]*/"";
+    var domain = /*[[${domain}]]*/ "domain";
+    var storeId = /*[[${storeId}]]*/ "storeId";
+    var settlementMode = /*[[${customerConfig != null && customerConfig.isRebate()}]]*/ "true";
+    var rebateMode = /*[[${customerConfig != null && customerConfig.rebateMode()}]]*/ "true";
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(function () {
+        //初始化uEditor
+        UE.getEditor('editor', {
+            initialFrameWidth: 800,
+            initialFrameHeight: 260,
+        });
+
+        UE.getEditor('editor').addListener("ready", function () {
+            setHtml();
+        });
+        specProductEditor.initSpec(specList, productBn);
+        //带搜索的下拉菜单
+        $('select').searchableSelect();
+        //校验
+        $("#tab-1-form").validate({
+            rules:{
+                name :"required",
+                limitBuyNum:{
+                    digits:true
+                }
+            },
+            messages:{
+                name:"请输入商品名称",
+                limitBuyNum:{
+                    digits:'限购数量必须是整数'
+                }
+            }
+        });
+        $.validator.addMethod("largeThan",function(value, element, param){
+            var target = $(element).siblings('input[name='+param+']');
+            console.log(target.val());
+            return parseInt(value) >= parseInt(target.val());
+        },$.validator.format("区间错误"));
+        $("#tab-2-form").validate();
+    })
+
+    function getHtml() {
+        document.getElementById('hidContent').value = UE.getEditor('editor').getContent();
+    }
+    function setHtml() {
+        UE.getEditor('editor').setContent(document.getElementById('hidContent').value);
+    }
+    function appendGoodsImage2Editor() {
+        var html = '';
+        $('img[name="imgGoods"]').each(function () {
+            html += '<p><img src="' + this.getAttribute('src') + '" /></p>';
+        });
+        if (html == '') {
+            Login.Tip("请在基本信息中上传商品图片", "warning");
+        } else {
+            UE.getEditor('editor').execCommand('insertHtml', html);
+        }
+    }
+    var configHandler = {
+        uploadImg: function () {
+            if (domain.charAt(0) == '.') {
+                domain = domain.substr(1);
+            } else {
+                domain = domain;
+            }
+            layer.open({
+                type: 2,
+                title: "图片库",
+                shadeClose: true,
+                shade: 0.8,
+                closeBtn: 1,
+                area: ['920px', '640px'],
+                //width=-1表示正方形图片
+                content: "/resources/3rdParty/Picture/gallery.html?customerId=" + storeId + "&isMult=false&domain=" + domain + "&isapi=1&width=-1&uploaderUri=" + uploadImageUrl,
+                //btn:["确定"],
+                end: function (index, layero) {
+                    var jsonStr = $("#js_cms_picture_value").val();
+                    var picInfo = eval(jsonStr);
+                    if (picInfo.length > 0) {
+                        for (var i = 0; i < picInfo.length; i++) {
+                            var html = $("#ltlImgs").html();
+                            html = html.replace(/\{imgNum}/g, imgNum);
+                            html = html.replace(/\{fileUrl}/g, picInfo[i].thumbPicUrl);
+                            var imgObj = {};
+                            imgObj['bigPic'] = picInfo[i].bigPicUri;
+                            imgObj['smallPic'] = picInfo[i].smallPicUri;
+                            imgObj['thumbPic'] = picInfo[i].thumbPicUri;
+                            html = html.replace(/\{fileUri}/g, JSON.stringify(imgObj).replace(/\"/g, "\'"));
+                            $("#more_img").before(html);
+                            imgNum++;
+                        }
+                        hot.tip.success("上传成功");
+                    }
+                }
+            });
+        },
+        deletePhoto: function (ctrlid) {
+            if (confirm('确定删除？')) {
+                var ImageUrl = $(ctrlid).parent().find('input[name="hidGoodsImagePath"]').val();
+                $(ctrlid).parent().remove();
+            }
+        }
+    }
+
+    function submitForm(status) {
+        getHtml();
+//                specProductEditor.getRecordList();
+        var specListVal = specProductEditor.getRecordList();
+        var specDescVal = specProductEditor.getSpecDescList();
+        $("#specList").val(specListVal);
+        $("#specDesc").val(specDescVal);
+        if(!chkForm()){
+            return;
+        }
+        var dataPara = $.extend(getFormJson($("#tab-1-form")),getFormJson($("#tab-2-form")));
+        dataPara = $.extend(dataPara,getFormJson($("#tab-3-form")));
+        dataPara['goodStatus'] = status;
+        hot.loading.show();
+        hot.ajax(submitUrl, dataPara, function (msg) {
+            if (msg.code == 200) {
+                hot.tip.success(msg.msg);
+                isSave = 1;
+                setTimeout(function () {
+                    top.document.getElementById("content_left").contentDocument.getElementById("id_040101").getElementsByTagName("a")[0].click();
+                }, 500);
+            } else {
+                hot.tip.error(msg.msg);
+            }
+        }, function () {
+        }, 'post');
+    }
+
+    //校验form
+    function chkForm() {
+        //校验tab1
+        $("#baseInfoBtn").click();
+        var tab1Success = $("#tab-1-form").valid();
+        if(!tab1Success){
+            return false;
+        }
+        //校验tab2
+        $("#specTabBtn").click();
+        var tab2Success = $("#tab-2-form").valid();
+        //货品规格检查
+        var objResult = specProductEditor.checkForm();
+        if(!objResult.flag){
+            $('#specList-error').show();
+            $("#specList-error").text(objResult.message);
+            tab2Success = false;
+        }else{
+            $("#specList-error").hide();
+        }
+        if(!tab2Success){
+            return false;
+        }
+        return true;
+    }
+
+    //将form中的值转换为键值对。
+    function getFormJson(frm) {
+        var o = {};
+        var a = $(frm).serializeArray();
+        $.each(a, function () {
+            if (o[this.name] != undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    }
+
+    var freightTemplateModel = $("#freightTemplateModel").modal("运费模板详情",function(){
+        freightTemplateModel.hide();
+    });
+
+    //查看运费模板相亲
+    function showFreightTemplateDetail(){
+        var freightTemplateId = $("#freightTemplateId").val();
+        if(freightTemplateId > 0){
+            hot.ajax(baseUrl + "good/getFreightTemplate?freightTemplateId=" + freightTemplateId,null,function(result){
+                if(result.code == 200){
+                    var freightTemplate = eval(result.data);
+                    var freightTemplateHeadJs,freightTemplateBodyJs = "";
+                    if(freightTemplate.valuationWay == 0){
+                        freightTemplateHeadJs = [
+                            "<th width='200px'>运送至</th>",
+                            "<th>首件（件）</th>",
+                            "<th>运费（元）</th>",
+                            "<th>续件（件）</th>",
+                            "<th>运费（元）</th>"
+                        ].join("\n");
+                    }else{
+                        freightTemplateHeadJs = [
+                            "<th width='200px'>运送至</th>",
+                            "<th>首重（g）</th>",
+                            "<th>运费（元）</th>",
+                            "<th>续重（g）</th>",
+                            "<th>运费（元）</th>"
+                        ].join("\n");
+                    }
+                    $.each(freightTemplate.freightTemplateDetailList,function(o,item){
+                        freightTemplateBodyJs += [
+                            "<tr>",
+                            "<td>",item.areaDesc,"</td>",
+                            "<td>",item.firstItem, "</td>",
+                            "<td>",item.firstFreight,"</td>",
+                            "<td>",item.nextItem,"</td>",
+                            "<td>",item.nextFreight,"</td>"
+                        ].join("");
+                    })
+                    freightTemplateModel.show();
+                    $("tr[class~=js-freightTemplate-head]").html(freightTemplateHeadJs);
+                    $("tbody[class~=js-freightTemplate-body]").html(freightTemplateBodyJs);
+                }else{
+                    hot.tip.error("查找运费模板错误");
+                }
+            });
+        }else{
+            hot.tip.error("请选择运费模板")
+        }
+    }
+
+    //返回类型选择
+    function returnTypeSelect() {
+        hot.confirm('修改类型后现有数据将全部丢失，确定要重新选择类型吗？', '提示', function (v) {
+            if (v == 'ok') {
+                location.href = goodType;
+            }
+        });
+    }
+
+    /*]]>*/
+</script>
+</body>
+</html>
