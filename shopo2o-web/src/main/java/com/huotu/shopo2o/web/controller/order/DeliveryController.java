@@ -6,7 +6,6 @@ import com.huotu.shopo2o.common.utils.ResultCodeEnum;
 import com.huotu.shopo2o.common.utils.StringUtil;
 import com.huotu.shopo2o.service.entity.MallCustomer;
 import com.huotu.shopo2o.service.entity.order.MallDelivery;
-import com.huotu.shopo2o.service.entity.order.MallOrder;
 import com.huotu.shopo2o.service.model.DeliveryInfo;
 import com.huotu.shopo2o.service.repository.OffsetBasedPageRequest;
 import com.huotu.shopo2o.service.searchable.DeliverySearcher;
@@ -64,25 +63,6 @@ public class DeliveryController {
         modelAndView.addObject("pageIndex", pageIndex);
         modelAndView.addObject("deliverySearcher", deliverySearcher);
         return modelAndView;
-    }
-
-    /**
-     * 加载发货单页面
-     *
-     * @param orderId
-     * @param model
-     * @param pageIndex
-     * @return
-     */
-    @RequestMapping("/deliveryView")
-    public String showConsignFlow(
-            String orderId, Model model,
-            @RequestParam(required = false, defaultValue = "1") int pageIndex
-    ) {
-        MallOrder order = orderService.findByOrderId(orderId);
-        model.addAttribute("order", order);
-        model.addAttribute("pageIndex", pageIndex);
-        return "order/order_delivery";
     }
 
     /**
@@ -149,6 +129,9 @@ public class DeliveryController {
     @ResponseBody
     public ApiResult editDelivery(String deliveryId, DeliveryInfo deliveryInfo) {
         MallDelivery delivery = mallDeliveryService.findById(deliveryId);
+        if(delivery==null){
+            return ApiResult.resultWith(ResultCodeEnum.DATA_NULL);
+        }
         delivery.setLogisticsNo(deliveryInfo.getLogiNo());
         delivery.setMemo(deliveryInfo.getRemark());
         delivery.setFreight(deliveryInfo.getFreight());

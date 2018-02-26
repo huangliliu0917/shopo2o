@@ -95,7 +95,7 @@ public class OperatorController {
             return ApiResult.resultWith(ResultCodeEnum.LOGINNAME_NOT_AVAILABLE);
         }
         Operator operator;
-        if (operatorId > 0) {
+        if (operatorId > 0&&operatorService.findById(operatorId)!=null) {
             operator = operatorService.findById(operatorId);
         } else {
             operator = new Operator();
